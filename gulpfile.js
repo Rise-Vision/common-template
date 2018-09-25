@@ -46,7 +46,7 @@
   ));
 
   gulp.task( "test", ( cb ) => {
-    runSequence( [ "build" ], [ "test-unit" ], cb );
+    runSequence([ "build" ], [ "test-unit" ], cb );
   });
 
 })( console );
