@@ -1,6 +1,6 @@
 const RisePlayerConfiguration = {
   ComponentLoader: null,
-  configure: ( playerInfo, localMessagingInfo, developmentManifestUrl = "" ) => {
+  configure: ( playerInfo, localMessagingInfo ) => {
 
     if ( !RisePlayerConfiguration.LocalMessaging ) {
       throw new Error( "RiseLocalMessaging script was not loaded" );
@@ -11,7 +11,7 @@ const RisePlayerConfiguration = {
     //TODO: other processing
 
     // lock down RisePlayerConfiguration object
-    Object.freeze(RisePlayerConfiguration);
+    Object.freeze( RisePlayerConfiguration );
   },
   LocalMessaging: null,
   Logger: null

@@ -1,10 +1,10 @@
-RisePlayerConfiguration.LocalMessaging = ( () => {
+RisePlayerConfiguration.LocalMessaging = (() => {
 
   return {
     broadcastMessage: () => {},
-    configure: ( info ) => {},
+    configure: () => {},
     isConnected: () => {},
     receiveMessages: () => {}
   }
 
-} )();
+})();
