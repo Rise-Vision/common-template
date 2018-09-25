@@ -4,12 +4,17 @@
   "use strict";
 
   const babel = require( "gulp-babel" ),
+    del = require( "del" ),
     gulp = require( "gulp" ),
     factory = require( "widget-tester" ).gulpTaskFactory,
     rename = require( "gulp-rename" ),
     runSequence = require( "run-sequence" ),
     sourcemaps = require( "gulp-sourcemaps" ),
-    uglify = require( "gulp-uglify" )
+    uglify = require( "gulp-uglify" );
+
+  gulp.task( "clean", function( cb ) {
+    return del([ "./dist/**" ], cb );
+  });
 
   gulp.task( "scripts", () => {
     return gulp.src([
@@ -30,7 +35,7 @@
   });
 
   gulp.task( "build", ( cb ) => {
-    runSequence( "scripts", cb );
+    runSequence([ "clean" ], [ "scripts" ], cb );
   });
 
   gulp.task( "test-unit", factory.testUnitAngular(
@@ -40,8 +45,8 @@
       "test/unit/*test.js" ] }
   ));
 
-  gulp.task( "test", [ "build" ], ( cb ) => {
-    runSequence( "test-unit", cb );
+  gulp.task( "test", ( cb ) => {
+    runSequence( [ "build" ], [ "test-unit" ], cb );
   });
 
 })( console );
