@@ -40,6 +40,7 @@
 
   gulp.task( "test-unit", factory.testUnitAngular(
     { testFiles: [
+      "test/test_env.js",
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "test/unit/*test.js" ] }
