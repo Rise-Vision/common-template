@@ -54,7 +54,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
   function _disconnectViewerConnection() {
     try {
-      if ( top.RiseVision.Viewer.LocalMessaging ) {
+      if ( top.RiseVision && top.RiseVision.Viewer && top.RiseVision.Viewer.LocalMessaging ) {
         top.RiseVision.Viewer.LocalMessaging.disconnect();
       }
     } catch ( err ) {
@@ -189,7 +189,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function configure( data ) {
-    const { player, connectionType, detail = { clientName: DEFAULT_CLIENT_NAME } } = data;
+    const { player, connectionType, detail = {} } = data;
 
     // automated testing purposes
     _resetForAutomatedTests();
@@ -209,7 +209,9 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       return;
     }
 
-    _clientName = detail.clientName;
+    let details = Object.assign({}, { clientName: DEFAULT_CLIENT_NAME }, detail );
+
+    _clientName = details.clientName;
 
     switch ( connectionType ) {
     case "websocket":
