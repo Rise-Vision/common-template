@@ -2,18 +2,63 @@
 
 RisePlayerConfiguration.LocalMessaging = (() => {
 
-  const DEFAULT_CLIENT_NAME = "ws-client";
+  const DEFAULT_CLIENT_NAME = "ws-client",
+    INITIAL_WEBSOCKET_CONNECTION_TIMEOUT = 20 * 1000;
 
   let _connected = false,
     _clientName,
-    _connectionType; // eslint-disable-line no-unused-vars
+    _connection,
+    _connectionType,
+    _initialWebsocketConnectionTimer = null,
+    _messageHandlers = [];
 
-  function _broadcastWebsocketMessage() {
-    // TODO
+  function _addWebsocketConnectionHandlers() {
+    _connection.on( "open", () => {
+      clearTimeout( _initialWebsocketConnectionTimer );
+
+      console.log( "local messaging connected" );
+
+      _connected = true;
+      _sendConnectionEvent();
+    });
+
+    _connection.on( "close", () => {
+      console.log( "local messaging connection closed" );
+    });
+
+    _connection.on( "end", () => {
+      console.log( "local messaging disconnected" );
+
+      _connected = false;
+    });
+
+    _connection.on( "error", ( error ) => {
+      console.log( "local messaging error", error.message );
+    });
+
+    _connection.on( "data", ( data ) => {
+      _messageHandlers.forEach(( action ) => {
+        action( data );
+      });
+    });
+  }
+
+  function _broadcastWebsocketMessage( msg ) {
+    _connection.write( Object.assign({}, { from: _clientName }, msg ));
   }
 
   function _broadcastWindowMessage( msg ) {
     top.postToPlayer( Object.assign({}, { from: _clientName }, msg ));
+  }
+
+  function _disconnectViewerConnection() {
+    try {
+      if ( top.RiseVision.Viewer.LocalMessaging ) {
+        top.RiseVision.Viewer.LocalMessaging.disconnect();
+      }
+    } catch ( err ) {
+      console.log( "window.top reference error", err );
+    }
   }
 
   function _isWindowConnectionAvailable() {
@@ -29,8 +74,53 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     return false;
   }
 
-  function _initWebsocketConnection() {
-    // TODO
+  function _isWebsocketConnectionAvailable() {
+    // Need to reference window.top to account for running in a Rise Player that is still using Viewer
+    try {
+      if ( top.PrimusLMS ) {
+        return true;
+      }
+    } catch ( err ) {
+      console.log( "window.top reference error", err );
+    }
+
+    return false;
+  }
+
+  function _initWebsocketConnection( detail ) {
+    // TODO: dynamically load the primus client side library
+
+    if ( !_isWebsocketConnectionAvailable()) {
+      console.log( "primus client side library was not loaded" );
+      return;
+    }
+
+    if ( !detail || !detail.serverUrl ) {
+      console.log( "websocket server url not provided" );
+      return;
+    }
+
+    const { serverUrl } = detail;
+
+    // Account for a connection already made in Viewer, disconnect it
+    _disconnectViewerConnection();
+
+    _connection = top.PrimusLMS.connect( serverUrl, {
+      reconnect: {
+        max: 1800000,
+        min: 2000,
+        retries: Infinity
+      },
+      manual: true
+    });
+
+    _addWebsocketConnectionHandlers();
+
+    _initialWebsocketConnectionTimer = setTimeout(() => {
+      _sendConnectionEvent();
+    }, INITIAL_WEBSOCKET_CONNECTION_TIMEOUT );
+
+    _connection.open();
   }
 
   function _initWindowConnection() {
@@ -38,8 +128,10 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _sendConnectionEvent();
   }
 
-  function _receiveWebsocketMessages() {
-    // TODO
+  function _receiveWebsocketMessages( handler ) {
+    _messageHandlers.push(( data ) => {
+      handler( data );
+    });
   }
 
   function _receiveWindowMessages( handler ) {
@@ -51,10 +143,17 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       return;
     }
 
-    _connected = false;
-    _connectionType = undefined;
+    clearTimeout( _initialWebsocketConnectionTimer );
+
+    if ( _connection ) {
+      _connection.end();
+    }
+
     _clientName = undefined;
-    // TODO: other things needing resetting
+    _connected = false;
+    _connection = undefined;
+    _connectionType = undefined;
+    _messageHandlers = [];
   }
 
   function _sendConnectionEvent() {
