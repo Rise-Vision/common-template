@@ -2,8 +2,8 @@
 
 RisePlayerConfiguration.LocalMessaging = (() => {
 
-  let connected = false,
-    connection; // eslint-disable-line no-unused-vars
+  let _connected = false,
+    _connectionType; // eslint-disable-line no-unused-vars
 
   function _initWebsocketConnection() {
     // TODO
@@ -14,8 +14,8 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       return;
     }
 
-    connected = false;
-    connection = undefined;
+    _connected = false;
+    _connectionType = undefined;
     // TODO: other things needing resetting
   }
 
@@ -35,7 +35,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     // automated testing purposes
     _resetForAutomatedTests();
 
-    if ( connection ) {
+    if ( _connectionType ) {
       console.log( "connection already configured" );
       return;
     }
@@ -52,11 +52,11 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
     switch ( connectionType ) {
     case "websocket":
-      connection = "websocket";
+      _connectionType = "websocket";
       _initWebsocketConnection( detail );
       break;
     case "window":
-      connection = "window";
+      _connectionType = "window";
       break;
     default:
       console.log( "connection type not supported", connectionType );
@@ -67,11 +67,11 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
   // automated testing purposes
   function getConnectionType() {
-    return connection;
+    return _connectionType;
   }
 
   function isConnected() {
-    return connected;
+    return _connected;
   }
 
   return {
