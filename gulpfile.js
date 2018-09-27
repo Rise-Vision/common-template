@@ -23,6 +23,7 @@
     ])
       .pipe( babel({
         presets: [ "env" ],
+        plugins: [ "transform-object-assign" ]
       }))
       .pipe( gulp.dest( "dist" ))
       .pipe( sourcemaps.init())
