@@ -30,6 +30,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       console.log( "local messaging disconnected" );
 
       _connected = false;
+      _sendConnectionEvent();
     });
 
     _connection.on( "error", ( error ) => {
