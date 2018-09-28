@@ -153,3 +153,209 @@ describe( "window connection", function() {
   });
 
 });
+
+describe( "websocket connection", function() {
+
+  var socketInstance,
+    clock;
+
+  function createSocketInstance() {
+    return {
+      end: sinon.spy(),
+      on: sinon.spy(),
+      write: sinon.spy(),
+      open: sinon.spy()
+    };
+  }
+
+  beforeEach( function() {
+    socketInstance = createSocketInstance();
+    top.PrimusLMS = { connect: function() {} };
+    clock = sinon.useFakeTimers();
+    sinon.stub( top.PrimusLMS, "connect", function( url ) {
+      socketInstance.url = url;
+      return socketInstance;
+    });
+  });
+
+  afterEach( function() {
+    top.PrimusLMS.connect.restore();
+    delete top.PrimusLMS;
+    clock.restore();
+  });
+
+  it( "should register error handler", function() {
+    var call,
+      handler;
+
+    sinon.stub( console, "log" );
+
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+
+    call = socketInstance.on.args.filter( function( call ) {
+      return call[ 0 ] === "error";
+    })[ 0 ];
+    expect( call ).to.be.ok;
+
+    handler = call[ 1 ];
+    handler({ message: "test" });
+    expect( console.log ).to.have.been.calledWith( "local messaging error" ); // eslint-disable-line no-console
+
+    console.log.restore(); // eslint-disable-line no-console
+  });
+
+  it( "should register data handler", function() {
+    var call,
+      handler;
+
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+
+    call = socketInstance.on.args.filter( function( call ) {
+      return call[ 0 ] === "data";
+    })[ 0 ];
+    expect( call ).to.be.ok;
+
+    handler = call[ 1 ];
+    expect( handler ).to.be.ok;
+  });
+
+  it( "should apply provided serverUrl", function() {
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+    expect( socketInstance.url ).to.equal( "http://localhost:8080" );
+  });
+
+  it( "should try to connect for 20 seconds before sending connection status event", function( done ) {
+    var connectionHandler = function( evt ) {
+      expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.false;
+      expect( evt.detail ).to.deep.equal({ isConnected: false });
+
+      window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
+
+      done();
+    };
+
+    window.addEventListener( "rise-local-messaging-connection", connectionHandler );
+
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+
+    clock.tick( 21000 );
+  });
+
+  it( "should send connection status event upon successful connection", function( done ) {
+    var connectionHandler = function( evt ) {
+        expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.true;
+        expect( evt.detail ).to.deep.equal({ isConnected: true });
+
+        window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
+
+        done();
+      },
+      call,
+      handler;
+
+    window.addEventListener( "rise-local-messaging-connection", connectionHandler );
+
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+
+    expect( socketInstance.open ).to.have.been.called;
+    expect( socketInstance.on ).to.have.been.called;
+
+    call = socketInstance.on.args.filter( function( call ) {
+      return call[ 0 ] === "open";
+    })[ 0 ];
+
+    expect( call ).to.be.ok;
+
+    handler = call[ 1 ];
+    handler();
+  });
+
+  describe( "receiveMessages", function() {
+    var messagingInternalDataHandler;
+
+    beforeEach( function() {
+      var dataHandlerRegistration;
+
+      RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+
+      dataHandlerRegistration = socketInstance.on.args.filter( function( call ) {
+        return call[ 0 ] === "data";
+      })[ 0 ];
+      messagingInternalDataHandler = dataHandlerRegistration[ 1 ];
+    });
+
+    it( "should execute handler when message is received", function() {
+      var spy = sinon.spy();
+
+      RisePlayerConfiguration.LocalMessaging.receiveMessages( spy );
+      messagingInternalDataHandler({ topic: "TEST" });
+
+      expect( spy ).to.be.calledWith({ topic: "TEST" });
+    });
+  });
+
+  describe( "broadcastMessage", function() {
+    beforeEach( function() {
+      RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+    });
+
+    it( "should not attempt to post to player if no message provided", function() {
+      RisePlayerConfiguration.LocalMessaging.broadcastMessage();
+
+      expect( socketInstance.write ).to.not.have.been.called;
+    });
+
+    it( "should not attempt to broadcast if no connection available", function() {
+      RisePlayerConfiguration.LocalMessaging.broadcastMessage({ topic: "TEST" });
+
+      expect( socketInstance.write ).to.not.have.been.called;
+    });
+
+    it( "should broadcast message to player with default client name", function() {
+      var call = socketInstance.on.args.filter( function( call ) {
+          return call[ 0 ] === "open";
+        })[ 0 ],
+        handler = call[ 1 ];
+
+      handler();
+
+      RisePlayerConfiguration.LocalMessaging.broadcastMessage({ topic: "TEST" });
+
+      expect( socketInstance.write ).to.have.been.calledWith({ topic: "TEST", from: "ws-client" });
+    });
+
+    it( "should broadcast message to player with configured client name", function() {
+      var call,
+        handler;
+
+      RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { clientName: "test-client", serverUrl: "http://localhost:8080" } });
+
+      call = socketInstance.on.args.filter( function( call ) {
+        return call[ 0 ] === "open";
+      })[ 0 ];
+      handler = call[ 1 ];
+
+      handler();
+
+      RisePlayerConfiguration.LocalMessaging.broadcastMessage({ topic: "TEST" });
+
+      expect( socketInstance.write ).to.have.been.calledWith({ topic: "TEST", from: "test-client" });
+    });
+
+    it( "should be able to handle a String for message param", function() {
+      var call = socketInstance.on.args.filter( function( call ) {
+          return call[ 0 ] === "open";
+        })[ 0 ],
+        handler = call[ 1 ];
+
+      handler();
+
+      RisePlayerConfiguration.LocalMessaging.broadcastMessage( "TEST" );
+
+      expect( socketInstance.write ).to.have.been.calledWith({ msg: "TEST", from: "ws-client" });
+    });
+
+  });
+
+
+});
