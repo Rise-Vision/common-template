@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 jobs:
   build_and_test:
@@ -28,7 +28,10 @@ jobs:
           paths:
             - gcloud
 
-  deploy_beta:
+  deploy_to_gcs:
+    parameters:
+      stage:
+        type: string
     docker: *GCSIMAGE
     steps:
       - checkout
@@ -39,18 +42,19 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          TARGET=gs://widgets.risevision.com/beta
+          TARGET=gs://widgets.risevision.com/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
 
 workflows:
-  version: 2
+  version: 2.1
   workflow1:
     jobs:
       - build_and_test
       - gcloud_setup
-      - deploy_beta:
+      - deploy_to_gcs:
+          stage: beta
           requires:
             - build_and_test
             - gcloud_setup
