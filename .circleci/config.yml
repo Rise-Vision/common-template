@@ -48,7 +48,6 @@ jobs:
           gsutil acl -r ch -u AllUsers:R $TARGET
 
 workflows:
-  version: 2.1
   workflow1:
     jobs:
       - build_and_test
