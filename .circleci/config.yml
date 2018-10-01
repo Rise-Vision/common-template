@@ -51,7 +51,7 @@ workflows:
   workflow1:
     jobs:
       - build_and_test
-      - gcloud_setup
+      - gcloud_setup:
           filters:
             branches:
               only:
