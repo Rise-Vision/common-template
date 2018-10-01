@@ -5,38 +5,38 @@
 describe( "watchSingleFile", function() {
 
   var DELETED_MESSAGE = {
-    "from":"local-storage",
-    "topic":"FILE-UPDATE",
-    "filePath":"bucket/file.txt",
-    "status":"DELETED",
-    "through":"ws"
+    "from": "local-storage",
+    "topic": "FILE-UPDATE",
+    "filePath": "bucket/file.txt",
+    "status": "DELETED",
+    "through": "ws"
   };
 
   var STALE_MESSAGE = {
-    "from":"local-storage",
-    "topic":"FILE-UPDATE",
-    "filePath":"bucket/file.txt",
-    "status":"STALE",
-    "through":"ws"
+    "from": "local-storage",
+    "topic": "FILE-UPDATE",
+    "filePath": "bucket/file.txt",
+    "status": "STALE",
+    "through": "ws"
   };
 
   var CURRENT_MESSAGE = {
-    "from":"local-storage",
-    "topic":"FILE-UPDATE",
-    "filePath":"bucket/file.txt",
-    "status":"CURRENT",
-    "version":"1453152401356000",
-    "ospath":"/home/rise/rvplayer/modules/local-storage/cache/dd6be87ae13b9d0a4c35420d1dfa1e37",
-    "osurl":"file:///home/rise/bucket/file.txt",
-    "through":"ws"
+    "from": "local-storage",
+    "topic": "FILE-UPDATE",
+    "filePath": "bucket/file.txt",
+    "status": "CURRENT",
+    "version": "1453152401356000",
+    "ospath": "/home/rise/rvplayer/modules/local-storage/cache/dd6be87ae13b9d0a4c35420d1dfa1e37",
+    "osurl": "file:///home/rise/bucket/file.txt",
+    "through": "ws"
   }
 
   var ERROR_MESSAGE = {
-    "from":"local-storage",
-    "topic":"FILE-ERROR",
-    "filePath":"bucket/file.txt",
-    "msg":"file transfer error",
-    "detail":"network failed"
+    "from": "local-storage",
+    "topic": "FILE-ERROR",
+    "filePath": "bucket/file.txt",
+    "msg": "file transfer error",
+    "detail": "network failed"
   };
 
   var _localMessaging, _messageHandler;

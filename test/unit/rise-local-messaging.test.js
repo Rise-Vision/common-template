@@ -417,7 +417,8 @@ describe( "websocket connection", function() {
 
     it( "should invoke the action when local storage and licensing modules are present", function(done) {
       RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable([
-        'local-storage', 'licensing'], done);
+        'local-storage', 'licensing'
+      ], done);
 
       messagingInternalDataHandler({
         topic: "client-list",
