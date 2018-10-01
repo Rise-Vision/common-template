@@ -52,8 +52,29 @@ workflows:
     jobs:
       - build_and_test
       - gcloud_setup
+          filters:
+            branches:
+              only:
+                - /^feature[/].*/
+                - master
+                - build/stable
       - deploy_to_gcs:
           stage: beta
           requires:
             - build_and_test
             - gcloud_setup
+          filters:
+            branches:
+              only:
+                - /^feature[/].*/
+                - master
+                - build/stable
+      - deploy_to_gcs:
+          stage: stable
+          requires:
+            - build_and_test
+            - gcloud_setup
+          filters:
+            branches:
+              only:
+                - build/stable
