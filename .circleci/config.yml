@@ -9,6 +9,10 @@ jobs:
       - run: sudo npm install -g gulp
       - run: npm install
       - run: npm test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
 
   gcloud_setup:
     docker: &GCSIMAGE
