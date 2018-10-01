@@ -55,7 +55,6 @@ workflows:
           filters:
             branches:
               only:
-                - /^chore[/].*/
                 - master
                 - build/stable
       - deploy_to_gcs:
@@ -66,9 +65,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^chore[/].*/
                 - master
-                - build/stable
       - deploy_to_gcs:
           stage: stable
           requires:
