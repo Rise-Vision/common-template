@@ -19,6 +19,7 @@
   gulp.task( "scripts", () => {
     return gulp.src([
       "src/rise-local-messaging.js",
+      "src/rise-local-storage.js",
       "src/rise-player-configuration.js"
     ])
       .pipe( babel({
@@ -44,6 +45,7 @@
       "test/test_env.js",
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
+      "dist/rise-local-storage.js",
       "test/unit/*test.js" ] }
   ));
 
