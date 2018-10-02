@@ -154,12 +154,13 @@ describe( "window connection", function() {
 
   describe( "onceClientsAreAvailable", function() {
     it( "should always invoke the action in ChromeOS player", function() {
+      var spy = sinon.spy();
+
       RisePlayerConfiguration.LocalMessaging.configure({
         player: "chromeos", connectionType: "window"
       });
-      var spy = sinon.spy();
 
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable('local-storage', spy);
+      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", spy );
 
       expect( spy ).to.have.been.called;
     });
@@ -396,7 +397,7 @@ describe( "websocket connection", function() {
 
       handler();
 
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable('local-storage', function(){
+      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", function() {
       });
 
       expect( socketInstance.write ).to.have.been.calledWith({
@@ -404,8 +405,8 @@ describe( "websocket connection", function() {
       });
     });
 
-    it( "should invoke the action when local storage module is present", function(done) {
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable('local-storage', done);
+    it( "should invoke the action when local storage module is present", function( done ) {
+      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", done );
 
       messagingInternalDataHandler({
         topic: "client-list",
@@ -415,10 +416,10 @@ describe( "websocket connection", function() {
       });
     });
 
-    it( "should invoke the action when local storage and licensing modules are present", function(done) {
+    it( "should invoke the action when local storage and licensing modules are present", function( done ) {
       RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable([
-        'local-storage', 'licensing'
-      ], done);
+        "local-storage", "licensing"
+      ], done );
 
       messagingInternalDataHandler({
         topic: "client-list",

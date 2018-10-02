@@ -161,8 +161,8 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _messageHandlers = [];
   }
 
-  function _clientsAreAvailable(names) {
-    return names.every(name => _clients.indexOf(name) >= 0);
+  function _clientsAreAvailable( names ) {
+    return names.every( name => _clients.indexOf( name ) >= 0 );
   }
 
   function _sendConnectionEvent() {
@@ -263,21 +263,23 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
   }
 
-  function onceClientsAreAvailable(requiredClientNames, action) {
+  function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
-    const names = typeof requiredClientNames === 'string' ?
-      [requiredClientNames] : requiredClientNames;
+    const names = typeof requiredClientNames === "string" ?
+      [ requiredClientNames ] : requiredClientNames;
 
-    if (_playerType !== 'electron' || _clientsAreAvailable(names) ) {
+    if ( _playerType !== "electron" || _clientsAreAvailable( names )) {
       return action();
     }
 
     receiveMessages( message => {
-      if (invoked || message.topic.toUpperCase() !== 'CLIENT-LIST') { return; }
+      if ( invoked || message.topic.toUpperCase() !== "CLIENT-LIST" ) {
+        return;
+      }
 
       _clients = message.clients;
 
-      if (_clientsAreAvailable(names)) {
+      if ( _clientsAreAvailable( names )) {
         invoked = true;
         action();
       }
