@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-RisePlayerConfiguration.LocalStorage= (() => {
+RisePlayerConfiguration.LocalStorage = (() => {
 
   function _handleFileUpdate(message, state, handler) {
     if (!message || !message.filePath || !message.status || message.filePath !== state.filePath) {
