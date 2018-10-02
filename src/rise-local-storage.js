@@ -43,7 +43,7 @@ RisePlayerConfiguration.LocalStorage = (() => {
 
   function watchSingleFile( filePath, handler ) {
     RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", () => {
-      const state = { filePath, available: false, error: false };
+      const state = { filePath, error: false };
 
       RisePlayerConfiguration.LocalMessaging.broadcastMessage({
         topic: "watch", filePath

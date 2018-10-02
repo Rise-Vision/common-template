@@ -64,8 +64,24 @@ describe( "watchSingleFile", function() {
     });
   });
 
+  it( "should detect that a file is still not available", function( done ) {
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
+      expect( data.available ).to.be.false;
+
+      done();
+    });
+
+    expect( _messageHandler ).to.not.be.null;
+
+    _messageHandler( STALE_MESSAGE );
+  });
+
   it( "should detect when a watched file is available", function( done ) {
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
+      if ( !data.available ) {
+        return;
+      }
+
       expect( data ).to.deep.equal({
         available: true, fileUrl: "file:///home/rise/bucket/file.txt"
       });
