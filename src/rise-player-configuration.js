@@ -11,11 +11,11 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.LocalMessaging ) {
       throw new Error( "RiseLocalMessaging script was not loaded" );
     }
-    if ( !RisePlayerConfiguration.Helpers ) {
-      throw new Error( "RiseHelpers script was not loaded" );
-    }
     if ( !RisePlayerConfiguration.LocalStorage ) {
       throw new Error( "RiseLocalStorage script was not loaded" );
+    }
+    if ( !RisePlayerConfiguration.Helpers ) {
+      throw new Error( "RiseHelpers script was not loaded" );
     }
 
     RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
