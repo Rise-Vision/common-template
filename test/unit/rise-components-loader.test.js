@@ -52,4 +52,14 @@ describe( "ComponentLoader", function() {
     expect( rolloutEnvironment ).to.be.null;
   });
 
+  it( "should not set the rollout environment if no player type is provided", function() {
+    RisePlayerConfiguration.configure({}, {});
+
+    RisePlayerConfiguration.ComponentLoader.load();
+
+    rolloutEnvironment = RisePlayerConfiguration.ComponentLoader.getRolloutEnvironment();
+
+    expect( rolloutEnvironment ).to.be.null;
+  });
+
 });
