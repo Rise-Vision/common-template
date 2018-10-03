@@ -11,7 +11,6 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _connectionType,
     _playerType,
     _initialWebsocketConnectionTimer = null,
-    _clients = [],
     _messageHandlers = [];
 
   function _addWebsocketConnectionHandlers() {
@@ -157,12 +156,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _connection = undefined;
     _connectionType = undefined;
     _playerType = undefined;
-    _clients = [];
     _messageHandlers = [];
-  }
-
-  function _clientsAreAvailable( names ) {
-    return names.every( name => _clients.indexOf( name ) >= 0 );
   }
 
   function _sendConnectionEvent() {
@@ -243,6 +237,10 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     return _connectionType;
   }
 
+  function getPlayerType() {
+    return _playerType;
+  }
+
   function isConnected() {
     return _connected;
   }
@@ -263,38 +261,13 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
   }
 
-  function onceClientsAreAvailable( requiredClientNames, action ) {
-    let invoked = false;
-    const names = typeof requiredClientNames === "string" ?
-      [ requiredClientNames ] : requiredClientNames;
-
-    if ( _playerType !== "electron" || _clientsAreAvailable( names )) {
-      return action();
-    }
-
-    receiveMessages( message => {
-      if ( invoked || message.topic.toUpperCase() !== "CLIENT-LIST" ) {
-        return;
-      }
-
-      _clients = message.clients;
-
-      if ( _clientsAreAvailable( names )) {
-        invoked = true;
-        action();
-      }
-    });
-
-    broadcastMessage({ topic: "client-list-request" });
-  }
-
   return {
     broadcastMessage: broadcastMessage,
     configure: configure,
     isConnected: isConnected,
     getConnectionType: getConnectionType,
-    receiveMessages: receiveMessages,
-    onceClientsAreAvailable: onceClientsAreAvailable
+    getPlayerType: getPlayerType,
+    receiveMessages: receiveMessages
   }
 
 })();

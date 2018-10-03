@@ -35,17 +35,22 @@ describe( "watchSingleFile", function() {
       "msg": "file transfer error",
       "detail": "network failed"
     },
+    _helpers,
     _localMessaging,
     _messageHandler;
 
   beforeEach( function() {
+    _helpers = RisePlayerConfiguration.Helpers;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
+
+    RisePlayerConfiguration.Helpers = {
+      onceClientsAreAvailable: function( modules, action ) {
+        action();
+      }
+    };
 
     RisePlayerConfiguration.LocalMessaging = {
       broadcastMessage: sinon.spy(),
-      onceClientsAreAvailable: function( modules, action ) {
-        action();
-      },
       receiveMessages: function( handler ) {
         _messageHandler = handler;
       }
@@ -53,6 +58,7 @@ describe( "watchSingleFile", function() {
   });
 
   afterEach( function() {
+    RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
 

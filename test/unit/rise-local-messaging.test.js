@@ -152,20 +152,6 @@ describe( "window connection", function() {
     });
   });
 
-  describe( "onceClientsAreAvailable", function() {
-    it( "should always invoke the action in ChromeOS player", function() {
-      var spy = sinon.spy();
-
-      RisePlayerConfiguration.LocalMessaging.configure({
-        player: "chromeos", connectionType: "window"
-      });
-
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", spy );
-
-      expect( spy ).to.have.been.called;
-    });
-  });
-
 });
 
 describe( "websocket connection", function() {
@@ -367,73 +353,6 @@ describe( "websocket connection", function() {
       RisePlayerConfiguration.LocalMessaging.broadcastMessage( "TEST" );
 
       expect( socketInstance.write ).to.have.been.calledWith({ msg: "TEST", from: "ws-client" });
-    });
-
-  });
-
-  describe( "onceClientsAreAvailable", function() {
-    var messagingInternalDataHandler;
-
-    beforeEach( function() {
-      var dataHandlerRegistration;
-
-      RisePlayerConfiguration.LocalMessaging.configure({
-        player: "electron",
-        connectionType: "websocket",
-        detail: { serverUrl: "http://localhost:8080" }
-      });
-
-      dataHandlerRegistration = socketInstance.on.args.filter( function( call ) {
-        return call[ 0 ] === "data";
-      })[ 0 ];
-      messagingInternalDataHandler = dataHandlerRegistration[ 1 ];
-    });
-
-    it( "should request the client list if the requested module is not present in player electron", function() {
-      var call = socketInstance.on.args.filter( function( call ) {
-          return call[ 0 ] === "open";
-        })[ 0 ],
-        handler = call[ 1 ];
-
-      handler();
-
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", function() {
-      });
-
-      expect( socketInstance.write ).to.have.been.calledWith({
-        topic: "client-list-request", from: "ws-client"
-      });
-    });
-
-    it( "should invoke the action when local storage module is present", function( done ) {
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable( "local-storage", done );
-
-      messagingInternalDataHandler({
-        topic: "client-list",
-        clients: [
-          "local-storage", "logging", "watchdog", "licensing", "installer"
-        ]
-      });
-    });
-
-    it( "should invoke the action when local storage and licensing modules are present", function( done ) {
-      RisePlayerConfiguration.LocalMessaging.onceClientsAreAvailable([
-        "local-storage", "licensing"
-      ], done );
-
-      messagingInternalDataHandler({
-        topic: "client-list",
-        clients: [
-          "local-storage", "logging", "watchdog", "installer"
-        ]
-      });
-
-      messagingInternalDataHandler({
-        topic: "client-list",
-        clients: [
-          "local-storage", "logging", "watchdog", "licensing", "installer"
-        ]
-      });
     });
 
   });
