@@ -140,7 +140,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _resetForAutomatedTests() {
-    if ( !window.env || !window.env.RISE_ENV || window.env.RISE_ENV !== "test" ) {
+    if ( !RisePlayerConfiguration.isTestEnvironment() ) {
       return;
     }
 
