@@ -7,18 +7,17 @@ RisePlayerConfiguration.LocalStorage = (() => {
       return;
     }
 
-    const available = message.status.toUpperCase() === "CURRENT";
+    const status = message.status.toUpperCase();
 
-    // availability hasn't changed, so don't handle
-    if ( available === state.available ) {
+    if ( status === state.status ) {
       return;
     }
 
-    Object.assign( state, { available, error: false });
+    Object.assign( state, { status, errorMessage: null, errorDetail: null });
 
-    const fileUrl = available ? message.osurl : null;
+    const fileUrl = status === "CURRENT" ? message.osurl : null;
 
-    handler({ fileUrl, available });
+    handler({ fileUrl, status });
   }
 
   function _handleFileError( message, state, handler ) {
@@ -26,24 +25,24 @@ RisePlayerConfiguration.LocalStorage = (() => {
       return;
     }
 
-    // file is not being watched
+    // file is not being wathed
     if ( message.filePath !== state.filePath ) {
       return;
     }
 
-    const available = false;
-    const error = true;
-
-    Object.assign( state, { available, error });
+    state.status = "FILE-ERROR";
 
     handler({
-      available, error, errorMessage: message.msg, errorDetail: message.detail
+      fileUrl: null,
+      status: state.status,
+      errorMessage: message.msg,
+      errorDetail: message.detail
     });
   }
 
   function watchSingleFile( filePath, handler ) {
     RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-storage", () => {
-      const state = { filePath, error: false };
+      const state = { filePath, status: "UNKNOWN", available: false };
 
       RisePlayerConfiguration.LocalMessaging.broadcastMessage({
         topic: "watch", filePath

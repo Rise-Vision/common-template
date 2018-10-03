@@ -72,7 +72,7 @@ describe( "watchSingleFile", function() {
 
   it( "should detect that a file is still not available", function( done ) {
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
-      expect( data.available ).to.be.false;
+      expect( data.status ).to.equal( "STALE" );
 
       done();
     });
@@ -84,12 +84,12 @@ describe( "watchSingleFile", function() {
 
   it( "should detect when a watched file is available", function( done ) {
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
-      if ( !data.available ) {
+      if ( !data.fileUrl ) {
         return;
       }
 
       expect( data ).to.deep.equal({
-        available: true, fileUrl: "file:///home/rise/bucket/file.txt"
+        status: "CURRENT", fileUrl: "file:///home/rise/bucket/file.txt"
       });
 
       done();
@@ -105,11 +105,9 @@ describe( "watchSingleFile", function() {
     var count = 0;
 
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
-      var available = count == 0;
+      expect( data.status ).to.equal( count ? "DELETED" : "CURRENT" );
 
-      expect( data.available ).to.equal( available );
-
-      if ( !available ) {
+      if ( !data.fileUrl ) {
         done();
       }
 
@@ -125,8 +123,8 @@ describe( "watchSingleFile", function() {
   it( "should detect a file error", function( done ) {
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
       expect( data ).to.deep.equal({
-        available: false,
-        error: true,
+        fileUrl: null,
+        status: "FILE-ERROR",
         errorMessage: "file transfer error",
         errorDetail: "network failed"
       });
