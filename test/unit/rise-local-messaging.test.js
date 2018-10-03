@@ -357,5 +357,4 @@ describe( "websocket connection", function() {
 
   });
 
-
 });

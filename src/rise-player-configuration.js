@@ -11,6 +11,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.LocalMessaging ) {
       throw new Error( "RiseLocalMessaging script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.Helpers ) {
+      throw new Error( "RiseHelpers script was not loaded" );
+    }
     if ( !RisePlayerConfiguration.LocalStorage ) {
       throw new Error( "RiseLocalStorage script was not loaded" );
     }
@@ -22,9 +25,7 @@ const RisePlayerConfiguration = {
     // lock down RisePlayerConfiguration object
     Object.freeze( RisePlayerConfiguration );
   },
-  isTestEnvironment: () => {
-    return window.env && window.env.RISE_ENV && window.env.RISE_ENV === "test";
-  },
+  Helpers: null,
   LocalMessaging: null,
   LocalStorage: null,
   Logger: null

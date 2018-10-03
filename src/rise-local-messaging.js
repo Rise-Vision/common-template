@@ -9,6 +9,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _clientName,
     _connection,
     _connectionType,
+    _playerType,
     _initialWebsocketConnectionTimer = null,
     _messageHandlers = [];
 
@@ -154,6 +155,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _connected = false;
     _connection = undefined;
     _connectionType = undefined;
+    _playerType = undefined;
     _messageHandlers = [];
   }
 
@@ -212,6 +214,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     let details = Object.assign({}, { clientName: DEFAULT_CLIENT_NAME }, detail );
 
     _clientName = details.clientName;
+    _playerType = player;
 
     switch ( connectionType ) {
     case "websocket":
@@ -232,6 +235,10 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   // automated testing purposes
   function getConnectionType() {
     return _connectionType;
+  }
+
+  function getPlayerType() {
+    return _playerType;
   }
 
   function isConnected() {
@@ -259,6 +266,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     configure: configure,
     isConnected: isConnected,
     getConnectionType: getConnectionType,
+    getPlayerType: getPlayerType,
     receiveMessages: receiveMessages
   }
 
