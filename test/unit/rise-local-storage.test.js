@@ -43,10 +43,6 @@ describe( "watchSingleFile", function() {
     _helpers = RisePlayerConfiguration.Helpers;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
 
-    RisePlayerConfiguration = {
-      LocalStorage: RisePlayerConfiguration.LocalStorage
-    };
-
     RisePlayerConfiguration.Helpers = {
       onceClientsAreAvailable: function( modules, action ) {
         action();
