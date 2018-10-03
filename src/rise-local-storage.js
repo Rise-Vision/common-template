@@ -17,7 +17,7 @@ RisePlayerConfiguration.LocalStorage = (() => {
 
     const fileUrl = status === "CURRENT" ? message.osurl : null;
 
-    handler({ fileUrl, status });
+    handler({ filePath: state.filePath, fileUrl, status });
   }
 
   function _handleFileError( message, state, handler ) {
@@ -33,6 +33,7 @@ RisePlayerConfiguration.LocalStorage = (() => {
     state.status = "FILE-ERROR";
 
     handler({
+      filePath: state.filePath,
       fileUrl: null,
       status: state.status,
       errorMessage: message.msg,
@@ -48,7 +49,7 @@ RisePlayerConfiguration.LocalStorage = (() => {
     }
 
     RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-storage", () => {
-      const state = { filePath, status: "UNKNOWN", available: false };
+      const state = { filePath, status: "UNKNOWN" };
 
       RisePlayerConfiguration.LocalMessaging.broadcastMessage({
         topic: "watch", filePath

@@ -102,7 +102,9 @@ describe( "watchSingleFile", function() {
       }
 
       expect( data ).to.deep.equal({
-        status: "CURRENT", fileUrl: "file:///home/rise/bucket/file.txt"
+        status: "CURRENT",
+        filePath: "bucket/file.txt",
+        fileUrl: "file:///home/rise/bucket/file.txt"
       });
 
       done();
@@ -137,6 +139,7 @@ describe( "watchSingleFile", function() {
     RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function( data ) {
       expect( data ).to.deep.equal({
         fileUrl: null,
+        filePath: "bucket/file.txt",
         status: "FILE-ERROR",
         errorMessage: "file transfer error",
         errorDetail: "network failed"
