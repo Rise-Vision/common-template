@@ -51,6 +51,9 @@ describe( "watchSingleFile", function() {
 
     RisePlayerConfiguration.LocalMessaging = {
       broadcastMessage: sinon.spy(),
+      isConnected: function() {
+        return true;
+      },
       receiveMessages: function( handler ) {
         _messageHandler = handler;
       }
@@ -60,6 +63,16 @@ describe( "watchSingleFile", function() {
   afterEach( function() {
     RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
+  });
+
+  it( "should not broadcast a watch message if connection was lost", function() {
+    RisePlayerConfiguration.LocalMessaging.isConnected = function() {
+      return false;
+    };
+
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( "bucket/file.txt", function() {});
+
+    expect( RisePlayerConfiguration.LocalMessaging.broadcastMessage ).to.not.have.been.called;
   });
 
   it( "should broadcast a watch message for a single file", function() {

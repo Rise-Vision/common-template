@@ -41,6 +41,12 @@ RisePlayerConfiguration.LocalStorage = (() => {
   }
 
   function watchSingleFile( filePath, handler ) {
+    if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {
+      console.log( `Conneciton lost, no sending WATCH for ${ filePath }` );
+
+      return;
+    }
+
     RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-storage", () => {
       const state = { filePath, status: "UNKNOWN", available: false };
 
