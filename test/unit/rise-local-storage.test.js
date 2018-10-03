@@ -35,11 +35,13 @@ describe( "watchSingleFile", function() {
       "msg": "file transfer error",
       "detail": "network failed"
     },
-    _configuration,
+    _helpers,
+    _localMessaging,
     _messageHandler;
 
   beforeEach( function() {
-    _configuration = RisePlayerConfiguration;
+    _helpers = RisePlayerConfiguration.Helpers;
+    _localMessaging = RisePlayerConfiguration.LocalMessaging;
 
     RisePlayerConfiguration = {
       LocalStorage: RisePlayerConfiguration.LocalStorage
@@ -63,7 +65,8 @@ describe( "watchSingleFile", function() {
   });
 
   afterEach( function() {
-    RisePlayerConfiguration = _configuration;
+    RisePlayerConfiguration.Helpers = _helpers;
+    RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
 
   it( "should not broadcast a watch message if connection was lost", function() {

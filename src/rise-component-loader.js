@@ -2,7 +2,7 @@
 
 RisePlayerConfiguration.ComponentLoader = (() => {
 
-  let _rolloutEnvironment;
+  let _rolloutEnvironment = null;
 
   function _determineRolloutEnvironment() {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
@@ -10,18 +10,18 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     if ( playerInfo.developmentManifestUrl ) {
       _rolloutEnvironment = "development";
     } else {
-      _rolloutEnvironment = playerInfo.playerType;
-
-      if ( !_rolloutEnvironment ) {
+      if ( !playerInfo.playerType ) {
         console.log( "No playerType parameter provided." );
 
         return false;
       }
-      if ( _rolloutEnvironment !== "beta" && _rolloutEnvironment !== "stable" ) {
-        console.log( `Illegal playerType parameter provided: '${ _rolloutEnvironment }'` );
+      if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
+        console.log( `Illegal playerType parameter provided: '${ playerInfo.playerType }'` );
 
         return false;
       }
+
+      _rolloutEnvironment = playerInfo.playerType;
     }
 
     return true;
@@ -44,10 +44,17 @@ RisePlayerConfiguration.ComponentLoader = (() => {
       return;
     }
 
+    console.log( "loading" );
     // TODO: load the page
   }
 
+  // for testing purposes
+  function clear() {
+    _rolloutEnvironment = null;
+  }
+
   return {
+    clear: clear,
     connectionHandler: connectionHandler,
     getRolloutEnvironment: getRolloutEnvironment,
     load: load

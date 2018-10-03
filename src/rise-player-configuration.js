@@ -23,7 +23,9 @@ const RisePlayerConfiguration = {
     //TODO: other processing
 
     // lock down RisePlayerConfiguration object
-    Object.freeze( RisePlayerConfiguration );
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+      Object.freeze( RisePlayerConfiguration );
+    }
   },
   Helpers: null,
   LocalMessaging: null,
