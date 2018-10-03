@@ -21,7 +21,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
 })();
 
-if ( !RisePlayerConfiguration.isTestEnvironment() ) {
+if ( !RisePlayerConfiguration.Helpers.isTestEnvironment() ) {
   const handler = RisePlayerConfiguration.ComponentLoader.connectionHandler;
 
   window.addEventListener( "rise-local-messaging-connection", handler);
