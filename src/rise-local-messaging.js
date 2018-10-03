@@ -141,7 +141,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _resetForAutomatedTests() {
-    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment() ) {
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       return;
     }
 

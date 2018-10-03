@@ -4,21 +4,20 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
   let _rolloutEnvironment;
 
-  _determineRolloutEnvironment() {
+  function _determineRolloutEnvironment() {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
 
     if ( playerInfo.developmentManifestUrl ) {
       _rolloutEnvironment = "development";
-    }
-    else {
+    } else {
       _rolloutEnvironment = playerInfo.playerType;
 
-      if( !_rolloutEnvironment ) {
-        console.log( `No playerType parameter provided.` );
+      if ( !_rolloutEnvironment ) {
+        console.log( "No playerType parameter provided." );
 
         return false;
       }
-      if( _rolloutEnvironment !== "beta" && _rolloutEnvironment !== "stable" ) {
+      if ( _rolloutEnvironment !== "beta" && _rolloutEnvironment !== "stable" ) {
         console.log( `Illegal playerType parameter provided: '${ _rolloutEnvironment }'` );
 
         return false;
@@ -29,7 +28,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   }
 
   function connectionHandler( event ) {
-    if (connected) {
+    if ( event.detail.isConnected ) {
       window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
 
       load();
@@ -41,7 +40,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   }
 
   function load() {
-    if ( !_determineRolloutEnvironment() ) {
+    if ( !_determineRolloutEnvironment()) {
       return;
     }
 
@@ -56,8 +55,8 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
 })();
 
-if ( !RisePlayerConfiguration.Helpers.isTestEnvironment() ) {
+if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
   const handler = RisePlayerConfiguration.ComponentLoader.connectionHandler;
 
-  window.addEventListener( "rise-local-messaging-connection", handler);
+  window.addEventListener( "rise-local-messaging-connection", handler );
 }

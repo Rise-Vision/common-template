@@ -1,23 +1,20 @@
 
-/* global describe, it, expect, afterEach, beforeEach, sinon */
+/* global describe, it, expect */
 
 "use strict";
 
 describe( "ComponentLoader", function() {
 
-  afterEach( function() {
-    delete top.postToPlayer;
-    delete top.receiveFromPlayer;
-  });
+  var rolloutEnvironment;
 
-  it( "should always invoke the action in ChromeOS player", function() {
-    var spy = sinon.spy();
+  it( "should recoginize the rollout environment as beta", function() {
+    RisePlayerConfiguration.configure({ playerType: "beta" }, {});
 
-    RisePlayerConfiguration.configure({ playerType: "beta" });
+    RisePlayerConfiguration.ComponentLoader.load();
 
-    RisePlayerConfiguration.ComponentLoader.onceClientsAreAvailable( "local-storage", spy );
+    rolloutEnvironment = RisePlayerConfiguration.ComponentLoader.getRolloutEnvironment();
 
-    expect( spy ).to.have.been.called;
+    expect( rolloutEnvironment ).to.equal( "beta" );
   });
 
 });
