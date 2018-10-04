@@ -53,12 +53,17 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     _rolloutEnvironment = null;
   }
 
-  return {
-    clear: clear,
+  const exposedFunctions = {
     connectionHandler: connectionHandler,
-    getRolloutEnvironment: getRolloutEnvironment,
-    load: load
+    getRolloutEnvironment: getRolloutEnvironment
   }
+
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    exposedFunctions.clear = clear;
+    exposedFunctions.load = load;
+  }
+
+  return exposedFunctions;
 
 })();
 
