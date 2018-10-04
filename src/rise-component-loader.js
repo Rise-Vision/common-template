@@ -34,8 +34,9 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     window.dispatchEvent( event );
   }
 
-  function _fetchComponentCode( component, download ) { // eslint-disable-line no-unused-vars
-    return component;
+  function _fetchComponentCode( component, download ) {
+    return download( component.url )
+      .then( response => response.text());
   }
 
   function connectionHandler( event ) {
