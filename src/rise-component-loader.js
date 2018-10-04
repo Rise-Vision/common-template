@@ -66,7 +66,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     fetchAndLoadComponents( components );
   }
 
-  function fetchAndLoadComponents( components, download ) { // eslint-disable-line no-unused-vars
+  function fetchAndLoadComponents( components, download = fetch ) { // eslint-disable-line no-unused-vars
     // TODO: load components, next card
 
     Promise.resolve()
