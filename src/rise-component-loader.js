@@ -34,6 +34,10 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     window.dispatchEvent( event );
   }
 
+  function _fetchComponentCode( component, download ) { // eslint-disable-line no-unused-vars
+    return component;
+  }
+
   function connectionHandler( event ) {
     if ( event.detail.isConnected ) {
       window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
@@ -61,15 +65,24 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     // TODO: all rollout procedure
 
     // fixed component names for the time being
-    const components = [ "rise-data-image" ];
+    const components = [
+      {
+        name: "rise-data-image",
+        url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+      }
+    ];
 
     fetchAndLoadComponents( components );
   }
 
-  function fetchAndLoadComponents( components, download = fetch ) { // eslint-disable-line no-unused-vars
+  function fetchAndLoadComponents( components, downloadFunction = fetch ) {
     // TODO: load components, next card
 
-    Promise.resolve()
+    components.reduce(( promise, component ) => {
+      return promise.then(() => {
+        return _fetchComponentCode( component, downloadFunction );
+      });
+    }, Promise.resolve())
       .then(() => {
         _sendComponentsLoadedEvent( true );
       })
