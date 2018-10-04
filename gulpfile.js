@@ -45,6 +45,7 @@
   gulp.task( "test-unit", factory.testUnitAngular(
     { testFiles: [
       "test/test_env.js",
+      "node_modules/promise-polyfill/dist/polyfill.min.js",
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "dist/rise-helpers.js",
