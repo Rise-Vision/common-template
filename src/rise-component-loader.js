@@ -27,6 +27,13 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     return true;
   }
 
+  function _sendComponentsLoadedEvent( isLoaded ) {
+    const detail = { detail: { isLoaded: isLoaded } },
+      event = new CustomEvent( "rise-components-loaded", detail );
+
+    window.dispatchEvent( event );
+  }
+
   function connectionHandler( event ) {
     if ( event.detail.isConnected ) {
       window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
@@ -40,12 +47,33 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   }
 
   function load() {
+    console.log( "loading" );
+
     if ( !_determineRolloutEnvironment()) {
+      return _sendComponentsLoadedEvent( false );
+    }
+    if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       return;
     }
 
-    console.log( "loading" );
-    // TODO: load the page
+    // TODO: all rollout procedure
+
+    // fixed component names for the time being
+    const components = [ "rise-data-image" ];
+
+    fetchComponents( components )
+      .then(() => {
+        _sendComponentsLoadedEvent( true );
+      })
+      .catch( error => {
+        console.log( error );
+
+        _sendComponentsLoadedEvent( false );
+      });
+  }
+
+  function fetchComponents( components, download = fetch ) { // eslint-disable-line no-unused-vars
+    return Promise.resolve();
   }
 
   // for testing purposes
@@ -56,10 +84,11 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   const exposedFunctions = {
     connectionHandler: connectionHandler,
     getRolloutEnvironment: getRolloutEnvironment
-  }
+  };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     exposedFunctions.clear = clear;
+    exposedFunctions.fetchComponents = fetchComponents;
     exposedFunctions.load = load;
   }
 
