@@ -12,6 +12,7 @@ module.exports = {
       "error",
       "double"
     ],
+    "func-names": "off",
     "newline-after-var": [
       "error",
       "always"

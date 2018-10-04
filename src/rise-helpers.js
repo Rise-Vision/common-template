@@ -8,6 +8,10 @@ RisePlayerConfiguration.Helpers = (() => {
     return names.every( name => _clients.indexOf( name ) >= 0 );
   }
 
+  function isTestEnvironment() {
+    return window.env && window.env.RISE_ENV && window.env.RISE_ENV === "test";
+  }
+
   function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
     const names = typeof requiredClientNames === "string" ?
@@ -41,6 +45,7 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   return {
+    isTestEnvironment: isTestEnvironment,
     onceClientsAreAvailable: onceClientsAreAvailable,
     reset: reset
   }
