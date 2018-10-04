@@ -52,6 +52,8 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     if ( !_determineRolloutEnvironment()) {
       return _sendComponentsLoadedEvent( false );
     }
+
+    // do not complete the load on test environments.
     if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       return;
     }

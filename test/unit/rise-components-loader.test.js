@@ -48,7 +48,16 @@ describe( "ComponentLoader", function() {
     expect( rolloutEnvironment ).to.equal( "development" );
   });
 
-  it( "should not set the rollout environment if an invalid player type is provided", function() {
+  it( "should not set the rollout environment if an invalid player type is provided", function( done ) {
+    function componentsLoadedHandler( event ) {
+      window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+      expect( event.detail.isLoaded ).to.be.false;
+      done();
+    }
+
+    window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
+
     RisePlayerConfiguration.configure({ playerType: "other" }, {});
 
     RisePlayerConfiguration.ComponentLoader.load();
@@ -58,7 +67,16 @@ describe( "ComponentLoader", function() {
     expect( rolloutEnvironment ).to.be.null;
   });
 
-  it( "should not set the rollout environment if no player type is provided", function() {
+  it( "should not set the rollout environment if no player type is provided", function( done ) {
+    function componentsLoadedHandler( event ) {
+      window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+      expect( event.detail.isLoaded ).to.be.false;
+      done();
+    }
+
+    window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
+
     RisePlayerConfiguration.configure({}, {});
 
     RisePlayerConfiguration.ComponentLoader.load();
