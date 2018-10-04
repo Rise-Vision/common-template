@@ -63,7 +63,13 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     // fixed component names for the time being
     const components = [ "rise-data-image" ];
 
-    fetchComponents( components )
+    fetchAndLoadComponents( components );
+  }
+
+  function fetchAndLoadComponents( components, download ) { // eslint-disable-line no-unused-vars
+    // TODO: load components, next card
+
+    Promise.resolve()
       .then(() => {
         _sendComponentsLoadedEvent( true );
       })
@@ -72,10 +78,6 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
         _sendComponentsLoadedEvent( false );
       });
-  }
-
-  function fetchComponents( components, download = fetch ) { // eslint-disable-line no-unused-vars
-    return Promise.resolve();
   }
 
   // for testing purposes
@@ -90,7 +92,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     exposedFunctions.clear = clear;
-    exposedFunctions.fetchComponents = fetchComponents;
+    exposedFunctions.fetchAndLoadComponents = fetchAndLoadComponents;
     exposedFunctions.load = load;
   }
 

@@ -4,6 +4,10 @@
 
 describe( "ComponentLoader", function() {
 
+  afterEach( function() {
+    RisePlayerConfiguration.ComponentLoader.clear();
+  });
+
   describe( "load", function() {
 
     var rolloutEnvironment;
@@ -13,10 +17,6 @@ describe( "ComponentLoader", function() {
         detail: { isConnected: isConnected }
       })
     }
-
-    afterEach( function() {
-      RisePlayerConfiguration.ComponentLoader.clear();
-    });
 
     it( "should recognize the rollout environment as beta", function() {
       RisePlayerConfiguration.configure({ playerType: "beta" }, {});
@@ -123,6 +123,27 @@ describe( "ComponentLoader", function() {
       // the component load is not attempted again.
       rolloutEnvironment = RisePlayerConfiguration.ComponentLoader.getRolloutEnvironment();
       expect( rolloutEnvironment ).to.be.null;
+    });
+
+  });
+
+  describe( "fetchAndLoadComponents", function() {
+
+    it( "should send the components loaded event with true flag if the component could be fetched and loaded", function( done ) {
+      function componentsLoadedHandler( event ) {
+        window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+        expect( event.detail.isLoaded ).to.be.true;
+        done();
+      }
+
+      window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+
+      RisePlayerConfiguration.ComponentLoader.load();
+
+      RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([]);
     });
 
   });
