@@ -174,6 +174,32 @@ describe( "ComponentLoader", function() {
       ], successfulDownload );
     });
 
+    it( "should send the event with isLoaded flag set to false if there was an error downloading the component", function( done ) {
+      function componentsLoadedHandler( event ) {
+        window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+        expect( event.detail.isLoaded ).to.be.false;
+        done();
+      }
+
+      function unsuccessfulDownload() {
+        return Promise.reject();
+      }
+
+      window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+
+      RisePlayerConfiguration.ComponentLoader.load();
+
+      RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
+        {
+          name: "rise-data-image",
+          url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+        }
+      ], unsuccessfulDownload );
+    });
+
   });
 
 });
