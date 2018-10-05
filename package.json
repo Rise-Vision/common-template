@@ -33,8 +33,10 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.1",
+    "promise-polyfill": "^8.1.0",
     "regenerator-runtime": "^0.12.1",
     "run-sequence": "^2.2.1",
+    "whatwg-fetch": "^3.0.0",
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.8.1"
   }
 }

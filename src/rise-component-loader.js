@@ -27,6 +27,18 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     return true;
   }
 
+  function _sendComponentsLoadedEvent( isLoaded ) {
+    const detail = { detail: { isLoaded: isLoaded } },
+      event = new CustomEvent( "rise-components-loaded", detail );
+
+    window.dispatchEvent( event );
+  }
+
+  function _fetchComponentCode( component, download ) {
+    return download( component.url )
+      .then( response => response.text());
+  }
+
   function connectionHandler( event ) {
     if ( event.detail.isConnected ) {
       window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
@@ -40,12 +52,46 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   }
 
   function load() {
+    console.log( "loading" );
+
     if ( !_determineRolloutEnvironment()) {
+      return _sendComponentsLoadedEvent( false );
+    }
+
+    // do not complete the load on test environments.
+    if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       return;
     }
 
-    console.log( "loading" );
-    // TODO: load the page
+    // TODO: all rollout procedure
+
+    // fixed component names for the time being
+    const components = [
+      {
+        name: "rise-data-image",
+        url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+      }
+    ];
+
+    fetchAndLoadComponents( components );
+  }
+
+  function fetchAndLoadComponents( components, downloadFunction = window.fetch ) {
+    // TODO: load components, next card
+
+    components.reduce(( promise, component ) => {
+      return promise.then(() => {
+        return _fetchComponentCode( component, downloadFunction );
+      });
+    }, Promise.resolve())
+      .then(() => {
+        _sendComponentsLoadedEvent( true );
+      })
+      .catch( error => {
+        console.log( error );
+
+        _sendComponentsLoadedEvent( false );
+      });
   }
 
   // for testing purposes
@@ -53,12 +99,18 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     _rolloutEnvironment = null;
   }
 
-  return {
-    clear: clear,
+  const exposedFunctions = {
     connectionHandler: connectionHandler,
-    getRolloutEnvironment: getRolloutEnvironment,
-    load: load
+    getRolloutEnvironment: getRolloutEnvironment
+  };
+
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    exposedFunctions.clear = clear;
+    exposedFunctions.fetchAndLoadComponents = fetchAndLoadComponents;
+    exposedFunctions.load = load;
   }
+
+  return exposedFunctions;
 
 })();
 
