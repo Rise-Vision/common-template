@@ -69,7 +69,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     const components = [
       {
         name: "rise-data-image",
-        url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+        url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
       }
     ];
 
