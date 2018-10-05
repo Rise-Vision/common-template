@@ -200,6 +200,60 @@ describe( "ComponentLoader", function() {
       ], unsuccessfulDownload );
     });
 
+    it( "should fetch the components in order", function( done ) {
+      var count = 0;
+
+      function componentsLoadedHandler( event ) {
+        window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+        expect( event.detail.isLoaded ).to.be.true;
+        expect( count ).to.equal( 3 );
+        done();
+      }
+
+      function successfulDownload( url ) {
+        switch ( count ) {
+        case 0:
+          expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js" );
+          break;
+        case 1:
+          expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-image/rise-image.js" );
+          break;
+        case 2:
+          expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-financial.js" );
+          break;
+        default: return Promise.reject();
+        }
+
+        count += 1;
+
+        return Promise.resolve({ text: function() {
+          return "";
+        } });
+      }
+
+      window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
+
+      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+
+      RisePlayerConfiguration.ComponentLoader.load();
+
+      RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
+        {
+          name: "rise-data-image",
+          url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+        },
+        {
+          name: "rise-image",
+          url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-image.js"
+        },
+        {
+          name: "rise-data-financial",
+          url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-financial.js"
+        }
+      ], successfulDownload );
+    });
+
   });
 
 });
