@@ -36,7 +36,13 @@ RisePlayerConfiguration.ComponentLoader = (() => {
 
   function _fetchComponentCode( component, download ) {
     return download( component.url )
-      .then( response => response.text());
+      .then( response => response.text())
+      .then( code => {
+        const script = document.createElement( "script" );
+
+        script.append( code );
+        document.body.appendChild( script );
+      });
   }
 
   function connectionHandler( event ) {
@@ -77,8 +83,6 @@ RisePlayerConfiguration.ComponentLoader = (() => {
   }
 
   function fetchAndLoadComponents( components, downloadFunction = window.fetch ) {
-    // TODO: load components, next card
-
     components.reduce(( promise, component ) => {
       return promise.then(() => {
         return _fetchComponentCode( component, downloadFunction );
