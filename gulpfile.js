@@ -55,8 +55,21 @@
       "test/unit/*test.js" ] }
   ));
 
+  gulp.task( "test-integration", factory.testUnitAngular(
+    { testFiles: [
+      "test/test_env.js",
+      "node_modules/promise-polyfill/dist/polyfill.min.js",
+      "node_modules/whatwg-fetch/dist/fetch.umd.js",
+      "dist/rise-player-configuration.js",
+      "dist/rise-local-messaging.js",
+      "dist/rise-helpers.js",
+      "dist/rise-local-storage.js",
+      "dist/rise-component-loader.js",
+      "test/integration/*test.js" ] }
+  ));
+
   gulp.task( "test", ( cb ) => {
-    runSequence([ "build" ], [ "test-unit" ], cb );
+    runSequence([ "build" ], [ "test-unit" ], [ "test-integration" ], cb );
   });
 
 })( console );

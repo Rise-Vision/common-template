@@ -76,7 +76,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     fetchAndLoadComponents( components );
   }
 
-  function fetchAndLoadComponents( components, downloadFunction = fetch ) {
+  function fetchAndLoadComponents( components, downloadFunction = window.fetch ) {
     // TODO: load components, next card
 
     components.reduce(( promise, component ) => {
