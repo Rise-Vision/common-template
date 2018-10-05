@@ -18,6 +18,7 @@ describe( "ComponentLoader", function() {
 
         expect( event.detail.isLoaded ).to.be.true;
         expect( RisePlayerConfiguration.testVariable ).to.equal( 2 );
+
         done();
       }
 
