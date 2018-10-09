@@ -11,18 +11,20 @@ describe( "ComponentLoader", function() {
   describe( "fetchAndLoadComponents", function() {
 
     it( "should perform the remote code fetch and notify when it has loaded", function( done ) {
+      RisePlayerConfiguration.testVariable = 1;
+
       function componentsLoadedHandler( event ) {
         window.removeEventListener( "rise-components-loaded", componentsLoadedHandler );
 
         expect( event.detail.isLoaded ).to.be.true;
+        expect( RisePlayerConfiguration.testVariable ).to.equal( 2 );
+
         done();
       }
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({ playerType: "beta" }, {});
-
-      RisePlayerConfiguration.ComponentLoader.load();
 
       RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
         {
