@@ -276,8 +276,6 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({ playerType: "beta" }, {});
 
-      RisePlayerConfiguration.ComponentLoader.load();
-
       RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
         {
           name: "rise-data-image",
