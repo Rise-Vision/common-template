@@ -64,6 +64,31 @@ describe( "logger configuration", function() {
         }
       });
     });
+
+    it( "should recognize player ip and chrome version if they are provided", function() {
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        os: "Ubuntu 64",
+        playerVersion: "2018.01.01.10.00",
+        ip: "213.21.45.40",
+        chromeVersion: "68.34"
+      }, {});
+
+      expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
+        "platform": "content",
+        "display_id": "DISPLAY_ID",
+        "company_id": "COMPANY_ID",
+        "rollout_stage": "beta",
+        "player": {
+          "ip": "213.21.45.40",
+          "version": "2018.01.01.10.00",
+          "os": "Ubuntu 64",
+          "chrome_version": "68.34"
+        }
+      });
+    });
+
   });
 
 });

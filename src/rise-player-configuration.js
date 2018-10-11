@@ -1,3 +1,5 @@
+/* eslint-disable one-var */
+
 const RisePlayerConfiguration = {
   ComponentLoader: null,
   configure: ( playerInfo, localMessagingInfo ) => {
@@ -30,6 +32,17 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       Object.freeze( RisePlayerConfiguration );
     }
+  },
+  getChromeVersion: function() {
+    const info = RisePlayerConfiguration.getPlayerInfo();
+
+    if ( info && info.chromeVersion ) {
+      return info.chromeVersion;
+    }
+
+    const match = navigator.userAgent.match( /Chrom(e|ium)\/([0-9.]+)/ );
+
+    return match ? match[ 2 ] : null;
   },
   getCompanyId: function() {
     // TODO: still not decided where this will come from.

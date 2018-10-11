@@ -20,7 +20,7 @@ RisePlayerConfiguration.Logger = (() => {
     const playerIp = playerInfo.ip || null;
     const playerVersion = playerInfo.playerVersion;
     const playerOs = playerInfo.os;
-    const chromeVersion = playerInfo.chromeVersion || null;
+    const chromeVersion = RisePlayerConfiguration.getChromeVersion();
 
     if ( !playerVersion ) {
       throw new Error( "No player version was provided" );
