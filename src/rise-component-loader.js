@@ -72,7 +72,7 @@ RisePlayerConfiguration.ComponentLoader = (() => {
     // TODO: all rollout procedure
 
     // fixed component names for the time being
-    const components = [
+    const components = RisePlayerConfiguration.ComponentLoader.components || [
       {
         name: "rise-data-image",
         url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
