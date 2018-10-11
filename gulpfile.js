@@ -22,6 +22,7 @@
       "src/rise-helpers.js",
       "src/rise-local-messaging.js",
       "src/rise-local-storage.js",
+      "src/rise-logger.js",
       "src/rise-player-configuration.js"
     ])
       .pipe( babel({
@@ -51,6 +52,7 @@
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "dist/rise-helpers.js",
+      "dist/rise-logger.js",
       "dist/rise-local-storage.js",
       "dist/rise-component-loader.js",
       "test/unit/*test.js" ] }
@@ -65,6 +67,7 @@
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "dist/rise-helpers.js",
+      "dist/rise-logger.js",
       "dist/rise-local-storage.js",
       "dist/rise-component-loader.js",
       "test/integration/*test.js" ] }

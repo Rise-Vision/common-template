@@ -14,6 +14,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.LocalStorage ) {
       throw new Error( "RiseLocalStorage script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.Logger ) {
+      throw new Error( "RiseLogger script was not loaded" );
+    }
     if ( !RisePlayerConfiguration.Helpers ) {
       throw new Error( "RiseHelpers script was not loaded" );
     }
