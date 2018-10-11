@@ -29,6 +29,7 @@ describe( "logger configuration", function() {
       }, {});
 
       expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
       expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
         "platform": "content",
         "display_id": "DISPLAY_ID",
@@ -51,6 +52,7 @@ describe( "logger configuration", function() {
       }, {});
 
       expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
       expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
         "platform": "content",
         "display_id": "DISPLAY_ID",
@@ -151,6 +153,30 @@ describe( "logger configuration", function() {
       } finally {
         stub.restore();
       }
+    });
+
+    it( "should enable debug logs", function() {
+      RisePlayerConfiguration.configure({
+        debug: true,
+        playerType: "stable",
+        os: "Ubuntu 64",
+        playerVersion: "2018.01.01.10.00"
+      }, {});
+
+      expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.true;
+    });
+
+    it( "should explicitly disable debug logs", function() {
+      RisePlayerConfiguration.configure({
+        debug: false,
+        playerType: "stable",
+        os: "Ubuntu 64",
+        playerVersion: "2018.01.01.10.00"
+      }, {});
+
+      expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
     });
 
   });

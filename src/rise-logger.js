@@ -35,6 +35,7 @@ RisePlayerConfiguration.Logger = (() => {
       throw new Error( "No company id was provided" );
     }
 
+    debug = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
     commonEntryValues = {
       "platform": "content",
       "display_id": displayId,
@@ -61,6 +62,7 @@ RisePlayerConfiguration.Logger = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     exposedFunctions.getCommonEntryValues = () => commonEntryValues,
+    exposedFunctions.isDebugEnabled = () => debug,
     exposedFunctions.logsToBq = () => logToBq,
     exposedFunctions.reset = reset;
   }
