@@ -15,6 +15,8 @@ RisePlayerConfiguration.Logger = (() => {
       return;
     }
 
+    const displayId = RisePlayerConfiguration.getDisplayId();
+    const companyId = RisePlayerConfiguration.getCompanyId();
     const playerIp = playerInfo.ip || null;
     const playerVersion = playerInfo.playerVersion;
     const playerOs = playerInfo.os;
@@ -26,11 +28,17 @@ RisePlayerConfiguration.Logger = (() => {
     if ( !playerOs ) {
       throw new Error( "No operating system was provided" );
     }
+    if ( !displayId ) {
+      throw new Error( "No display id was provided" );
+    }
+    if ( !companyId ) {
+      throw new Error( "No company id was provided" );
+    }
 
     commonEntryValues = {
       "platform": "content",
-      "display_id": "",
-      "company_id": "",
+      "display_id": displayId,
+      "company_id": companyId,
       "rollout_stage": rolloutStage,
       "player": {
         "ip": playerIp,

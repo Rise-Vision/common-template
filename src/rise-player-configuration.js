@@ -31,6 +31,14 @@ const RisePlayerConfiguration = {
       Object.freeze( RisePlayerConfiguration );
     }
   },
+  getCompanyId: function() {
+    // TODO: still not decided where this will come from.
+    return "COMPANY_ID";
+  },
+  getDisplayId: function() {
+    // TODO: still not decided where this will come from.
+    return "DISPLAY_ID";
+  },
   Helpers: null,
   LocalMessaging: null,
   LocalStorage: null,

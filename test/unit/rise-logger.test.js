@@ -31,8 +31,8 @@ describe( "logger configuration", function() {
       expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
       expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
         "platform": "content",
-        "display_id": "",
-        "company_id": "",
+        "display_id": "DISPLAY_ID",
+        "company_id": "COMPANY_ID",
         "rollout_stage": "beta",
         "player": {
           "ip": null,
@@ -53,8 +53,8 @@ describe( "logger configuration", function() {
       expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
       expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
         "platform": "content",
-        "display_id": "",
-        "company_id": "",
+        "display_id": "DISPLAY_ID",
+        "company_id": "COMPANY_ID",
         "rollout_stage": "stable",
         "player": {
           "ip": null,
