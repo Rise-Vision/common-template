@@ -52,6 +52,7 @@ RisePlayerConfiguration.Logger = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     exposedFunctions.getCommonEntryValues = () => commonEntryValues,
+    exposedFunctions.logsToBq = () => logToBq,
     exposedFunctions.reset = reset;
   }
 
