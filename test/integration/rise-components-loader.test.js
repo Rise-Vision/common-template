@@ -26,7 +26,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 

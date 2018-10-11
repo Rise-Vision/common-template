@@ -21,7 +21,7 @@ describe( "ComponentLoader", function() {
     it( "should recognize the rollout environment as beta", function() {
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -35,7 +35,7 @@ describe( "ComponentLoader", function() {
     it( "should recognize the rollout environment as stable", function() {
       RisePlayerConfiguration.configure({
         playerType: "stable",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -108,7 +108,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -153,7 +153,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -180,7 +180,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -210,7 +210,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -260,7 +260,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 
@@ -304,7 +304,7 @@ describe( "ComponentLoader", function() {
 
       RisePlayerConfiguration.configure({
         playerType: "beta",
-        version: "1.1.1.1.0",
+        playerVersion: "1.1.1.1.0",
         os: "Windows"
       }, {});
 

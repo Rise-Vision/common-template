@@ -16,7 +16,7 @@ RisePlayerConfiguration.Logger = (() => {
     }
 
     const playerIp = playerInfo.ip || null;
-    const playerVersion = playerInfo.version;
+    const playerVersion = playerInfo.playerVersion;
     const playerOs = playerInfo.os;
     const chromeVersion = playerInfo.chromeVersion || null;
 
@@ -44,6 +44,7 @@ RisePlayerConfiguration.Logger = (() => {
   function reset() {
     commonEntryValues = null;
     debug = false;
+    logToBq = true;
   }
 
   const exposedFunctions = {
