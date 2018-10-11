@@ -123,7 +123,7 @@ describe( "logger configuration", function() {
         RisePlayerConfiguration.configure({
           playerType: "beta",
           playerVersion: "2018.01.01.10.00",
-          "os": "Ubuntu 64"
+          os: "Ubuntu 64"
         }, {});
 
         expect.fail();
@@ -142,7 +142,7 @@ describe( "logger configuration", function() {
         RisePlayerConfiguration.configure({
           playerType: "beta",
           playerVersion: "2018.01.01.10.00",
-          "os": "Ubuntu 64"
+          os: "Ubuntu 64"
         }, {});
 
         expect.fail();
