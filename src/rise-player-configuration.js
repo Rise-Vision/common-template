@@ -21,6 +21,7 @@ const RisePlayerConfiguration = {
       throw new Error( "RiseHelpers script was not loaded" );
     }
 
+    RisePlayerConfiguration.Logger.configure();
     RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
 
     //TODO: other processing

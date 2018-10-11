@@ -19,7 +19,11 @@ describe( "ComponentLoader", function() {
     }
 
     it( "should recognize the rollout environment as beta", function() {
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -29,7 +33,11 @@ describe( "ComponentLoader", function() {
     });
 
     it( "should recognize the rollout environment as stable", function() {
-      RisePlayerConfiguration.configure({ playerType: "stable" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "stable",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -98,7 +106,11 @@ describe( "ComponentLoader", function() {
       // register the listener as runtime would do
       window.addEventListener( "rise-local-messaging-connection", RisePlayerConfiguration.ComponentLoader.connectionHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       // it shouldn't attempt to load if not connected
       window.dispatchEvent( disconnectionEvent );
@@ -139,7 +151,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -162,7 +178,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -188,7 +208,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -234,7 +258,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -274,7 +302,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        version: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
         {
