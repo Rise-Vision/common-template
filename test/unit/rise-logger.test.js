@@ -42,6 +42,28 @@ describe( "logger configuration", function() {
         }
       });
     });
+
+    it( "should configure logging during stable stage", function() {
+      RisePlayerConfiguration.configure({
+        playerType: "stable",
+        os: "Ubuntu 64",
+        playerVersion: "2018.01.01.10.00"
+      }, {});
+
+      expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+      expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
+        "platform": "content",
+        "display_id": "",
+        "company_id": "",
+        "rollout_stage": "stable",
+        "player": {
+          "ip": null,
+          "version": "2018.01.01.10.00",
+          "os": "Ubuntu 64",
+          "chrome_version": null
+        }
+      });
+    });
   });
 
 });
