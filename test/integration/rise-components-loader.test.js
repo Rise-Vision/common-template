@@ -24,7 +24,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "beta" }, {});
+      RisePlayerConfiguration.configure({
+        playerType: "beta",
+        playerVersion: "1.1.1.1.0",
+        os: "Windows"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.fetchAndLoadComponents([
         {
