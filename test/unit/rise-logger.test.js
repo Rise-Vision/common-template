@@ -326,6 +326,37 @@ describe( "logger configuration", function() {
         expect( requests.length ).to.equal( 0 );
       });
 
+      it( "should not log the same event multiple times if the time between calls is less than 1 second", function() {
+        requests = [];
+
+        RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
+
+        expect( requests.length ).to.equal( 0 );
+      });
+
+      it( "should log the same event multiple times if the time between calls is 1.5 seconds", function() {
+        requests = [];
+
+        clock.tick( 1500 );
+        RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
+
+      it( "should log different events if the time between calls is less than 1 second", function() {
+        requests = [];
+
+        var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
+
+        row.event = "another event";
+
+        RisePlayerConfiguration.Logger.logToBigQuery( row );
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
+
     });
 
   });
