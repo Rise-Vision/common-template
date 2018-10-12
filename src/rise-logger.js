@@ -180,11 +180,14 @@ RisePlayerConfiguration.Logger = (() => {
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-    exposedFunctions.getCommonEntryValues = () => _commonEntryValues,
-    exposedFunctions.isDebugEnabled = () => _debug,
-    exposedFunctions.logsToBq = () => _logToBq,
-    exposedFunctions.logToBigQuery = _logToBigQuery,
-    exposedFunctions.reset = reset;
+    Object.assign( exposedFunctions, {
+      getCommonEntryValues: () => _commonEntryValues,
+      getInsertData: _getInsertData,
+      isDebugEnabled: () => _debug,
+      logsToBq: () => _logToBq,
+      logToBigQuery: _logToBigQuery,
+      reset: reset
+    });
   }
 
   return exposedFunctions;

@@ -1,4 +1,4 @@
-/* global describe, it, expect, afterEach, sinon */
+/* global describe, it, expect, afterEach, beforeEach, sinon */
 
 "use strict";
 
@@ -177,6 +177,51 @@ describe( "logger configuration", function() {
 
       expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
       expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
+    });
+
+  });
+
+  describe( "Big Query logging", function() {
+
+    var SAMPLE_FULL_PARAMETERS = {
+      "ts": "2018-10-12T17:29:57.225Z",
+      "platform": "content",
+      "source": "rise-data-image",
+      "version": "2018.01.01.10.00",
+      "rollout_stage": "beta",
+      "display_id": "TEST_DISPLAY_ID",
+      "company_id": "TEST_COMPANY_ID",
+      "level": "info",
+      "event": "test event",
+      "event_details": "",
+      "player": {
+        "version": "2018.01.02.14.00",
+        "os": "Ubuntu 64",
+        "chrome_version": "69.12"
+      },
+      "component": {
+        "id": "rise-data-image-01"
+      }
+    }
+
+    describe( "getInsertData", function() {
+      var data = null;
+
+      beforeEach( function() {
+        data = RisePlayerConfiguration.Logger.getInsertData( SAMPLE_FULL_PARAMETERS );
+      });
+
+      it( "should return an object containing a rows array", function() {
+        expect( data.rows ).to.exist;
+        expect( data.rows ).to.be.a( "array" );
+        expect( data.rows.length ).to.equal( 1 );
+      });
+
+      it( "should return an object containing insertId property", function() {
+        expect( data.rows[ 0 ].insertId ).to.exist;
+        expect( data.rows[ 0 ].insertId ).to.be.a( "string" );
+      });
+
     });
 
   });
