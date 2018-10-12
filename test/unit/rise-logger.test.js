@@ -1,3 +1,4 @@
+/* eslint-disable one-var, vars-on-top */
 /* global describe, it, expect, after, afterEach, before, beforeEach, sinon */
 
 "use strict";
@@ -283,6 +284,23 @@ describe( "logger configuration", function() {
         var authorization = requests[ 1 ].requestHeaders.Authorization;
 
         expect( authorization ).to.equal( "Bearer " + TOKEN );
+      });
+
+      it( "should send string data in the body", function() {
+        var body = requests[ 1 ].requestBody;
+
+        expect( body ).to.be.a( "string" );
+
+        var content = JSON.parse( body );
+
+        expect( content.kind ).to.equal( "bigquery#tableDataInsertAllRequest" );
+        expect( content.skipInvalidRows ).to.be.false;
+        expect( content.rows ).to.exist;
+
+        var row = content.rows[ 0 ];
+
+        expect( row.insertId ).to.exist;
+        expect( row.json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
       });
 
     });
