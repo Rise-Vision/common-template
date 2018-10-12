@@ -1,17 +1,51 @@
 /* eslint-disable no-console, one-var */
 
+// TODO: extract to config file
+const TEMPLATE_COMMON_CONFIG = {
+  LOGGER_CLIENT_ID: "1088527147109-6q1o2vtihn34292pjt4ckhmhck0rk0o7.apps.googleusercontent.com",
+  LOGGER_CLIENT_SECRET: "nlZyrcPLg6oEwO9f9Wfn29Wh",
+  LOGGER_REFRESH_TOKEN: "1/xzt4kwzE1H7W9VnKB8cAaCx6zb4Es4nKEoqaYHdTD15IgOrJDtdun6zK6XiATCKT",
+  LOGGER_PROJECT: "client-side-events",
+  LOGGER_DATASET: "Display_Events",
+  LOGGER_TABLE: "events_test"
+};
+
 RisePlayerConfiguration.Logger = (() => {
 
-  let commonEntryValues = null,
-    debug = false, // eslint-disable-line no-unused-vars
-    logToBq = true; // eslint-disable-line no-unused-vars
+  const GOOGLE_APIS_BASE = "https://www.googleapis.com";
+  const REFRESH_URL = GOOGLE_APIS_BASE + "/oauth2/v3/token" +
+    "?client_id=" + TEMPLATE_COMMON_CONFIG.LOGGER_CLIENT_ID +
+    "&client_secret=" + TEMPLATE_COMMON_CONFIG.LOGGER_CLIENT_SECRET +
+    "&refresh_token=" + TEMPLATE_COMMON_CONFIG.LOGGER_REFRESH_TOKEN +
+    "&grant_type=refresh_token";
+  const SERVICE_URL = GOOGLE_APIS_BASE + "/bigquery/v2" +
+    "/projects/" + TEMPLATE_COMMON_CONFIG.LOGGER_PROJECT +
+    "/datasets/" + TEMPLATE_COMMON_CONFIG.LOGGER_DATASET +
+    "/tables/" + TEMPLATE_COMMON_CONFIG.LOGGER_TABLE +
+    "/insertAll";
+
+  const BASE_INSERT_SCHEMA = {
+    kind: "bigquery#tableDataInsertAllRequest",
+    skipInvalidRows: false,
+    ignoreUnknownValues: false,
+    rows: [ { insertId: "" } ]
+  };
+  const THROTTLE_DELAY = 1000;
+
+  let _commonEntryValues = null,
+    _debug = false, // eslint-disable-line no-unused-vars,
+    _lastEvent = "",
+    _logToBq = true, // eslint-disable-line no-unused-vars
+    _refreshDate = 0,
+    _throttle = false,
+    _token = "";
 
   function configure() {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
     const rolloutStage = playerInfo.playerType;
 
     if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
-      logToBq = false;
+      _logToBq = false;
       return;
     }
 
@@ -35,8 +69,8 @@ RisePlayerConfiguration.Logger = (() => {
       throw new Error( "No company id was provided" );
     }
 
-    debug = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
-    commonEntryValues = {
+    _debug = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
+    _commonEntryValues = {
       "platform": "content",
       "display_id": displayId,
       "company_id": companyId,
@@ -51,9 +85,94 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function reset() {
-    commonEntryValues = null;
-    debug = false;
-    logToBq = true;
+    _commonEntryValues = null;
+    _debug = false;
+    _lastEvent = "";
+    _logToBq = true;
+    _refreshDate = 0;
+    _throttle = false;
+    _token = "";
+  }
+
+  function _copyOf( data ) {
+    return JSON.parse( JSON.stringify( data ));
+  }
+
+  function _getInsertData( params ) {
+    const data = _copyOf( BASE_INSERT_SCHEMA );
+    const insertId = Math.random().toString( 36 ).substr( 2 ).toUpperCase();
+
+    data.rows[ 0 ].insertId = insertId;
+    data.rows[ 0 ].json = _copyOf( params );
+
+    return data;
+  }
+
+  function _isThrottled( event ) {
+    return _throttle && ( _lastEvent === event );
+  }
+
+  function _refreshToken( callback ) {
+    var xhr = new XMLHttpRequest();
+
+    if ( new Date() - _refreshDate < 3580000 ) {
+      return callback({});
+    }
+
+    xhr.open( "POST", REFRESH_URL, true );
+    xhr.onloadend = function() {
+      let response = {};
+
+      try {
+        response = JSON.parse( xhr.response );
+      } catch ( e ) {
+        console.warn( "Can't refresh logger token - ", e.message );
+      }
+
+      callback({ token: response.access_token, refreshedAt: new Date() });
+    };
+
+    xhr.send();
+  }
+
+  function _insertWithToken( refreshData, params ) {
+    const xhr = new XMLHttpRequest();
+
+    _refreshDate = refreshData.refreshedAt || _refreshDate;
+    _token = refreshData.token || _token;
+
+    const insertData = _getInsertData( params );
+    const insertText = JSON.stringify( insertData );
+
+    if ( !_token ) {
+      return console.log( `No token, not sending: ${ insertText }` );
+    }
+
+    // Insert the data.
+    xhr.open( "POST", SERVICE_URL, true );
+    xhr.setRequestHeader( "Content-Type", "application/json" );
+    xhr.setRequestHeader( "Authorization", `Bearer ${ _token }` );
+
+    if ( params.cb && typeof params.cb === "function" ) {
+      xhr.onloadend = () => params.cb( xhr.response );
+    }
+
+    xhr.send( insertText );
+  }
+
+  function _logToBigQuery( params ) {
+    if ( !params || !params.event || _isThrottled( params.event )) {
+      return;
+    }
+
+    _throttle = true;
+    _lastEvent = params.event;
+
+    setTimeout(() => {
+      _throttle = false;
+    }, THROTTLE_DELAY );
+
+    return _refreshToken( refreshData => _insertWithToken( refreshData, params ));
   }
 
   const exposedFunctions = {
@@ -61,9 +180,10 @@ RisePlayerConfiguration.Logger = (() => {
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-    exposedFunctions.getCommonEntryValues = () => commonEntryValues,
-    exposedFunctions.isDebugEnabled = () => debug,
-    exposedFunctions.logsToBq = () => logToBq,
+    exposedFunctions.getCommonEntryValues = () => _commonEntryValues,
+    exposedFunctions.isDebugEnabled = () => _debug,
+    exposedFunctions.logsToBq = () => _logToBq,
+    exposedFunctions.logToBigQuery = _logToBigQuery,
     exposedFunctions.reset = reset;
   }
 
