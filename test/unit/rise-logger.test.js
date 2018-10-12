@@ -196,6 +196,7 @@ describe( "logger configuration", function() {
       "event": "test event",
       "event_details": "",
       "player": {
+        "ip": null,
         "version": "2018.01.02.14.00",
         "os": "Ubuntu 64",
         "chrome_version": "69.12"
@@ -301,6 +302,28 @@ describe( "logger configuration", function() {
 
         expect( row.insertId ).to.exist;
         expect( row.json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
+      });
+
+      it( "should not make a request if no params provided", function() {
+        requests = [];
+
+        clock.tick( INTERVAL );
+        RisePlayerConfiguration.Logger.logToBigQuery();
+
+        expect( requests.length ).to.equal( 0 );
+      });
+
+      it( "should not make a request if event is empty", function() {
+        requests = [];
+
+        var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
+
+        row.event = "";
+
+        clock.tick( INTERVAL );
+        RisePlayerConfiguration.Logger.logToBigQuery( row );
+
+        expect( requests.length ).to.equal( 0 );
       });
 
     });
