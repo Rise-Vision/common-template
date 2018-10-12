@@ -1,4 +1,4 @@
-/* global describe, it, expect, afterEach, beforeEach, sinon */
+/* global describe, it, expect, after, afterEach, before, beforeEach, sinon */
 
 "use strict";
 
@@ -207,7 +207,7 @@ describe( "logger configuration", function() {
     describe( "getInsertData", function() {
       var data = null;
 
-      beforeEach( function() {
+      before( function() {
         data = RisePlayerConfiguration.Logger.getInsertData( SAMPLE_FULL_PARAMETERS );
       });
 
@@ -225,6 +225,46 @@ describe( "logger configuration", function() {
       it( "should return an object containing the provided properties", function() {
         expect( data.rows[ 0 ].json ).to.exist;
         expect( data.rows[ 0 ].json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
+      });
+
+    });
+
+    describe( "logToBigQuery", function() {
+      var INTERVAL = 3580000,
+        TOKEN = "my-token",
+        TOKEN_DATA = { "access_token": TOKEN },
+        TOKEN_JSON = JSON.stringify( TOKEN_DATA ),
+        xhr,
+        clock,
+        requests;
+
+      before( function() {
+        xhr = sinon.useFakeXMLHttpRequest();
+
+        xhr.onCreate = function( xhr ) {
+          requests.push( xhr );
+        };
+
+        clock = sinon.useFakeTimers();
+      });
+
+      beforeEach( function() {
+        requests = [];
+
+        clock.tick( INTERVAL );
+        RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
+
+        // Respond to refresh token request.
+        requests[ 0 ].respond( 200, { "Content-Type": "text/json" }, TOKEN_JSON );
+      });
+
+      after( function() {
+        xhr.restore();
+        clock.restore();
+      });
+
+      it( "should make a POST request", function() {
+        expect( requests[ 1 ].method ).to.equal( "POST" );
       });
 
     });
