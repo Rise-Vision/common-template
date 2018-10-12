@@ -76,6 +76,10 @@ RisePlayerConfiguration.ComponentLoader = (() => {
       {
         name: "rise-data-image",
         url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+      },
+      {
+        name: "rise-data-financial",
+        url: "https://widgets.risevision.com/beta/components/rise-data-financial/rise-data-financial.js"
       }
     ];
 

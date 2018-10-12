@@ -220,7 +220,7 @@ describe( "ComponentLoader", function() {
           expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-image/rise-image.js" );
           break;
         case 2:
-          expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-financial.js" );
+          expect( url ).to.equal( "http://widgets.risevision.com/beta/components/rise-data-financial/rise-data-financial.js" );
           break;
         default: return Promise.reject();
         }
@@ -249,7 +249,7 @@ describe( "ComponentLoader", function() {
         },
         {
           name: "rise-data-financial",
-          url: "http://widgets.risevision.com/beta/components/rise-data-image/rise-data-financial.js"
+          url: "http://widgets.risevision.com/beta/components/rise-data-financial/rise-data-financial.js"
         }
       ], successfulDownload );
     });
