@@ -222,6 +222,11 @@ describe( "logger configuration", function() {
         expect( data.rows[ 0 ].insertId ).to.be.a( "string" );
       });
 
+      it( "should return an object containing the provided properties", function() {
+        expect( data.rows[ 0 ].json ).to.exist;
+        expect( data.rows[ 0 ].json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
+      });
+
     });
 
   });
