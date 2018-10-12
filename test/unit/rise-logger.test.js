@@ -267,6 +267,24 @@ describe( "logger configuration", function() {
         expect( requests[ 1 ].method ).to.equal( "POST" );
       });
 
+      it( "should make a request to the correct URL", function() {
+        var expectedUrl = "https://www.googleapis.com/bigquery/v2/projects/client-side-events/datasets/Display_Events/tables/events_test/insertAll";
+
+        expect( requests[ 1 ].url ).to.equal( expectedUrl );
+      });
+
+      it( "should set the Content-Type header", function() {
+        var contentType = requests[ 1 ].requestHeaders[ "Content-Type" ];
+
+        expect( contentType ).to.equal( "application/json;charset=utf-8" );
+      });
+
+      it( "should set the Authorization header", function() {
+        var authorization = requests[ 1 ].requestHeaders.Authorization;
+
+        expect( authorization ).to.equal( "Bearer " + TOKEN );
+      });
+
     });
 
   });
