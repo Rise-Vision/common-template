@@ -18,6 +18,8 @@
 
   gulp.task( "scripts", () => {
     return gulp.src([
+      "src/config/config-prod.js",
+      "src/config/config-test.js",
       "src/rise-component-loader.js",
       "src/rise-helpers.js",
       "src/rise-local-messaging.js",
@@ -49,6 +51,7 @@
       "node_modules/promise-polyfill/dist/polyfill.min.js",
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
+      "dist/config-test.js",
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "dist/rise-helpers.js",
@@ -64,6 +67,7 @@
       "node_modules/promise-polyfill/dist/polyfill.min.js",
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
+      "dist/config-test.js",
       "dist/rise-player-configuration.js",
       "dist/rise-local-messaging.js",
       "dist/rise-helpers.js",
