@@ -166,17 +166,63 @@ RisePlayerConfiguration.Logger = (() => {
     return _refreshToken( refreshData => _insertWithToken( refreshData, params ));
   }
 
+  function _createLogEntryFor( params ) {
+    const entry = {
+      "ts": new Date().toISOString(),
+      "source": params.component.name,
+      "version": params.component.version,
+      "level": params.level,
+      "event": params.event,
+      "component": {
+        "id": params.component.id
+      }
+    };
+
+    if ( params.hasOwnProperty( "event_details" ) && params.event_details !== null ) {
+      entry.event_details = typeof params.event_details === "string" ?
+        params.event_details : JSON.stringify( params.event_details );
+    }
+
+    if ( params.storage ) {
+      entry.storage = _copyOf( params.storage );
+    }
+
+    return Object.assign( entry, _commonEntryValues );
+  }
+
+  function _log( params ) {
+    if ( !params || !params.event || !params.level || !params.component ||
+      !params.component.name || !params.component.id || !params.component.version
+    ) {
+      return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
+    }
+
+    if ( !_debug && params.level === "debug" ) {
+      return;
+    }
+
+    const entry = _createLogEntryFor( params );
+
+    if ( !_logToBq ) {
+      return console.log( JSON.stringify( entry ));
+    }
+
+    _logToBq( entry );
+  }
+
   const exposedFunctions = {
     configure: configure
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
+      createLogEntryFor: _createLogEntryFor,
       getCommonEntryValues: () => _commonEntryValues,
       getInsertData: _getInsertData,
       isDebugEnabled: () => _debug,
       logsToBq: () => _logToBq,
       logToBigQuery: _logToBigQuery,
+      log: _log,
       reset: reset
     });
   }

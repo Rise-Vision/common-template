@@ -5,6 +5,9 @@
 
 describe( "logger configuration", function() {
 
+  var INTERVAL = 3580000,
+    clock;
+
   afterEach( function() {
     RisePlayerConfiguration.Logger.reset();
   });
@@ -231,13 +234,63 @@ describe( "logger configuration", function() {
 
     });
 
+    describe( "_createLogEntryFor", function() {
+
+      before( function() {
+        clock = sinon.useFakeTimers();
+
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34"
+        }, {});
+      });
+
+      it( "should complete the log entry with the predefined values", function() {
+        var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+          "level": "info",
+          "event": "test event",
+          "event_details": "",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        console.log( JSON.stringify( entry )); // eslint-disable-line no-console
+
+        expect( entry ).to.deep.equal({
+          "ts": "1970-01-01T00:00:00.000Z",
+          "platform": "content",
+          "source": "rise-data-image",
+          "version": "2018.01.01.10.00",
+          "rollout_stage": "beta",
+          "display_id": "DISPLAY_ID",
+          "company_id": "COMPANY_ID",
+          "level": "info",
+          "event": "test event",
+          "event_details": "",
+          "player": {
+            "ip": "213.21.45.40",
+            "version": "2018.01.01.10.00",
+            "os": "Ubuntu 64",
+            "chrome_version": "68.34"
+          },
+          "component": {
+            "id": "rise-data-image-01"
+          }
+        });
+      });
+    });
+
     describe( "logToBigQuery", function() {
-      var INTERVAL = 3580000,
-        TOKEN = "my-token",
+      var TOKEN = "my-token",
         TOKEN_DATA = { "access_token": TOKEN },
         TOKEN_JSON = JSON.stringify( TOKEN_DATA ),
         xhr,
-        clock,
         requests;
 
       before( function() {
