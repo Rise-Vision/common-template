@@ -238,7 +238,9 @@ describe( "logger configuration", function() {
 
       before( function() {
         clock = sinon.useFakeTimers();
+      });
 
+      beforeEach( function() {
         RisePlayerConfiguration.configure({
           playerType: "beta",
           os: "Ubuntu 64",
@@ -252,15 +254,13 @@ describe( "logger configuration", function() {
         var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
           "level": "info",
           "event": "test event",
-          "event_details": "",
+          "event_details": "test data",
           "component": {
             "id": "rise-data-image-01",
             "name": "rise-data-image",
             "version": "2018.01.01.10.00"
           }
         });
-
-        console.log( JSON.stringify( entry )); // eslint-disable-line no-console
 
         expect( entry ).to.deep.equal({
           "ts": "1970-01-01T00:00:00.000Z",
@@ -272,7 +272,7 @@ describe( "logger configuration", function() {
           "company_id": "COMPANY_ID",
           "level": "info",
           "event": "test event",
-          "event_details": "",
+          "event_details": "test data",
           "player": {
             "ip": "213.21.45.40",
             "version": "2018.01.01.10.00",
@@ -284,6 +284,74 @@ describe( "logger configuration", function() {
           }
         });
       });
+
+      it( "should not send event details if it's not provided", function() {
+        var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+          "level": "info",
+          "event": "test event",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        expect( entry ).to.deep.equal({
+          "ts": "1970-01-01T00:00:00.000Z",
+          "platform": "content",
+          "source": "rise-data-image",
+          "version": "2018.01.01.10.00",
+          "rollout_stage": "beta",
+          "display_id": "DISPLAY_ID",
+          "company_id": "COMPANY_ID",
+          "level": "info",
+          "event": "test event",
+          "player": {
+            "ip": "213.21.45.40",
+            "version": "2018.01.01.10.00",
+            "os": "Ubuntu 64",
+            "chrome_version": "68.34"
+          },
+          "component": {
+            "id": "rise-data-image-01"
+          }
+        });
+      });
+
+      it( "should not send event details if it's null", function() {
+        var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+          "level": "info",
+          "event": "test event",
+          "event_details": null,
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        expect( entry ).to.deep.equal({
+          "ts": "1970-01-01T00:00:00.000Z",
+          "platform": "content",
+          "source": "rise-data-image",
+          "version": "2018.01.01.10.00",
+          "rollout_stage": "beta",
+          "display_id": "DISPLAY_ID",
+          "company_id": "COMPANY_ID",
+          "level": "info",
+          "event": "test event",
+          "player": {
+            "ip": "213.21.45.40",
+            "version": "2018.01.01.10.00",
+            "os": "Ubuntu 64",
+            "chrome_version": "68.34"
+          },
+          "component": {
+            "id": "rise-data-image-01"
+          }
+        });
+      });
+
     });
 
     describe( "logToBigQuery", function() {
