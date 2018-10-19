@@ -214,6 +214,83 @@ describe( "Big Query logging", function() {
         expect( requests.length ).to.equal( 2 );
       });
 
+      it( "should disable BiqQuery logging on developer mode", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "developer",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34"
+        }, {});
+
+        requests = [];
+
+        RisePlayerConfiguration.Logger.log({
+          "level": "error",
+          "event": "network error",
+          "event_details": "test data",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        expect( requests.length ).to.equal( 0 );
+      });
+
+      it( "should not log debug entries by default", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34"
+        }, {});
+
+        requests = [];
+
+        RisePlayerConfiguration.Logger.log({
+          "level": "debug",
+          "event": "object data",
+          "event_details": "test data",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        expect( requests.length ).to.equal( 0 );
+      });
+
+      it( "should log debug entries if debug mode was enabled", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34",
+          debug: true
+        }, {});
+
+        requests = [];
+
+        RisePlayerConfiguration.Logger.log({
+          "level": "debug",
+          "event": "object data",
+          "event_details": "test dump",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
+
     });
 
   });
