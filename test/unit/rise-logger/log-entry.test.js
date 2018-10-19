@@ -5,6 +5,12 @@
 
 describe( "log-entry", function() {
 
+  var COMPONENT_DATA = {
+    "id": "rise-data-image-01",
+    "name": "rise-data-image",
+    "version": "2018.01.01.10.00"
+  };
+
   afterEach( function() {
     RisePlayerConfiguration.Logger.reset();
   });
@@ -24,15 +30,10 @@ describe( "log-entry", function() {
     });
 
     it( "should complete the log entry with the predefined values", function() {
-      var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+      var entry = RisePlayerConfiguration.Logger.createLogEntryFor( COMPONENT_DATA, {
         "level": "info",
         "event": "test event",
-        "event_details": "test data",
-        "component": {
-          "id": "rise-data-image-01",
-          "name": "rise-data-image",
-          "version": "2018.01.01.10.00"
-        }
+        "event_details": "test data"
       });
 
       expect( entry ).to.deep.equal({
@@ -59,15 +60,10 @@ describe( "log-entry", function() {
     });
 
     it( "should convert event_details to a string if it's an object", function() {
-      var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+      var entry = RisePlayerConfiguration.Logger.createLogEntryFor( COMPONENT_DATA, {
         "level": "info",
         "event": "test event",
-        "event_details": { "content": "test data" },
-        "component": {
-          "id": "rise-data-image-01",
-          "name": "rise-data-image",
-          "version": "2018.01.01.10.00"
-        }
+        "event_details": { "content": "test data" }
       });
 
       expect( entry ).to.deep.equal({
@@ -93,15 +89,10 @@ describe( "log-entry", function() {
       });
     });
 
-    it( "should not send event details if it's not provided", function() {
-      var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+    it( "should not include event details if it's not provided", function() {
+      var entry = RisePlayerConfiguration.Logger.createLogEntryFor( COMPONENT_DATA, {
         "level": "info",
-        "event": "test event",
-        "component": {
-          "id": "rise-data-image-01",
-          "name": "rise-data-image",
-          "version": "2018.01.01.10.00"
-        }
+        "event": "test event"
       });
 
       expect( entry ).to.deep.equal({
@@ -126,16 +117,11 @@ describe( "log-entry", function() {
       });
     });
 
-    it( "should send null event details if it's null", function() {
-      var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+    it( "should set null event details if it's null", function() {
+      var entry = RisePlayerConfiguration.Logger.createLogEntryFor( COMPONENT_DATA, {
         "level": "info",
         "event": "test event",
-        "event_details": null,
-        "component": {
-          "id": "rise-data-image-01",
-          "name": "rise-data-image",
-          "version": "2018.01.01.10.00"
-        }
+        "event_details": null
       });
 
       expect( entry ).to.deep.equal({

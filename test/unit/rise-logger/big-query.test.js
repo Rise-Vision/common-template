@@ -188,6 +188,12 @@ describe( "Big Query logging", function() {
 
     describe( "log", function() {
 
+      var COMPONENT_DATA = {
+        "id": "rise-data-image-01",
+        "name": "rise-data-image",
+        "version": "2018.01.01.10.00"
+      };
+
       beforeEach( function() {
         requests = [];
       });
@@ -205,15 +211,10 @@ describe( "Big Query logging", function() {
         });
 
         it( "should log an event if all required data is provided", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "level": "info",
             "event": "disk full",
-            "event_details": "test data",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event_details": "test data"
           });
 
           // Refresh token request + insert request
@@ -221,15 +222,10 @@ describe( "Big Query logging", function() {
         });
 
         it( "should not log debug entries by default", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "level": "debug",
             "event": "object data",
-            "event_details": "test data",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event_details": "test data"
           });
 
           expect( requests.length ).to.equal( 0 );
@@ -242,42 +238,27 @@ describe( "Big Query logging", function() {
         });
 
         it( "should not log if no level was provided", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "event": "bad event",
-            "event_details": "test data",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event_details": "test data"
           });
 
           expect( requests.length ).to.equal( 0 );
         });
 
         it( "should not log if no event was provided", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "level": "error",
-            "event_details": "test data",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event_details": "test data"
           });
 
           expect( requests.length ).to.equal( 0 );
         });
 
         it( "should log even if no event_details were provided", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "level": "error",
-            "event": "noise",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event": "noise"
           });
 
           // Refresh token request + insert request
@@ -285,9 +266,9 @@ describe( "Big Query logging", function() {
         });
 
         it( "should not log if no component was provided", function() {
-          RisePlayerConfiguration.Logger.log({
+          RisePlayerConfiguration.Logger.log({}, {
             "level": "error",
-            "event": "noise"
+            "event": "no component"
           });
 
           expect( requests.length ).to.equal( 0 );
@@ -295,12 +276,11 @@ describe( "Big Query logging", function() {
 
         it( "should not log if no component id was provided", function() {
           RisePlayerConfiguration.Logger.log({
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }, {
             "level": "error",
-            "event": "noise",
-            "component": {
-              "name": "rise-data-image",
-              "version": "2018.01.01.10.00"
-            }
+            "event": "no id"
           });
 
           expect( requests.length ).to.equal( 0 );
@@ -308,12 +288,11 @@ describe( "Big Query logging", function() {
 
         it( "should not log if no component name was provided", function() {
           RisePlayerConfiguration.Logger.log({
+            "id": "rise-data-image-01",
+            "version": "2018.01.01.10.00"
+          }, {
             "level": "error",
-            "event": "noise",
-            "component": {
-              "id": "rise-data-image-01",
-              "version": "2018.01.01.10.00"
-            }
+            "event": "no name"
           });
 
           expect( requests.length ).to.equal( 0 );
@@ -321,12 +300,11 @@ describe( "Big Query logging", function() {
 
         it( "should not log if no component version was provided", function() {
           RisePlayerConfiguration.Logger.log({
+            "id": "rise-data-image-01",
+            "name": "rise-data-image"
+          }, {
             "level": "error",
-            "event": "noise",
-            "component": {
-              "id": "rise-data-image-01",
-              "name": "rise-data-image"
-            }
+            "event": "no version"
           });
 
           expect( requests.length ).to.equal( 0 );
@@ -343,15 +321,10 @@ describe( "Big Query logging", function() {
           chromeVersion: "68.34"
         }, {});
 
-        RisePlayerConfiguration.Logger.log({
+        RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
           "level": "error",
           "event": "network error",
-          "event_details": "test data",
-          "component": {
-            "id": "rise-data-image-01",
-            "name": "rise-data-image",
-            "version": "2018.01.01.10.00"
-          }
+          "event_details": "test data"
         });
 
         expect( requests.length ).to.equal( 0 );
@@ -367,15 +340,10 @@ describe( "Big Query logging", function() {
           debug: true
         }, {});
 
-        RisePlayerConfiguration.Logger.log({
+        RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
           "level": "debug",
           "event": "object data",
-          "event_details": "test dump",
-          "component": {
-            "id": "rise-data-image-01",
-            "name": "rise-data-image",
-            "version": "2018.01.01.10.00"
-          }
+          "event_details": "test dump"
         });
 
         // Refresh token request + insert request

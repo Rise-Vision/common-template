@@ -166,7 +166,7 @@ RisePlayerConfiguration.Logger = (() => {
     return _refreshToken( refreshData => _insertWithToken( refreshData, params ));
   }
 
-  function _createLogEntryFor( params ) {
+  function _createLogEntryFor( componentData, params ) {
     const entry = _copyOf( params );
 
     if ( entry.hasOwnProperty( "event_details" ) && entry.event_details !== null && typeof entry.event_details !== "string" ) {
@@ -175,17 +175,17 @@ RisePlayerConfiguration.Logger = (() => {
 
     return Object.assign( entry, {
       "ts": new Date().toISOString(),
-      "source": params.component.name,
-      "version": params.component.version,
+      "source": componentData.name,
+      "version": componentData.version,
       "component": {
-        "id": params.component.id
+        "id": componentData.id
       }
     }, _commonEntryValues );
   }
 
-  function _log( params ) {
-    if ( !params || !params.event || !params.level || !params.component ||
-      !params.component.name || !params.component.id || !params.component.version
+  function _log( componentData, params ) {
+    if ( !params || !params.event || !params.level || !componentData ||
+      !componentData.name || !componentData.id || !componentData.version
     ) {
       return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
     }
@@ -194,7 +194,7 @@ RisePlayerConfiguration.Logger = (() => {
       return;
     }
 
-    const entry = _createLogEntryFor( params );
+    const entry = _createLogEntryFor( componentData, params );
 
     if ( !_bigQueryLoggingEnabled ) {
       return console.log( JSON.stringify( entry ));
