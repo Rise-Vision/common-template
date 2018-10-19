@@ -58,7 +58,8 @@
       "dist/rise-logger.js",
       "dist/rise-local-storage.js",
       "dist/rise-component-loader.js",
-      "test/unit/*test.js" ] }
+      "test/unit/*test.js",
+      "test/unit/rise-logger/*test.js" ] }
   ));
 
   gulp.task( "test-integration", factory.testUnitAngular(
