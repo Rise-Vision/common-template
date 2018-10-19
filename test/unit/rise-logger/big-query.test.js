@@ -186,7 +186,7 @@ describe( "Big Query logging", function() {
 
     });
 
-    describe( "log", function() {
+    describe( "log and API methods", function() {
 
       var COMPONENT_DATA = {
         "id": "rise-data-image-01",
@@ -204,7 +204,7 @@ describe( "Big Query logging", function() {
           RisePlayerConfiguration.configure({
             playerType: "beta",
             os: "Ubuntu 64",
-            playerVersion: "2018.01.01.10.00",
+            playerVersion: "2018.01.14.10.00",
             ip: "213.21.45.40",
             chromeVersion: "68.34"
           }, {});
@@ -308,6 +308,88 @@ describe( "Big Query logging", function() {
           });
 
           expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should log a severe event", function() {
+          RisePlayerConfiguration.Logger.severe( COMPONENT_DATA, "display exploded" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "display exploded" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event", function() {
+          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event with event details", function() {
+          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed", "http://video.com/matrix.wmv" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event with extra parameters", function() {
+          RisePlayerConfiguration.Logger.error(
+            COMPONENT_DATA,
+            "video download failed",
+            "http://video.com/matrix.wmv",
+            {
+              "storage": { "file_path": "./videos/matrix.wmv" }
+            }
+          );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+          expect( entry.storage ).to.deep.equal({
+            "file_path": "./videos/matrix.wmv"
+          });
         });
 
       });

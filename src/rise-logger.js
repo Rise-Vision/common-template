@@ -203,8 +203,43 @@ RisePlayerConfiguration.Logger = (() => {
     _logToBigQuery( entry );
   }
 
+  function _logWithLevel( level, componentData, event, eventDetails, additionalFields ) {
+    const params = Object.assign({}, additionalFields, {
+      "level": level,
+      "event": event,
+      "event_details": eventDetails || ""
+    });
+
+    _log( componentData, params );
+  }
+
+  function severe( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "severe", componentData, event, eventDetails, additionalFields );
+  }
+
+  function error( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "error", componentData, event, eventDetails, additionalFields );
+  }
+
+  function warning( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "warning", componentData, event, eventDetails, additionalFields );
+  }
+
+  function info( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "info", componentData, event, eventDetails, additionalFields );
+  }
+
+  function debug( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "debug", componentData, event, eventDetails, additionalFields );
+  }
+
   const exposedFunctions = {
-    configure: configure
+    configure: configure,
+    severe: severe,
+    error: error,
+    warning: warning,
+    info: info,
+    debug: debug
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
