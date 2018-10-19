@@ -347,7 +347,7 @@ describe( "Big Query logging", function() {
         });
 
         it( "should log an error event with event details", function() {
-          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed", "http://video.com/matrix.wmv" );
+          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed again", "http://video.com/matrix.wmv" );
 
           // Refresh token request + insert request
           expect( requests.length ).to.equal( 2 );
@@ -356,7 +356,7 @@ describe( "Big Query logging", function() {
           var entry = body.rows[ 0 ].json;
 
           expect( entry.level ).to.equal( "error" );
-          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event ).to.equal( "video download failed again" );
           expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
           expect( entry.platform ).to.equal( "content" );
           expect( entry.source ).to.equal( COMPONENT_DATA.name );
@@ -367,7 +367,7 @@ describe( "Big Query logging", function() {
         it( "should log an error event with extra parameters", function() {
           RisePlayerConfiguration.Logger.error(
             COMPONENT_DATA,
-            "video download failed",
+            "video download failed once more",
             "http://video.com/matrix.wmv",
             {
               "storage": { "file_path": "./videos/matrix.wmv" }
@@ -381,7 +381,7 @@ describe( "Big Query logging", function() {
           var entry = body.rows[ 0 ].json;
 
           expect( entry.level ).to.equal( "error" );
-          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event ).to.equal( "video download failed once more" );
           expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
           expect( entry.platform ).to.equal( "content" );
           expect( entry.source ).to.equal( COMPONENT_DATA.name );
@@ -390,6 +390,48 @@ describe( "Big Query logging", function() {
           expect( entry.storage ).to.deep.equal({
             "file_path": "./videos/matrix.wmv"
           });
+        });
+
+        it( "should log a warning event", function() {
+          RisePlayerConfiguration.Logger.warning( COMPONENT_DATA, "possible race condition" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "warning" );
+          expect( entry.event ).to.equal( "possible race condition" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an info event", function() {
+          RisePlayerConfiguration.Logger.info( COMPONENT_DATA, "component started" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "info" );
+          expect( entry.event ).to.equal( "component started" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should not log a debug event by default", function() {
+          RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "low level trace" );
+
+          expect( requests.length ).to.equal( 0 );
         });
 
       });
@@ -430,6 +472,33 @@ describe( "Big Query logging", function() {
 
         // Refresh token request + insert request
         expect( requests.length ).to.equal( 2 );
+      });
+
+      it( "should log a debug event with the debug method if debug was enabled", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34",
+          debug: true
+        }, {});
+
+        RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "socket data" );
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+
+        var body = JSON.parse( requests[ 1 ].requestBody );
+        var entry = body.rows[ 0 ].json;
+
+        expect( entry.level ).to.equal( "debug" );
+        expect( entry.event ).to.equal( "socket data" );
+        expect( entry.event_details ).to.equal( "" );
+        expect( entry.platform ).to.equal( "content" );
+        expect( entry.source ).to.equal( COMPONENT_DATA.name );
+        expect( entry.version ).to.equal( COMPONENT_DATA.version );
+        expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
       });
 
     });
