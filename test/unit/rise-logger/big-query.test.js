@@ -186,6 +186,36 @@ describe( "Big Query logging", function() {
 
     });
 
+    describe( "log", function() {
+
+      it( "should log an event if all required data is provided", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34"
+        }, {});
+
+        requests = [];
+
+        RisePlayerConfiguration.Logger.log({
+          "level": "info",
+          "event": "disk full",
+          "event_details": "test data",
+          "component": {
+            "id": "rise-data-image-01",
+            "name": "rise-data-image",
+            "version": "2018.01.01.10.00"
+          }
+        });
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
+
+    });
+
   });
 
 });

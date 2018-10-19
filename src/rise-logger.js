@@ -200,7 +200,7 @@ RisePlayerConfiguration.Logger = (() => {
       return console.log( JSON.stringify( entry ));
     }
 
-    _logToBq( entry );
+    _logToBigQuery( entry );
   }
 
   const exposedFunctions = {

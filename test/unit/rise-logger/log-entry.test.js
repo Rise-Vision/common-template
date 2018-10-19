@@ -35,7 +35,6 @@ describe( "log-entry", function() {
         }
       });
 
-      console.log( JSON.stringify( entry )); // eslint-disable-line no-console
       expect( entry ).to.deep.equal({
         "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
