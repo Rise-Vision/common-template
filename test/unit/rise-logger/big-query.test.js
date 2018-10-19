@@ -188,30 +188,150 @@ describe( "Big Query logging", function() {
 
     describe( "log", function() {
 
-      it( "should log an event if all required data is provided", function() {
-        RisePlayerConfiguration.configure({
-          playerType: "beta",
-          os: "Ubuntu 64",
-          playerVersion: "2018.01.01.10.00",
-          ip: "213.21.45.40",
-          chromeVersion: "68.34"
-        }, {});
-
+      beforeEach( function() {
         requests = [];
+      });
 
-        RisePlayerConfiguration.Logger.log({
-          "level": "info",
-          "event": "disk full",
-          "event_details": "test data",
-          "component": {
-            "id": "rise-data-image-01",
-            "name": "rise-data-image",
-            "version": "2018.01.01.10.00"
-          }
+      describe( "beta or stable default configuration", function() {
+
+        beforeEach( function() {
+          RisePlayerConfiguration.configure({
+            playerType: "beta",
+            os: "Ubuntu 64",
+            playerVersion: "2018.01.01.10.00",
+            ip: "213.21.45.40",
+            chromeVersion: "68.34"
+          }, {});
         });
 
-        // Refresh token request + insert request
-        expect( requests.length ).to.equal( 2 );
+        it( "should log an event if all required data is provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "info",
+            "event": "disk full",
+            "event_details": "test data",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+        });
+
+        it( "should not log debug entries by default", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "debug",
+            "event": "object data",
+            "event_details": "test data",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no entry was provided", function() {
+          RisePlayerConfiguration.Logger.log();
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no level was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "event": "bad event",
+            "event_details": "test data",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no event was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event_details": "test data",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should log even if no event_details were provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event": "noise",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+        });
+
+        it( "should not log if no component was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event": "noise"
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no component id was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event": "noise",
+            "component": {
+              "name": "rise-data-image",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no component name was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event": "noise",
+            "component": {
+              "id": "rise-data-image-01",
+              "version": "2018.01.01.10.00"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should not log if no component version was provided", function() {
+          RisePlayerConfiguration.Logger.log({
+            "level": "error",
+            "event": "noise",
+            "component": {
+              "id": "rise-data-image-01",
+              "name": "rise-data-image"
+            }
+          });
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
       });
 
       it( "should disable BiqQuery logging on developer mode", function() {
@@ -223,36 +343,9 @@ describe( "Big Query logging", function() {
           chromeVersion: "68.34"
         }, {});
 
-        requests = [];
-
         RisePlayerConfiguration.Logger.log({
           "level": "error",
           "event": "network error",
-          "event_details": "test data",
-          "component": {
-            "id": "rise-data-image-01",
-            "name": "rise-data-image",
-            "version": "2018.01.01.10.00"
-          }
-        });
-
-        expect( requests.length ).to.equal( 0 );
-      });
-
-      it( "should not log debug entries by default", function() {
-        RisePlayerConfiguration.configure({
-          playerType: "beta",
-          os: "Ubuntu 64",
-          playerVersion: "2018.01.01.10.00",
-          ip: "213.21.45.40",
-          chromeVersion: "68.34"
-        }, {});
-
-        requests = [];
-
-        RisePlayerConfiguration.Logger.log({
-          "level": "debug",
-          "event": "object data",
           "event_details": "test data",
           "component": {
             "id": "rise-data-image-01",
@@ -273,8 +366,6 @@ describe( "Big Query logging", function() {
           chromeVersion: "68.34",
           debug: true
         }, {});
-
-        requests = [];
 
         RisePlayerConfiguration.Logger.log({
           "level": "debug",
