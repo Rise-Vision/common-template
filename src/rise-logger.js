@@ -23,10 +23,10 @@ RisePlayerConfiguration.Logger = (() => {
   };
   const THROTTLE_DELAY = 1000;
 
-  let _commonEntryValues = null,
-    _debug = false,
+  let _bigQueryLoggingEnabled = true,
+    _commonEntryValues = null,
+    _debugEnabled = false,
     _lastEvent = "",
-    _logToBq = true,
     _refreshDate = 0,
     _throttle = false,
     _token = "";
@@ -36,7 +36,7 @@ RisePlayerConfiguration.Logger = (() => {
     const rolloutStage = playerInfo.playerType;
 
     if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
-      _logToBq = false;
+      _bigQueryLoggingEnabled = false;
       return;
     }
 
@@ -60,7 +60,7 @@ RisePlayerConfiguration.Logger = (() => {
       throw new Error( "No company id was provided" );
     }
 
-    _debug = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
+    _debugEnabled = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
     _commonEntryValues = {
       "platform": "content",
       "display_id": displayId,
@@ -77,9 +77,9 @@ RisePlayerConfiguration.Logger = (() => {
 
   function reset() {
     _commonEntryValues = null;
-    _debug = false;
+    _debugEnabled = false;
     _lastEvent = "";
-    _logToBq = true;
+    _bigQueryLoggingEnabled = true;
     _refreshDate = 0;
     _throttle = false;
     _token = "";
@@ -190,13 +190,13 @@ RisePlayerConfiguration.Logger = (() => {
       return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
     }
 
-    if ( !_debug && params.level === "debug" ) {
+    if ( !_debugEnabled && params.level === "debug" ) {
       return;
     }
 
     const entry = _createLogEntryFor( params );
 
-    if ( !_logToBq ) {
+    if ( !_bigQueryLoggingEnabled ) {
       return console.log( JSON.stringify( entry ));
     }
 
@@ -212,8 +212,8 @@ RisePlayerConfiguration.Logger = (() => {
       createLogEntryFor: _createLogEntryFor,
       getCommonEntryValues: () => _commonEntryValues,
       getInsertData: _getInsertData,
-      isDebugEnabled: () => _debug,
-      logsToBq: () => _logToBq,
+      isDebugEnabled: () => _debugEnabled,
+      isBigQueryLoggingEnabled: () => _bigQueryLoggingEnabled,
       logToBigQuery: _logToBigQuery,
       log: _log,
       reset: reset

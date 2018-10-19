@@ -12,13 +12,13 @@ describe( "configure", function() {
   it( "should not enable BQ logging if no player type is defined", function() {
     RisePlayerConfiguration.configure({}, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.false;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.false;
   });
 
   it( "should not enable BQ logging if player type is not stable or beta", function() {
     RisePlayerConfiguration.configure({ playerType: "stage" }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.false;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.false;
   });
 
   it( "should configure logging during beta stage", function() {
@@ -28,7 +28,7 @@ describe( "configure", function() {
       playerVersion: "2018.01.01.10.00"
     }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
     expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
     expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
       "platform": "content",
@@ -51,7 +51,7 @@ describe( "configure", function() {
       playerVersion: "2018.01.01.10.00"
     }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
     expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
     expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
       "platform": "content",
@@ -76,7 +76,7 @@ describe( "configure", function() {
       chromeVersion: "68.34"
     }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
     expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
       "platform": "content",
       "display_id": "DISPLAY_ID",
@@ -163,7 +163,7 @@ describe( "configure", function() {
       playerVersion: "2018.01.01.10.00"
     }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
     expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.true;
   });
 
@@ -175,7 +175,7 @@ describe( "configure", function() {
       playerVersion: "2018.01.01.10.00"
     }, {});
 
-    expect( RisePlayerConfiguration.Logger.logsToBq()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
     expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
   });
 
