@@ -23,10 +23,10 @@ RisePlayerConfiguration.Logger = (() => {
   };
   const THROTTLE_DELAY = 1000;
 
-  let _commonEntryValues = null,
-    _debug = false, // eslint-disable-line no-unused-vars,
+  let _bigQueryLoggingEnabled = true,
+    _commonEntryValues = null,
+    _debugEnabled = false,
     _lastEvent = "",
-    _logToBq = true, // eslint-disable-line no-unused-vars
     _refreshDate = 0,
     _throttle = false,
     _token = "";
@@ -36,7 +36,7 @@ RisePlayerConfiguration.Logger = (() => {
     const rolloutStage = playerInfo.playerType;
 
     if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
-      _logToBq = false;
+      _bigQueryLoggingEnabled = false;
       return;
     }
 
@@ -60,7 +60,7 @@ RisePlayerConfiguration.Logger = (() => {
       throw new Error( "No company id was provided" );
     }
 
-    _debug = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
+    _debugEnabled = typeof playerInfo.debug === "undefined" ? false : !!playerInfo.debug;
     _commonEntryValues = {
       "platform": "content",
       "display_id": displayId,
@@ -77,9 +77,9 @@ RisePlayerConfiguration.Logger = (() => {
 
   function reset() {
     _commonEntryValues = null;
-    _debug = false;
+    _debugEnabled = false;
     _lastEvent = "";
-    _logToBq = true;
+    _bigQueryLoggingEnabled = true;
     _refreshDate = 0;
     _throttle = false;
     _token = "";
@@ -166,17 +166,56 @@ RisePlayerConfiguration.Logger = (() => {
     return _refreshToken( refreshData => _insertWithToken( refreshData, params ));
   }
 
+  function _createLogEntryFor( componentData, params ) {
+    const entry = _copyOf( params );
+
+    if ( entry.hasOwnProperty( "event_details" ) && entry.event_details !== null && typeof entry.event_details !== "string" ) {
+      entry.event_details = JSON.stringify( entry.event_details );
+    }
+
+    return Object.assign( entry, {
+      "ts": new Date().toISOString(),
+      "source": componentData.name,
+      "version": componentData.version,
+      "component": {
+        "id": componentData.id
+      }
+    }, _commonEntryValues );
+  }
+
+  function _log( componentData, params ) {
+    if ( !params || !params.event || !params.level || !componentData ||
+      !componentData.name || !componentData.id || !componentData.version
+    ) {
+      return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
+    }
+
+    if ( !_debugEnabled && params.level === "debug" ) {
+      return;
+    }
+
+    const entry = _createLogEntryFor( componentData, params );
+
+    if ( !_bigQueryLoggingEnabled ) {
+      return console.log( JSON.stringify( entry ));
+    }
+
+    _logToBigQuery( entry );
+  }
+
   const exposedFunctions = {
     configure: configure
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
+      createLogEntryFor: _createLogEntryFor,
       getCommonEntryValues: () => _commonEntryValues,
       getInsertData: _getInsertData,
-      isDebugEnabled: () => _debug,
-      logsToBq: () => _logToBq,
+      isDebugEnabled: () => _debugEnabled,
+      isBigQueryLoggingEnabled: () => _bigQueryLoggingEnabled,
       logToBigQuery: _logToBigQuery,
+      log: _log,
       reset: reset
     });
   }
