@@ -167,27 +167,20 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _createLogEntryFor( params ) {
-    const entry = {
+    const entry = _copyOf( params );
+
+    if ( entry.hasOwnProperty( "event_details" ) && entry.event_details !== null && typeof entry.event_details !== "string" ) {
+      entry.event_details = JSON.stringify( entry.event_details );
+    }
+
+    return Object.assign( entry, {
       "ts": new Date().toISOString(),
       "source": params.component.name,
       "version": params.component.version,
-      "level": params.level,
-      "event": params.event,
       "component": {
         "id": params.component.id
       }
-    };
-
-    if ( params.hasOwnProperty( "event_details" ) && params.event_details !== null ) {
-      entry.event_details = typeof params.event_details === "string" ?
-        params.event_details : JSON.stringify( params.event_details );
-    }
-
-    if ( params.storage ) {
-      entry.storage = _copyOf( params.storage );
-    }
-
-    return Object.assign( entry, _commonEntryValues );
+    }, _commonEntryValues );
   }
 
   function _log( params ) {

@@ -1,4 +1,4 @@
-/* eslint-disable one-var, vars-on-top */
+/* eslint-disable one-var, quotes, vars-on-top */
 /* global describe, it, expect, afterEach, before, beforeEach, sinon */
 
 "use strict";
@@ -35,6 +35,7 @@ describe( "log-entry", function() {
         }
       });
 
+      console.log( JSON.stringify( entry )); // eslint-disable-line no-console
       expect( entry ).to.deep.equal({
         "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
@@ -46,6 +47,41 @@ describe( "log-entry", function() {
         "level": "info",
         "event": "test event",
         "event_details": "test data",
+        "player": {
+          "ip": "213.21.45.40",
+          "version": "2018.01.01.10.00",
+          "os": "Ubuntu 64",
+          "chrome_version": "68.34"
+        },
+        "component": {
+          "id": "rise-data-image-01"
+        }
+      });
+    });
+
+    it( "should convert event_details to a string if it's an object", function() {
+      var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
+        "level": "info",
+        "event": "test event",
+        "event_details": { "content": "test data" },
+        "component": {
+          "id": "rise-data-image-01",
+          "name": "rise-data-image",
+          "version": "2018.01.01.10.00"
+        }
+      });
+
+      expect( entry ).to.deep.equal({
+        "ts": "1970-01-01T00:00:00.000Z",
+        "platform": "content",
+        "source": "rise-data-image",
+        "version": "2018.01.01.10.00",
+        "rollout_stage": "beta",
+        "display_id": "DISPLAY_ID",
+        "company_id": "COMPANY_ID",
+        "level": "info",
+        "event": "test event",
+        "event_details": '{"content":"test data"}',
         "player": {
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
@@ -91,7 +127,7 @@ describe( "log-entry", function() {
       });
     });
 
-    it( "should not send event details if it's null", function() {
+    it( "should send null event details if it's null", function() {
       var entry = RisePlayerConfiguration.Logger.createLogEntryFor({
         "level": "info",
         "event": "test event",
@@ -113,6 +149,7 @@ describe( "log-entry", function() {
         "company_id": "COMPANY_ID",
         "level": "info",
         "event": "test event",
+        "event_details": null,
         "player": {
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
