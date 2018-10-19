@@ -24,9 +24,9 @@ RisePlayerConfiguration.Logger = (() => {
   const THROTTLE_DELAY = 1000;
 
   let _commonEntryValues = null,
-    _debug = false, // eslint-disable-line no-unused-vars,
+    _debug = false,
     _lastEvent = "",
-    _logToBq = true, // eslint-disable-line no-unused-vars
+    _logToBq = true,
     _refreshDate = 0,
     _throttle = false,
     _token = "";
