@@ -58,7 +58,7 @@ describe( "Big Query logging", function() {
 
   });
 
-  describe( "logToBigQuery", function() {
+  describe( "logging", function() {
     var TOKEN = "my-token",
       TOKEN_DATA = { "access_token": TOKEN },
       TOKEN_JSON = JSON.stringify( TOKEN_DATA ),
@@ -90,96 +90,100 @@ describe( "Big Query logging", function() {
       clock.restore();
     });
 
-    it( "should make a POST request", function() {
-      expect( requests[ 1 ].method ).to.equal( "POST" );
-    });
+    describe( "logToBigQuery", function() {
 
-    it( "should make a request to the correct URL", function() {
-      var expectedUrl = "https://www.googleapis.com/bigquery/v2/projects/client-side-events/datasets/Display_Events/tables/events_test/insertAll";
+      it( "should make a POST request", function() {
+        expect( requests[ 1 ].method ).to.equal( "POST" );
+      });
 
-      expect( requests[ 1 ].url ).to.equal( expectedUrl );
-    });
+      it( "should make a request to the correct URL", function() {
+        var expectedUrl = "https://www.googleapis.com/bigquery/v2/projects/client-side-events/datasets/Display_Events/tables/events_test/insertAll";
 
-    it( "should set the Content-Type header", function() {
-      var contentType = requests[ 1 ].requestHeaders[ "Content-Type" ];
+        expect( requests[ 1 ].url ).to.equal( expectedUrl );
+      });
 
-      expect( contentType ).to.equal( "application/json;charset=utf-8" );
-    });
+      it( "should set the Content-Type header", function() {
+        var contentType = requests[ 1 ].requestHeaders[ "Content-Type" ];
 
-    it( "should set the Authorization header", function() {
-      var authorization = requests[ 1 ].requestHeaders.Authorization;
+        expect( contentType ).to.equal( "application/json;charset=utf-8" );
+      });
 
-      expect( authorization ).to.equal( "Bearer " + TOKEN );
-    });
+      it( "should set the Authorization header", function() {
+        var authorization = requests[ 1 ].requestHeaders.Authorization;
 
-    it( "should send string data in the body", function() {
-      var body = requests[ 1 ].requestBody;
+        expect( authorization ).to.equal( "Bearer " + TOKEN );
+      });
 
-      expect( body ).to.be.a( "string" );
+      it( "should send string data in the body", function() {
+        var body = requests[ 1 ].requestBody;
 
-      var content = JSON.parse( body );
+        expect( body ).to.be.a( "string" );
 
-      expect( content.kind ).to.equal( "bigquery#tableDataInsertAllRequest" );
-      expect( content.skipInvalidRows ).to.be.false;
-      expect( content.rows ).to.exist;
+        var content = JSON.parse( body );
 
-      var row = content.rows[ 0 ];
+        expect( content.kind ).to.equal( "bigquery#tableDataInsertAllRequest" );
+        expect( content.skipInvalidRows ).to.be.false;
+        expect( content.rows ).to.exist;
 
-      expect( row.insertId ).to.exist;
-      expect( row.json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
-    });
+        var row = content.rows[ 0 ];
 
-    it( "should not make a request if no params provided", function() {
-      requests = [];
+        expect( row.insertId ).to.exist;
+        expect( row.json ).to.deep.equal( SAMPLE_FULL_PARAMETERS );
+      });
 
-      clock.tick( INTERVAL );
-      RisePlayerConfiguration.Logger.logToBigQuery();
+      it( "should not make a request if no params provided", function() {
+        requests = [];
 
-      expect( requests.length ).to.equal( 0 );
-    });
+        clock.tick( INTERVAL );
+        RisePlayerConfiguration.Logger.logToBigQuery();
 
-    it( "should not make a request if event is empty", function() {
-      requests = [];
+        expect( requests.length ).to.equal( 0 );
+      });
 
-      var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
+      it( "should not make a request if event is empty", function() {
+        requests = [];
 
-      row.event = "";
+        var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
 
-      clock.tick( INTERVAL );
-      RisePlayerConfiguration.Logger.logToBigQuery( row );
+        row.event = "";
 
-      expect( requests.length ).to.equal( 0 );
-    });
+        clock.tick( INTERVAL );
+        RisePlayerConfiguration.Logger.logToBigQuery( row );
 
-    it( "should not log the same event multiple times if the time between calls is less than 1 second", function() {
-      requests = [];
+        expect( requests.length ).to.equal( 0 );
+      });
 
-      RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
+      it( "should not log the same event multiple times if the time between calls is less than 1 second", function() {
+        requests = [];
 
-      expect( requests.length ).to.equal( 0 );
-    });
+        RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
 
-    it( "should log the same event multiple times if the time between calls is 1.5 seconds", function() {
-      requests = [];
+        expect( requests.length ).to.equal( 0 );
+      });
 
-      clock.tick( 1500 );
-      RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
+      it( "should log the same event multiple times if the time between calls is 1.5 seconds", function() {
+        requests = [];
 
-      // Refresh token request + insert request
-      expect( requests.length ).to.equal( 2 );
-    });
+        clock.tick( 1500 );
+        RisePlayerConfiguration.Logger.logToBigQuery( SAMPLE_FULL_PARAMETERS );
 
-    it( "should log different events if the time between calls is less than 1 second", function() {
-      requests = [];
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
 
-      var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
+      it( "should log different events if the time between calls is less than 1 second", function() {
+        requests = [];
 
-      row.event = "another event";
+        var row = JSON.parse( JSON.stringify( SAMPLE_FULL_PARAMETERS ));
 
-      RisePlayerConfiguration.Logger.logToBigQuery( row );
+        row.event = "another event";
 
-      // Refresh token request + insert request
-      expect( requests.length ).to.equal( 2 );
+        RisePlayerConfiguration.Logger.logToBigQuery( row );
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+      });
+
     });
 
   });
