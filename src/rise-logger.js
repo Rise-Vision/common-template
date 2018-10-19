@@ -204,6 +204,12 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _logWithLevel( level, componentData, event, eventDetails, additionalFields ) {
+    if ( typeof additionalFields !== "undefined" && typeof additionalFields !== "object" ) {
+      console.log( `Invalid additional fields value: ${ additionalFields }` );
+
+      return;
+    }
+
     const params = Object.assign({}, additionalFields, {
       "level": level,
       "event": event,

@@ -392,6 +392,17 @@ describe( "Big Query logging", function() {
           });
         });
 
+        it( "should not log an error event if the extra parameters are not an object", function() {
+          RisePlayerConfiguration.Logger.error(
+            COMPONENT_DATA,
+            "video player crashed",
+            "http://video.com/matrix.wmv",
+            "not an object"
+          );
+
+          expect( requests.length ).to.equal( 0 );
+        });
+
         it( "should log a warning event", function() {
           RisePlayerConfiguration.Logger.warning( COMPONENT_DATA, "possible race condition" );
 
