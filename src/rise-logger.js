@@ -21,6 +21,11 @@ RisePlayerConfiguration.Logger = (() => {
     ignoreUnknownValues: false,
     rows: [ { insertId: "" } ]
   };
+  const LOGGER_COMPONENT_DATA = {
+    id: "Logger",
+    name: "Logger",
+    version: "N/A"
+  };
   const THROTTLE_DELAY = 1000;
 
   let _bigQueryLoggingEnabled = true,
@@ -184,10 +189,14 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _log( componentData, params ) {
-    if ( !params || !params.event || !params.level || !componentData ||
-      !componentData.name || !componentData.id || !componentData.version
-    ) {
-      return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
+    if ( !componentData || !componentData.name || !componentData.id || !componentData.version ) {
+      return severe( LOGGER_COMPONENT_DATA, "invalid component data", {
+        componentData: componentData,
+        params: params
+      });
+    }
+    if ( !params || !params.event || !params.level ) {
+      return severe( componentData, "incomplete log parameters", params );
     }
 
     if ( !_debugEnabled && params.level === "debug" ) {
@@ -205,9 +214,13 @@ RisePlayerConfiguration.Logger = (() => {
 
   function _logWithLevel( level, componentData, event, eventDetails, additionalFields ) {
     if ( typeof additionalFields !== "undefined" && typeof additionalFields !== "object" ) {
-      console.log( `Invalid additional fields value: ${ additionalFields }` );
-
-      return;
+      return severe( LOGGER_COMPONENT_DATA, "invalid additional fields value", {
+        componentData: componentData,
+        level: level,
+        event: event,
+        eventDetails: eventDetails,
+        additionalFields: additionalFields
+      });
     }
 
     const params = Object.assign({}, additionalFields, {
