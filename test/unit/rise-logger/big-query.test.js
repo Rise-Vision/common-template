@@ -186,7 +186,7 @@ describe( "Big Query logging", function() {
 
     });
 
-    describe( "log", function() {
+    describe( "log and API methods", function() {
 
       var COMPONENT_DATA = {
         "id": "rise-data-image-01",
@@ -204,7 +204,7 @@ describe( "Big Query logging", function() {
           RisePlayerConfiguration.configure({
             playerType: "beta",
             os: "Ubuntu 64",
-            playerVersion: "2018.01.01.10.00",
+            playerVersion: "2018.01.14.10.00",
             ip: "213.21.45.40",
             chromeVersion: "68.34"
           }, {});
@@ -219,6 +219,17 @@ describe( "Big Query logging", function() {
 
           // Refresh token request + insert request
           expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "info" );
+          expect( entry.event ).to.equal( "disk full" );
+          expect( entry.event_details ).to.equal( "test data" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
         });
 
         it( "should not log debug entries by default", function() {
@@ -231,28 +242,61 @@ describe( "Big Query logging", function() {
           expect( requests.length ).to.equal( 0 );
         });
 
-        it( "should not log if no entry was provided", function() {
-          RisePlayerConfiguration.Logger.log();
+        it( "should log a severe error if no log entry was provided", function() {
+          RisePlayerConfiguration.Logger.log( COMPONENT_DATA );
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "incomplete log parameters" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
         });
 
-        it( "should not log if no level was provided", function() {
+        it( "should log a severe error if no level was provided", function() {
           RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "event": "bad event",
             "event_details": "test data"
           });
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "incomplete log parameters" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
         });
 
-        it( "should not log if no event was provided", function() {
+        it( "should log a severe error if no event was provided", function() {
           RisePlayerConfiguration.Logger.log( COMPONENT_DATA, {
             "level": "error",
             "event_details": "test data"
           });
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "incomplete log parameters" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
         });
 
         it( "should log even if no event_details were provided", function() {
@@ -265,16 +309,27 @@ describe( "Big Query logging", function() {
           expect( requests.length ).to.equal( 2 );
         });
 
-        it( "should not log if no component was provided", function() {
+        it( "should log a severe error if no component was provided", function() {
           RisePlayerConfiguration.Logger.log({}, {
             "level": "error",
             "event": "no component"
           });
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "invalid component data" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.version ).to.equal( "N/A" );
+          expect( entry.component.id ).to.equal( "Logger" );
         });
 
-        it( "should not log if no component id was provided", function() {
+        it( "should log a severe error if no component id was provided", function() {
           RisePlayerConfiguration.Logger.log({
             "name": "rise-data-image",
             "version": "2018.01.01.10.00"
@@ -283,10 +338,21 @@ describe( "Big Query logging", function() {
             "event": "no id"
           });
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "invalid component data" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.version ).to.equal( "N/A" );
+          expect( entry.component.id ).to.equal( "Logger" );
         });
 
-        it( "should not log if no component name was provided", function() {
+        it( "should log a severe error if no component name was provided", function() {
           RisePlayerConfiguration.Logger.log({
             "id": "rise-data-image-01",
             "version": "2018.01.01.10.00"
@@ -295,10 +361,21 @@ describe( "Big Query logging", function() {
             "event": "no name"
           });
 
-          expect( requests.length ).to.equal( 0 );
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "invalid component data" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.version ).to.equal( "N/A" );
+          expect( entry.component.id ).to.equal( "Logger" );
         });
 
-        it( "should not log if no component version was provided", function() {
+        it( "should log a severe error if no component version was provided", function() {
           RisePlayerConfiguration.Logger.log({
             "id": "rise-data-image-01",
             "name": "rise-data-image"
@@ -306,6 +383,163 @@ describe( "Big Query logging", function() {
             "level": "error",
             "event": "no version"
           });
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "invalid component data" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.version ).to.equal( "N/A" );
+          expect( entry.component.id ).to.equal( "Logger" );
+        });
+
+        it( "should directly log a severe event", function() {
+          RisePlayerConfiguration.Logger.severe( COMPONENT_DATA, "display exploded" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "display exploded" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event", function() {
+          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event with event details", function() {
+          RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "video download failed again", "http://video.com/matrix.wmv" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed again" );
+          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an error event with extra parameters", function() {
+          RisePlayerConfiguration.Logger.error(
+            COMPONENT_DATA,
+            "video download failed once more",
+            "http://video.com/matrix.wmv",
+            {
+              "storage": { "file_path": "./videos/matrix.wmv" }
+            }
+          );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "error" );
+          expect( entry.event ).to.equal( "video download failed once more" );
+          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+          expect( entry.storage ).to.deep.equal({
+            "file_path": "./videos/matrix.wmv"
+          });
+        });
+
+        it( "should log a severe entry if the extra parameters are not an object", function() {
+          RisePlayerConfiguration.Logger.error(
+            COMPONENT_DATA,
+            "video player crashed",
+            "http://video.com/matrix.wmv",
+            "not an object"
+          );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "severe" );
+          expect( entry.event ).to.equal( "invalid additional fields value" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.version ).to.equal( "N/A" );
+          expect( entry.component.id ).to.equal( "Logger" );
+        });
+
+        it( "should log a warning event", function() {
+          RisePlayerConfiguration.Logger.warning( COMPONENT_DATA, "possible race condition" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "warning" );
+          expect( entry.event ).to.equal( "possible race condition" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should log an info event", function() {
+          RisePlayerConfiguration.Logger.info( COMPONENT_DATA, "component started" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.level ).to.equal( "info" );
+          expect( entry.event ).to.equal( "component started" );
+          expect( entry.event_details ).to.equal( "" );
+          expect( entry.platform ).to.equal( "content" );
+          expect( entry.source ).to.equal( COMPONENT_DATA.name );
+          expect( entry.version ).to.equal( COMPONENT_DATA.version );
+          expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should not log a debug event by default", function() {
+          RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "low level trace" );
 
           expect( requests.length ).to.equal( 0 );
         });
@@ -348,6 +582,33 @@ describe( "Big Query logging", function() {
 
         // Refresh token request + insert request
         expect( requests.length ).to.equal( 2 );
+      });
+
+      it( "should log a debug event with the debug method if debug was enabled", function() {
+        RisePlayerConfiguration.configure({
+          playerType: "beta",
+          os: "Ubuntu 64",
+          playerVersion: "2018.01.01.10.00",
+          ip: "213.21.45.40",
+          chromeVersion: "68.34",
+          debug: true
+        }, {});
+
+        RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "socket data" );
+
+        // Refresh token request + insert request
+        expect( requests.length ).to.equal( 2 );
+
+        var body = JSON.parse( requests[ 1 ].requestBody );
+        var entry = body.rows[ 0 ].json;
+
+        expect( entry.level ).to.equal( "debug" );
+        expect( entry.event ).to.equal( "socket data" );
+        expect( entry.event_details ).to.equal( "" );
+        expect( entry.platform ).to.equal( "content" );
+        expect( entry.source ).to.equal( COMPONENT_DATA.name );
+        expect( entry.version ).to.equal( COMPONENT_DATA.version );
+        expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
       });
 
     });

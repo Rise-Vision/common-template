@@ -21,6 +21,11 @@ RisePlayerConfiguration.Logger = (() => {
     ignoreUnknownValues: false,
     rows: [ { insertId: "" } ]
   };
+  const LOGGER_COMPONENT_DATA = {
+    id: "Logger",
+    name: "Logger",
+    version: "N/A"
+  };
   const THROTTLE_DELAY = 1000;
 
   let _bigQueryLoggingEnabled = true,
@@ -184,10 +189,14 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _log( componentData, params ) {
-    if ( !params || !params.event || !params.level || !componentData ||
-      !componentData.name || !componentData.id || !componentData.version
-    ) {
-      return console.log( `Incomplete log parameters: ${ JSON.stringify( params ) }` );
+    if ( !componentData || !componentData.name || !componentData.id || !componentData.version ) {
+      return severe( LOGGER_COMPONENT_DATA, "invalid component data", {
+        componentData: componentData,
+        params: params
+      });
+    }
+    if ( !params || !params.event || !params.level ) {
+      return severe( componentData, "incomplete log parameters", params );
     }
 
     if ( !_debugEnabled && params.level === "debug" ) {
@@ -203,8 +212,53 @@ RisePlayerConfiguration.Logger = (() => {
     _logToBigQuery( entry );
   }
 
+  function _logWithLevel( level, componentData, event, eventDetails, additionalFields ) {
+    if ( typeof additionalFields !== "undefined" && typeof additionalFields !== "object" ) {
+      return severe( LOGGER_COMPONENT_DATA, "invalid additional fields value", {
+        componentData: componentData,
+        level: level,
+        event: event,
+        eventDetails: eventDetails,
+        additionalFields: additionalFields
+      });
+    }
+
+    const params = Object.assign({}, additionalFields, {
+      "level": level,
+      "event": event,
+      "event_details": eventDetails || ""
+    });
+
+    _log( componentData, params );
+  }
+
+  function severe( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "severe", componentData, event, eventDetails, additionalFields );
+  }
+
+  function error( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "error", componentData, event, eventDetails, additionalFields );
+  }
+
+  function warning( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "warning", componentData, event, eventDetails, additionalFields );
+  }
+
+  function info( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "info", componentData, event, eventDetails, additionalFields );
+  }
+
+  function debug( componentData, event, eventDetails, additionalFields ) {
+    _logWithLevel( "debug", componentData, event, eventDetails, additionalFields );
+  }
+
   const exposedFunctions = {
-    configure: configure
+    configure: configure,
+    severe: severe,
+    error: error,
+    warning: warning,
+    info: info,
+    debug: debug
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
