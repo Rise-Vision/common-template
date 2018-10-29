@@ -20,6 +20,8 @@ describe( "ComponentLoader", function() {
 
     it( "should recognize the rollout environment as beta", function() {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -34,6 +36,8 @@ describe( "ComponentLoader", function() {
 
     it( "should recognize the rollout environment as stable", function() {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "stable",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -48,6 +52,8 @@ describe( "ComponentLoader", function() {
 
     it( "should assume a development rollout environment if developmentManifestUrl is provided", function() {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         developmentManifestUrl: "http://localhost:9000/manifest.json"
       }, {});
 
@@ -68,7 +74,11 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({ playerType: "other" }, {});
+      RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
+        playerType: "other"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -87,7 +97,10 @@ describe( "ComponentLoader", function() {
 
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
-      RisePlayerConfiguration.configure({}, {});
+      RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID"
+      }, {});
 
       RisePlayerConfiguration.ComponentLoader.load();
 
@@ -107,6 +120,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-local-messaging-connection", RisePlayerConfiguration.ComponentLoader.connectionHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -152,6 +167,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -179,6 +196,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -209,6 +228,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -259,6 +280,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"
@@ -303,6 +326,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"

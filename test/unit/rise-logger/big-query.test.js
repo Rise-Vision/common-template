@@ -202,6 +202,8 @@ describe( "Big Query logging", function() {
 
         beforeEach( function() {
           RisePlayerConfiguration.configure({
+            displayId: "DISPLAY_ID",
+            companyId: "COMPANY_ID",
             playerType: "beta",
             os: "Ubuntu 64",
             playerVersion: "2018.01.14.10.00",
@@ -548,6 +550,8 @@ describe( "Big Query logging", function() {
 
       it( "should disable BiqQuery logging on developer mode", function() {
         RisePlayerConfiguration.configure({
+          displayId: "DISPLAY_ID",
+          companyId: "COMPANY_ID",
           playerType: "developer",
           os: "Ubuntu 64",
           playerVersion: "2018.01.01.10.00",
@@ -566,6 +570,8 @@ describe( "Big Query logging", function() {
 
       it( "should log debug entries if debug mode was enabled", function() {
         RisePlayerConfiguration.configure({
+          displayId: "DISPLAY_ID",
+          companyId: "COMPANY_ID",
           playerType: "beta",
           os: "Ubuntu 64",
           playerVersion: "2018.01.01.10.00",
@@ -586,6 +592,8 @@ describe( "Big Query logging", function() {
 
       it( "should log a debug event with the debug method if debug was enabled", function() {
         RisePlayerConfiguration.configure({
+          displayId: "DISPLAY_ID",
+          companyId: "COMPANY_ID",
           playerType: "beta",
           os: "Ubuntu 64",
           playerVersion: "2018.01.01.10.00",
