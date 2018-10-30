@@ -72,12 +72,7 @@
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
       "dist/config-test.js",
-      "dist/rise-player-configuration.js",
-      "dist/rise-local-messaging.js",
-      "dist/rise-helpers.js",
-      "dist/rise-logger.js",
-      "dist/rise-local-storage.js",
-      "dist/rise-component-loader.js",
+      "dist/common-template.js",
       "test/unit/*test.js",
       "test/unit/rise-logger/*test.js" ] }
   ));
@@ -89,12 +84,7 @@
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
       "dist/config-test.js",
-      "dist/rise-player-configuration.js",
-      "dist/rise-local-messaging.js",
-      "dist/rise-helpers.js",
-      "dist/rise-logger.js",
-      "dist/rise-local-storage.js",
-      "dist/rise-component-loader.js",
+      "dist/common-template.js",
       "test/integration/*test.js" ] }
   ));
 
