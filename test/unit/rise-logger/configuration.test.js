@@ -1,5 +1,5 @@
 /* eslint-disable one-var, vars-on-top */
-/* global describe, it, expect, afterEach, sinon */
+/* global describe, it, expect, afterEach */
 
 "use strict";
 
@@ -23,6 +23,8 @@ describe( "configure", function() {
 
   it( "should configure logging during beta stage", function() {
     RisePlayerConfiguration.configure({
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
       playerType: "beta",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"
@@ -46,6 +48,8 @@ describe( "configure", function() {
 
   it( "should configure logging during stable stage", function() {
     RisePlayerConfiguration.configure({
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
       playerType: "stable",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"
@@ -69,6 +73,8 @@ describe( "configure", function() {
 
   it( "should recognize player ip and chrome version if they are provided", function() {
     RisePlayerConfiguration.configure({
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
       playerType: "beta",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00",
@@ -94,6 +100,8 @@ describe( "configure", function() {
   it( "should fail if player version is not provided", function() {
     try {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         os: "Ubuntu 64"
       }, {});
@@ -107,6 +115,8 @@ describe( "configure", function() {
   it( "should fail if operating system is not provided", function() {
     try {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "2018.01.01.10.00"
       }, {});
@@ -118,11 +128,9 @@ describe( "configure", function() {
   });
 
   it( "should fail if display id is not provided", function() {
-    var stub = sinon.stub( RisePlayerConfiguration, "getDisplayId" )
-      .returns( undefined );
-
     try {
       RisePlayerConfiguration.configure({
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "2018.01.01.10.00",
         os: "Ubuntu 64"
@@ -131,17 +139,13 @@ describe( "configure", function() {
       expect.fail();
     } catch ( error ) {
       expect( error.message ).to.equal( "No display id was provided" );
-    } finally {
-      stub.restore();
     }
   });
 
   it( "should fail if company id is not provided", function() {
-    var stub = sinon.stub( RisePlayerConfiguration, "getCompanyId" )
-      .returns( undefined );
-
     try {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
         playerType: "beta",
         playerVersion: "2018.01.01.10.00",
         os: "Ubuntu 64"
@@ -150,14 +154,14 @@ describe( "configure", function() {
       expect.fail();
     } catch ( error ) {
       expect( error.message ).to.equal( "No company id was provided" );
-    } finally {
-      stub.restore();
     }
   });
 
   it( "should enable debug logs", function() {
     RisePlayerConfiguration.configure({
       debug: true,
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
       playerType: "stable",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"
@@ -170,6 +174,8 @@ describe( "configure", function() {
   it( "should explicitly disable debug logs", function() {
     RisePlayerConfiguration.configure({
       debug: false,
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
       playerType: "stable",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"

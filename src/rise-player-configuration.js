@@ -26,8 +26,6 @@ const RisePlayerConfiguration = {
     RisePlayerConfiguration.Logger.configure();
     RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
 
-    //TODO: other processing
-
     // lock down RisePlayerConfiguration object
     if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       Object.freeze( RisePlayerConfiguration );
@@ -45,12 +43,14 @@ const RisePlayerConfiguration = {
     return match ? match[ 2 ] : null;
   },
   getCompanyId: function() {
-    // TODO: still not decided where this will come from.
-    return "COMPANY_ID";
+    var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+
+    return playerInfo ? playerInfo.companyId : null;
   },
   getDisplayId: function() {
-    // TODO: still not decided where this will come from.
-    return "DISPLAY_ID";
+    var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+
+    return playerInfo ? playerInfo.displayId : null;
   },
   Helpers: null,
   LocalMessaging: null,

@@ -25,6 +25,8 @@ describe( "ComponentLoader", function() {
       window.addEventListener( "rise-components-loaded", componentsLoadedHandler );
 
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         playerVersion: "1.1.1.1.0",
         os: "Windows"

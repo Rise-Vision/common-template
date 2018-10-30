@@ -21,6 +21,8 @@ describe( "log-entry", function() {
 
     beforeEach( function() {
       RisePlayerConfiguration.configure({
+        displayId: "DISPLAY_ID",
+        companyId: "COMPANY_ID",
         playerType: "beta",
         os: "Ubuntu 64",
         playerVersion: "2018.01.01.10.00",
