@@ -44,10 +44,15 @@ RisePlayerConfiguration.Helpers = (() => {
     _clients = [];
   }
 
-  return {
+  const exposedFunctions = {
     isTestEnvironment: isTestEnvironment,
-    onceClientsAreAvailable: onceClientsAreAvailable,
-    reset: reset
+    onceClientsAreAvailable: onceClientsAreAvailable
+  };
+
+  if ( isTestEnvironment()) {
+    exposedFunctions.reset = reset
   }
+
+  return exposedFunctions;
 
 })();
