@@ -30,6 +30,8 @@ jobs:
   gcloud-setup:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
+        environment:
+          WIDGETS_BASE: gs://widgets.risevision.com
     steps:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -62,9 +64,8 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          GS_BASE=gs://widgets.risevision.com
           VERSION=$(cat version-string/version)
-          TARGET=$GS_BASE/staging/common/$VERSION/
+          TARGET=$WIDGETS_BASE/staging/common/$VERSION/
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
@@ -84,8 +85,7 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          GS_BASE=gs://widgets.risevision.com
-          TARGET=$GS_BASE/<< parameters.stage >>/common
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
@@ -98,8 +98,6 @@ workflows:
           requires:
             - install
       - gcloud-setup:
-          requires:
-            - install
           filters:
             branches:
               only:
@@ -128,6 +126,7 @@ workflows:
                 - build/stable
       - deploy-production:
           stage: beta
+          name: deploy-beta
           requires:
             - build_and_test
             - gcloud-setup
@@ -137,6 +136,7 @@ workflows:
                 - master
       - deploy-production:
           stage: stable
+          name: deploy-stable
           requires:
             - build_and_test
             - gcloud-setup
