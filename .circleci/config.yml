@@ -15,7 +15,7 @@ jobs:
           paths:
             - ./node_modules
 
-  test:
+  build_and_test:
     docker: *BUILDIMAGE
     steps:
       - checkout
@@ -31,7 +31,7 @@ jobs:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
         environment:
-          GS_BASE: gs://widgets.risevision.com
+          WIDGETS_BASE: gs://widgets.risevision.com
     steps:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -95,7 +95,7 @@ jobs:
       - run: cp -r gcloud ~/.config
       - run: |
           VERSION=$(cat version-string/version)
-          TARGET=$GS_BASE/staging/common/$VERSION/
+          TARGET=$WIDGETS_BASE/staging/common/$VERSION/
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
@@ -165,7 +165,7 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          TARGET=$GS_BASE/<< parameters.stage >>/common
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
@@ -174,12 +174,10 @@ workflows:
   workflow1:
     jobs:
       - install
-      - test:
+      - build_and_test:
           requires:
             - install
       - gcloud-setup:
-          requires:
-            - install
           filters:
             branches:
               only:
@@ -197,7 +195,7 @@ workflows:
                 - build/stable
       - deploy-stage:
           requires:
-            - test
+            - build_and_test
             - gcloud-setup
             - generate-version
           filters:
@@ -210,7 +208,7 @@ workflows:
           stage: beta
           name: build-e2e-page-beta
           requires:
-            - test
+            - build_and_test
             - generate-version
           filters:
             branches:
@@ -221,7 +219,7 @@ workflows:
           stage: stable
           name: build-e2e-page-stable
           requires:
-            - test
+            - build_and_test
             - generate-version
           filters:
             branches:
@@ -273,6 +271,7 @@ workflows:
                 - build/stable
       - deploy-production:
           stage: beta
+          name: deploy-beta
           requires:
             - test-e2e-electron-beta
             - gcloud-setup
@@ -282,6 +281,7 @@ workflows:
                 - master
       - deploy-production:
           stage: stable
+          name: deploy-stable
           requires:
             - test-e2e-electron-stable
             - gcloud-setup
