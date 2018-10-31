@@ -4,29 +4,49 @@
   "use strict";
 
   const babel = require( "gulp-babel" ),
+    concat = require( "gulp-concat" ),
     del = require( "del" ),
     gulp = require( "gulp" ),
     factory = require( "widget-tester" ).gulpTaskFactory,
     rename = require( "gulp-rename" ),
     runSequence = require( "run-sequence" ),
     sourcemaps = require( "gulp-sourcemaps" ),
-    uglify = require( "gulp-uglify" );
+    uglify = require( "gulp-uglify" ),
+    configScripts = [
+      "src/config/config-*.js"
+    ],
+    templateScripts = [
+      "src/rise-player-configuration.js",
+      "src/rise-local-messaging.js",
+      "src/rise-helpers.js",
+      "src/rise-logger.js",
+      "src/rise-local-storage.js",
+      "src/rise-component-loader.js",
+    ];
 
   gulp.task( "clean", function( cb ) {
     return del([ "./dist/**" ], cb );
   });
 
-  gulp.task( "scripts", () => {
-    return gulp.src([
-      "src/config/config-prod.js",
-      "src/config/config-test.js",
-      "src/rise-component-loader.js",
-      "src/rise-helpers.js",
-      "src/rise-local-messaging.js",
-      "src/rise-local-storage.js",
-      "src/rise-logger.js",
-      "src/rise-player-configuration.js"
-    ])
+  gulp.task( "configScripts", () => {
+    return gulp.src( configScripts )
+      .pipe( babel({
+        presets: [ "env" ],
+        plugins: [ "transform-object-assign" ]
+      }))
+      .pipe( gulp.dest( "dist" ))
+      .pipe( sourcemaps.init())
+      .pipe( rename(( path ) => {
+        path.basename += ".min";
+      }))
+      .pipe( uglify())
+      .pipe( sourcemaps.write())
+      .pipe( gulp.dest( "dist" ));
+  });
+
+  gulp.task( "templateScripts", () => {
+    return gulp.src( templateScripts )
+      .pipe( concat( "common-template.js" ))
       .pipe( babel({
         presets: [ "env" ],
         plugins: [ "transform-object-assign" ]
@@ -42,7 +62,7 @@
   });
 
   gulp.task( "build", ( cb ) => {
-    runSequence([ "clean" ], [ "scripts" ], cb );
+    runSequence([ "clean" ], [ "configScripts", "templateScripts" ], cb );
   });
 
   gulp.task( "test-unit", factory.testUnitAngular(
@@ -52,12 +72,7 @@
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
       "dist/config-test.js",
-      "dist/rise-player-configuration.js",
-      "dist/rise-local-messaging.js",
-      "dist/rise-helpers.js",
-      "dist/rise-logger.js",
-      "dist/rise-local-storage.js",
-      "dist/rise-component-loader.js",
+      "dist/common-template.js",
       "test/unit/*test.js",
       "test/unit/rise-logger/*test.js" ] }
   ));
@@ -69,12 +84,7 @@
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
       "dist/config-test.js",
-      "dist/rise-player-configuration.js",
-      "dist/rise-local-messaging.js",
-      "dist/rise-helpers.js",
-      "dist/rise-logger.js",
-      "dist/rise-local-storage.js",
-      "dist/rise-component-loader.js",
+      "dist/common-template.js",
       "test/integration/*test.js" ] }
   ));
 
