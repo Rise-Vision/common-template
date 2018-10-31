@@ -30,6 +30,8 @@ jobs:
   gcloud-setup:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
+        environment:
+          GS_BASE: gs://widgets.risevision.com
     steps:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -92,13 +94,62 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          GS_BASE=gs://widgets.risevision.com
           VERSION=$(cat version-string/version)
           TARGET=$GS_BASE/staging/common/$VERSION/
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
+
+  deploy-e2e-page:
+    parameters:
+      stage:
+        type: string
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          TARGET=$GS_BASE/<< parameters.stage >>/e2e/rise-data-image/electron
+          echo Deploying << parameters.stage >> electron e2e page for rise-data-image
+          gsutil rsync -d -r base $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil acl -r ch -u AllUsers:R $TARGET
+
+  test-e2e-electron:
+    parameters:
+      stage:
+        type: string
+      displayId:
+        type: string
+    docker: &E2EIMAGE
+      - image: jenkinsrise/jenkinsrise-cci-image-launcher-electron-e2e:0.0.2
+        environment:
+          SCREENSHOTS_BASE: https://storage.googleapis.com/risevision-display-screenshots
+          PLAYER_CONFIG: /home/circleci/rvplayer/RiseDisplayNetworkII.ini
+    steps:
+      - run: git clone https://github.com/Rise-Vision/rise-launcher-electron-e2e.git
+      - run: |
+          cd rise-launcher-electron-e2e
+          npm install
+      - run: mkdir ~/rvplayer
+      - run: echo "displayid=<< parameters.displayId >>" > $PLAYER_CONFIG
+      - run: echo proxy= >> $PLAYER_CONFIG
+      - run:
+          name: run the test
+          command: |
+            EXPECTED_SNAPSHOT_URL=$SCREENSHOTS_BASE/<< parameters.displayId >>.jpg
+            cd rise-launcher-electron-e2e
+            node test-display-runner.js << parameters.displayId >> $EXPECTED_SNAPSHOT_URL 20 << parameters.stage >>
+      - run: mkdir output
+      - run: mv ./rise-launcher-electron-e2e/*screenshot.jpg output
+      - store_artifacts:
+          path: output
 
   deploy-production:
     parameters:
@@ -114,7 +165,6 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          GS_BASE=gs://widgets.risevision.com
           TARGET=$GS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
@@ -165,8 +215,8 @@ workflows:
           filters:
             branches:
               only:
-                - /^(stage|staging)[/].*/
                 - master
+                - /^(stage|staging)[/].*/
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
@@ -177,10 +227,54 @@ workflows:
             branches:
               only:
                 - build/stable
+      - deploy-e2e-page:
+          stage: beta
+          name: deploy-e2e-page-beta
+          requires:
+            - gcloud-setup
+            - build-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^(stage|staging)[/].*/
+      - deploy-e2e-page:
+          stage: stable
+          name: deploy-e2e-page-stable
+          requires:
+            - gcloud-setup
+            - build-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
+      - test-e2e-electron:
+          stage: beta
+          displayId: 9YP68DHZ4HUJ
+          name: test-e2e-electron-beta
+          requires:
+            - deploy-stage
+            - deploy-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^(stage|staging)[/].*/
+      - test-e2e-electron:
+          stage: stable
+          displayId: U2SQ87Y5QM64
+          name: test-e2e-electron-stable
+          requires:
+            - deploy-stage
+            - deploy-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
       - deploy-production:
           stage: beta
           requires:
-            - build-e2e-page-beta
+            - test-e2e-electron-beta
             - gcloud-setup
           filters:
             branches:
@@ -189,7 +283,7 @@ workflows:
       - deploy-production:
           stage: stable
           requires:
-            - build-e2e-page-stable
+            - test-e2e-electron-stable
             - gcloud-setup
           filters:
             branches:
