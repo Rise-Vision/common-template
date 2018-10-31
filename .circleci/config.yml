@@ -57,15 +57,17 @@ jobs:
       - run: |
           VERSION=$(cat version-string/version)
           sed "
+            s!__STAGE__/common!<< parameters.stage >>/common/$VERSION!;
             s/__STAGE__/<< parameters.stage >>/;
-            s/__VERSION__/$VERSION/;
+            s!staging/components/rise-data-image/__VERSION__!<< parameters.stage >>/components/rise-data-image!;
             s/__PLAYER__/electron/;
             s/__CONNECTION__/websocket/;
           " rise-data-image/e2e/rise-data-image.html > rise-data-image/e2e/rise-data-image-electron.html
       - run: cp rise-data-image/e2e/polymer-e2e-electron.json rise-data-image/polymer.json
-      - run: cat rise-data-image/polymer.json
+      - run: cat rise-data-image/e2e/rise-data-image-electron.html
       - run: |
           cd rise-data-image
+          npm install
           polymer build
       - persist_to_workspace:
           root: ./rise-data-image/build
