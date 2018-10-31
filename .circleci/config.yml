@@ -1,20 +1,33 @@
 version: 2.1
 
 jobs:
-  build_and_test:
+  install:
     docker: &BUILDIMAGE
       - image: jenkinsrise/cci-v2-components:0.0.4
     steps:
       - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
       - run: sudo npm install -g gulp
       - run: npm install
+      - save_cache:
+          key: node-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+
+  build_and_test:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
       - run: npm test
       - persist_to_workspace:
           root: .
           paths:
             - dist
 
-  gcloud_setup:
+  gcloud-setup:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
     steps:
@@ -28,7 +41,36 @@ jobs:
           paths:
             - gcloud
 
-  deploy_to_gcs:
+  generate-version:
+    docker: *BUILDIMAGE
+    steps:
+      - run: mkdir version-string
+      - run: echo $(date +%Y.%m.%d.%H.%M) > version-string/version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - version-string
+
+  deploy-stage:
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          GS_BASE=gs://widgets.risevision.com
+          VERSION=$(cat version-string/version)
+          TARGET=$GS_BASE/staging/common/$VERSION/
+          echo Deploying version $VERSION to common
+          gsutil cp dist/*.js $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil acl -r ch -u AllUsers:R $TARGET
+
+  deploy-production:
     parameters:
       stage:
         type: string
@@ -42,7 +84,8 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          TARGET=gs://widgets.risevision.com/<< parameters.stage >>/common
+          GS_BASE=gs://widgets.risevision.com
+          TARGET=$GS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
@@ -50,27 +93,53 @@ jobs:
 workflows:
   workflow1:
     jobs:
-      - build_and_test
-      - gcloud_setup:
+      - install
+      - build_and_test:
+          requires:
+            - install
+      - gcloud-setup:
+          requires:
+            - install
           filters:
             branches:
               only:
+                - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-      - deploy_to_gcs:
+      - generate-version:
+          requires:
+            - install
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
+      - deploy-stage:
+          requires:
+            - build_and_test
+            - gcloud-setup
+            - generate-version
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
+      - deploy-production:
           stage: beta
           requires:
             - build_and_test
-            - gcloud_setup
+            - gcloud-setup
           filters:
             branches:
               only:
                 - master
-      - deploy_to_gcs:
+      - deploy-production:
           stage: stable
           requires:
             - build_and_test
-            - gcloud_setup
+            - gcloud-setup
           filters:
             branches:
               only:
