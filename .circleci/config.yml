@@ -6,8 +6,14 @@ jobs:
       - image: jenkinsrise/cci-v2-components:0.0.4
     steps:
       - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
       - run: sudo npm install -g gulp
       - run: npm install
+      - save_cache:
+          key: node-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
       - run: npm test
       - persist_to_workspace:
           root: .
@@ -27,6 +33,44 @@ jobs:
           root: ~/.config
           paths:
             - gcloud
+
+  generate_version:
+    docker: *BUILDIMAGE
+    steps:
+      - run: mkdir version-string
+      - run: echo $(date +%Y.%m.%d.%H.%M) > version-string/version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - version-string
+
+  build_e2e_page:
+    parameters:
+      stage:
+        type: string
+    docker: *BUILDIMAGE
+    steps:
+      - attach_workspace:
+          at: .
+      - run: echo build rise-data-image e2e page << parameters.stage >>
+      - run: git clone https://github.com/Rise-Vision/rise-data-image.git
+      - run: |
+          VERSION=$(cat version-string/version)
+          sed "
+            s/__STAGE__/<< parameters.stage >>/;
+            s/__VERSION__/$VERSION/;
+            s/__PLAYER__/electron/;
+            s/__CONNECTION__/websocket/;
+          " rise-data-image/e2e/rise-data-image.html > rise-data-image/e2e/rise-data-image-electron.html
+      - run: cp rise-data-image/e2e/polymer-e2e-electron.json rise-data-image/polymer.json
+      - run: cat rise-data-image/polymer.json
+      - run: |
+          cd rise-data-image
+          polymer build
+      - persist_to_workspace:
+          root: ./rise-data-image/build
+          paths:
+            - base
 
   deploy_to_gcs:
     parameters:
@@ -51,16 +95,22 @@ workflows:
   workflow1:
     jobs:
       - build_and_test
+      - generate_version
       - gcloud_setup:
           filters:
             branches:
               only:
                 - master
                 - build/stable
-      - deploy_to_gcs:
+      - build_e2e_page:
           stage: beta
           requires:
             - build_and_test
+            - generate_version
+      - deploy_to_gcs:
+          stage: beta
+          requires:
+            - build_e2e_page
             - gcloud_setup
           filters:
             branches:
@@ -69,7 +119,7 @@ workflows:
       - deploy_to_gcs:
           stage: stable
           requires:
-            - build_and_test
+            - build_e2e_page
             - gcloud_setup
           filters:
             branches:
