@@ -115,7 +115,7 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          TARGET=$GS_BASE/<< parameters.stage >>/e2e/rise-data-image/electron
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/e2e/rise-data-image/electron
           echo Deploying << parameters.stage >> electron e2e page for rise-data-image
           gsutil rsync -d -r base $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
