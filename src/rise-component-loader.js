@@ -2,119 +2,26 @@
 
 RisePlayerConfiguration.ComponentLoader = (() => {
 
-  let _rolloutEnvironment = null;
-
-  function _determineRolloutEnvironment() {
-    const playerInfo = RisePlayerConfiguration.getPlayerInfo();
-
-    if ( playerInfo.developmentManifestUrl ) {
-      _rolloutEnvironment = "development";
-    } else {
-      if ( !playerInfo.playerType ) {
-        console.log( "No playerType parameter provided." );
-
-        return false;
-      }
-      if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
-        console.log( `Illegal playerType parameter provided: '${ playerInfo.playerType }'` );
-
-        return false;
-      }
-
-      _rolloutEnvironment = playerInfo.playerType;
-    }
-
-    return true;
-  }
-
-  function _sendComponentsLoadedEvent( isLoaded ) {
-    const detail = { detail: { isLoaded: isLoaded } },
-      event = new CustomEvent( "rise-components-loaded", detail );
-
-    window.dispatchEvent( event );
-  }
-
-  function _fetchComponentCode( component, download ) {
-    return download( component.url )
-      .then( response => response.text())
-      .then( code => {
-        const script = document.createElement( "script" );
-
-        script.append( code );
-        document.body.appendChild( script );
-      });
-  }
-
   function connectionHandler( event ) {
     if ( event.detail.isConnected ) {
       window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
 
-      load();
+      Promise.resolve()
+        .then(() => {
+          const detail = { detail: { isLoaded: true } };
+
+          // old event, so we don't break existing pages; will be removed soon
+          window.dispatchEvent( new CustomEvent( "rise-components-loaded", detail ));
+
+          // components ready event, will be moved elsewhere after when this class disappears
+          window.dispatchEvent( new CustomEvent( "rise-components-ready" ));
+        });
     }
   }
 
-  function getRolloutEnvironment() {
-    return _rolloutEnvironment;
-  }
-
-  function load() {
-    console.log( "loading" );
-
-    if ( !_determineRolloutEnvironment()) {
-      return _sendComponentsLoadedEvent( false );
-    }
-
-    // do not complete the load on test environments.
-    if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-      return;
-    }
-
-    // TODO: all rollout procedure
-
-    // fixed component names for the time being
-    const components = RisePlayerConfiguration.ComponentLoader.components || [
-      {
-        name: "rise-data-financial",
-        url: "https://widgets.risevision.com/beta/components/rise-data-financial/rise-data-financial.js"
-      }
-    ];
-
-    fetchAndLoadComponents( components );
-  }
-
-  function fetchAndLoadComponents( components, downloadFunction = window.fetch ) {
-    components.reduce(( promise, component ) => {
-      return promise.then(() => {
-        return _fetchComponentCode( component, downloadFunction );
-      });
-    }, Promise.resolve())
-      .then(() => {
-        _sendComponentsLoadedEvent( true );
-      })
-      .catch( error => {
-        console.log( error );
-
-        _sendComponentsLoadedEvent( false );
-      });
-  }
-
-  // for testing purposes
-  function clear() {
-    _rolloutEnvironment = null;
-  }
-
-  const exposedFunctions = {
-    connectionHandler: connectionHandler,
-    getRolloutEnvironment: getRolloutEnvironment
+  return {
+    connectionHandler: connectionHandler
   };
-
-  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-    exposedFunctions.clear = clear;
-    exposedFunctions.fetchAndLoadComponents = fetchAndLoadComponents;
-    exposedFunctions.load = load;
-  }
-
-  return exposedFunctions;
 
 })();
 
