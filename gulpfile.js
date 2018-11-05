@@ -77,19 +77,8 @@
       "test/unit/rise-logger/*test.js" ] }
   ));
 
-  gulp.task( "test-integration", factory.testUnitAngular(
-    { testFiles: [
-      "test/test_env.js",
-      "node_modules/promise-polyfill/dist/polyfill.min.js",
-      "node_modules/whatwg-fetch/dist/fetch.umd.js",
-      "node_modules/dom4/build/dom4.js",
-      "dist/config-test.js",
-      "dist/common-template.js",
-      "test/integration/*test.js" ] }
-  ));
-
   gulp.task( "test", ( cb ) => {
-    runSequence([ "build" ], [ "test-unit" ], [ "test-integration" ], cb );
+    runSequence([ "build" ], [ "test-unit" ], cb );
   });
 
 })( console );
