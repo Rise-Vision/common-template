@@ -25,6 +25,68 @@ describe( "RisePlayerConfiguration", function() {
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
 
+  describe( "getPlayerInfo", function() {
+
+    it( "should return the player info", function() {
+      RisePlayerConfiguration.configure({ displayId: "id" });
+
+      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+        displayId: "id"
+      });
+    });
+
+    it( "should not return the player info if there was no configuration", function() {
+      RisePlayerConfiguration.configure();
+
+      expect( RisePlayerConfiguration.getPlayerInfo()).to.be.undefined;
+    });
+
+  });
+
+  describe( "getDisplayId", function() {
+
+    it( "should return the display id", function() {
+      RisePlayerConfiguration.configure({ displayId: "id" });
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "id" );
+    });
+
+    it( "should not return the display id if it was not provided", function() {
+      RisePlayerConfiguration.configure({});
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
+    });
+
+    it( "should not return the display id if there was no configuration", function() {
+      RisePlayerConfiguration.configure();
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.be.null;
+    });
+
+  });
+
+  describe( "getCompanyId", function() {
+
+    it( "should return the company id", function() {
+      RisePlayerConfiguration.configure({ companyId: "id" });
+
+      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "id" );
+    });
+
+    it( "should not return the company id if it was not provided", function() {
+      RisePlayerConfiguration.configure({});
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
+    });
+
+    it( "should not return the company id if there was no configuration", function() {
+      RisePlayerConfiguration.configure();
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.be.null;
+    });
+
+  });
+
   describe( "isPreview", function() {
 
     it( "should be preview if display id is 'preview'", function() {
