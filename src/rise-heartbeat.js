@@ -9,11 +9,17 @@ RisePlayerConfiguration.Heartbeat = (() => {
   function _startHeartbeatInterval() {
     reset();
 
+    // send heartbeat immediately, so watchdog module will receive it even if
+    // the template page changes fast.
+    _sendHeartbeat();
+
     _interval = setInterval( _sendHeartbeat, HEARTBEAT_TIMEOUT );
   }
 
   function _sendHeartbeat() {
-    // send heartbeat
+    RisePlayerConfiguration.LocalMessaging.broadcastMessage({
+      topic: "heartbeat"
+    });
   }
 
   function connectionHandler( event ) {
