@@ -21,6 +21,18 @@ describe( "configure", function() {
     expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.false;
   });
 
+  it( "should not enable BQ logging if preview", function() {
+    RisePlayerConfiguration.configure({
+      displayId: "preview",
+      companyId: "COMPANY_ID",
+      playerType: "beta",
+      os: "Ubuntu 64",
+      playerVersion: "2018.01.01.10.00"
+    }, {});
+
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.false;
+  });
+
   it( "should configure logging during beta stage", function() {
     RisePlayerConfiguration.configure({
       displayId: "DISPLAY_ID",

@@ -52,6 +52,9 @@ const RisePlayerConfiguration = {
 
     return playerInfo ? playerInfo.displayId : null;
   },
+  isPreview: function() {
+    return RisePlayerConfiguration.getDisplayId() === "preview";
+  },
   Helpers: null,
   LocalMessaging: null,
   LocalStorage: null,

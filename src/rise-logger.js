@@ -40,7 +40,8 @@ RisePlayerConfiguration.Logger = (() => {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
     const rolloutStage = playerInfo.playerType;
 
-    if ( playerInfo.playerType !== "beta" && playerInfo.playerType !== "stable" ) {
+    if ( RisePlayerConfiguration.isPreview() ||
+      ( rolloutStage !== "beta" && rolloutStage !== "stable" )) {
       _bigQueryLoggingEnabled = false;
       return;
     }
