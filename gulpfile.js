@@ -19,6 +19,7 @@
       "src/rise-player-configuration.js",
       "src/rise-local-messaging.js",
       "src/rise-helpers.js",
+      "src/rise-heartbeat.js",
       "src/rise-logger.js",
       "src/rise-local-storage.js",
       "src/rise-component-loader.js",
