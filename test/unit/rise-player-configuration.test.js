@@ -101,6 +101,18 @@ describe( "RisePlayerConfiguration", function() {
       expect( RisePlayerConfiguration.isPreview()).to.be.false;
     });
 
+    it( "should call rise-components-ready on preview", function( done ) {
+      var connectionHandler = function() {
+        window.removeEventListener( "rise-components-ready", connectionHandler );
+
+        done();
+      };
+
+      window.addEventListener( "rise-components-ready", connectionHandler );
+
+      RisePlayerConfiguration.configure({ displayId: "preview" });
+    });
+
   });
 
 });

@@ -24,7 +24,12 @@ const RisePlayerConfiguration = {
     }
 
     RisePlayerConfiguration.Logger.configure();
-    RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+
+    if ( RisePlayerConfiguration.isPreview()) {
+      RisePlayerConfiguration.sendComponentsReadyEvent();
+    } else {
+      RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+    }
 
     // lock down RisePlayerConfiguration object
     if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
@@ -54,6 +59,12 @@ const RisePlayerConfiguration = {
   },
   isPreview: function() {
     return RisePlayerConfiguration.getDisplayId() === "preview";
+  },
+  sendComponentsReadyEvent() {
+    Promise.resolve()
+      .then(() => {
+        window.dispatchEvent( new CustomEvent( "rise-components-ready" ));
+      });
   },
   Helpers: null,
   LocalMessaging: null,
