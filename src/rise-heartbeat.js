@@ -7,7 +7,7 @@ RisePlayerConfiguration.Heartbeat = (() => {
     _interval = null;
 
   function _startHeartbeatInterval() {
-    reset();
+    _reset();
 
     // send heartbeat immediately, so watchdog module will receive it even if
     // the template page changes fast.
@@ -33,7 +33,7 @@ RisePlayerConfiguration.Heartbeat = (() => {
     }
   }
 
-  function reset() {
+  function _reset() {
     clearTimeout( _interval );
   }
 
@@ -42,7 +42,10 @@ RisePlayerConfiguration.Heartbeat = (() => {
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-    exposedFunctions.reset = reset;
+    Object.assign( exposedFunctions, {
+      startHeartbeatInterval: _startHeartbeatInterval,
+      reset: _reset
+    });
   }
 
   return exposedFunctions;
