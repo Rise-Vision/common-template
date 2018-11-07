@@ -132,12 +132,14 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
   function _receiveWebsocketMessages( handler ) {
     _messageHandlers.push(( data ) => {
-      handler( data );
+      data.topic && typeof data.topic === "string" && handler( data );
     });
   }
 
   function _receiveWindowMessages( handler ) {
-    top.receiveFromPlayer( "local-messaging", handler );
+    top.receiveFromPlayer( "local-messaging", data => {
+      data.topic && typeof data.topic === "string" && handler( data );
+    });
   }
 
   function _resetForAutomatedTests() {

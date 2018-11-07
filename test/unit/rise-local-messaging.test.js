@@ -100,6 +100,18 @@ describe( "window connection", function() {
 
       expect( spy ).to.have.been.calledWith({ topic: "TEST" });
     });
+
+    it( "should not execute handler when message is received without a topic", function() {
+      var spy = sinon.spy();
+
+      top.receiveFromPlayer = function( name, handler ) {
+        // force test a message
+        handler({ test: "TEST" });
+      };
+      RisePlayerConfiguration.LocalMessaging.receiveMessages( spy );
+
+      expect( spy ).to.not.have.been.called;
+    });
   });
 
   describe( "broadcastMessage", function() {
@@ -291,6 +303,15 @@ describe( "websocket connection", function() {
       messagingInternalDataHandler({ topic: "TEST" });
 
       expect( spy ).to.be.calledWith({ topic: "TEST" });
+    });
+
+    it( "should not execute handler when message is received without a topic", function() {
+      var spy = sinon.spy();
+
+      RisePlayerConfiguration.LocalMessaging.receiveMessages( spy );
+      messagingInternalDataHandler({ test: "TEST" });
+
+      expect( spy ).to.not.have.been.called;
     });
   });
 
