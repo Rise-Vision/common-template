@@ -292,6 +292,15 @@ describe( "websocket connection", function() {
 
       expect( spy ).to.be.calledWith({ topic: "TEST" });
     });
+
+    it( "should not execute handler when message is received without a topic", function() {
+      var spy = sinon.spy();
+
+      RisePlayerConfiguration.LocalMessaging.receiveMessages( spy );
+      messagingInternalDataHandler({ test: "TEST" });
+
+      expect( spy ).to.not.have.been.called;
+    });
   });
 
   describe( "broadcastMessage", function() {
