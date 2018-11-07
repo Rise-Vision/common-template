@@ -35,6 +35,7 @@ RisePlayerConfiguration.Heartbeat = (() => {
 
   function _reset() {
     clearTimeout( _interval );
+    _interval = null;
   }
 
   const exposedFunctions = {
@@ -43,6 +44,7 @@ RisePlayerConfiguration.Heartbeat = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
+      timeout: HEARTBEAT_TIMEOUT,
       startHeartbeatInterval: _startHeartbeatInterval,
       reset: _reset
     });
