@@ -11,7 +11,8 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _connectionType,
     _playerType,
     _initialWebsocketConnectionTimer = null,
-    _messageHandlers = [];
+    _messageHandlers = [],
+    _useViewerWebsocketConnection = false;
 
   function _addWebsocketConnectionHandlers() {
     _connection.on( "open", () => {
@@ -46,21 +47,16 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _broadcastWebsocketMessage( msg ) {
+    if ( _useViewerWebsocketConnection ) {
+      top.RiseVision.Viewer.LocalMessaging.write( msg );
+      return;
+    }
+
     _connection.write( Object.assign({}, { from: _clientName }, msg ));
   }
 
   function _broadcastWindowMessage( msg ) {
     top.postToPlayer( Object.assign({}, { from: _clientName }, msg ));
-  }
-
-  function _disconnectViewerConnection() {
-    try {
-      if ( top.RiseVision && top.RiseVision.Viewer && top.RiseVision.Viewer.LocalMessaging ) {
-        top.RiseVision.Viewer.LocalMessaging.disconnect();
-      }
-    } catch ( err ) {
-      console.log( "window.top reference error", err );
-    }
   }
 
   function _isWindowConnectionAvailable() {
@@ -89,23 +85,20 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     return false;
   }
 
-  function _initWebsocketConnection( detail ) {
-    // TODO: dynamically load the primus client side library
-
-    if ( !_isWebsocketConnectionAvailable()) {
-      console.log( "primus client side library was not loaded" );
-      return;
+  function _isWebsocketOpenByViewer() {
+    try {
+      if ( top.RiseVision && top.RiseVision.Viewer && top.RiseVision.Viewer.LocalMessaging ) {
+        return true;
+      }
+    } catch ( err ) {
+      console.log( "window.top reference error", err );
     }
 
-    if ( !detail || !detail.serverUrl ) {
-      console.log( "websocket server url not provided" );
-      return;
-    }
+    return false;
+  }
 
+  function _openWebsocketConnection( detail ) {
     const { serverUrl } = detail;
-
-    // Account for a connection already made in Viewer, disconnect it
-    _disconnectViewerConnection();
 
     _connection = top.PrimusLMS.connect( serverUrl, {
       reconnect: {
@@ -125,12 +118,41 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _connection.open();
   }
 
+  function _initWebsocketConnection( detail ) {
+    // TODO: dynamically load the primus client side library
+
+    if ( !_isWebsocketConnectionAvailable()) {
+      console.log( "primus client side library was not loaded" );
+      return;
+    }
+
+    if ( !detail || !detail.serverUrl ) {
+      console.log( "websocket server url not provided" );
+      return;
+    }
+
+    if ( _isWebsocketOpenByViewer()) {
+      _useViewerWebsocketConnection = true;
+
+      console.log( "local messaging connected via Viewer" );
+      _sendConnectionEvent();
+      return;
+    }
+
+    _openWebsocketConnection( detail );
+  }
+
   function _initWindowConnection() {
     _connected = _isWindowConnectionAvailable();
     _sendConnectionEvent();
   }
 
   function _receiveWebsocketMessages( handler ) {
+    if ( _useViewerWebsocketConnection ) {
+      top.RiseVision.Viewer.LocalMessaging.receiveMessages( handler );
+      return;
+    }
+
     _messageHandlers.push(( data ) => {
       data.topic && typeof data.topic === "string" && handler( data );
     });
@@ -162,7 +184,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _sendConnectionEvent() {
-    window.dispatchEvent( new CustomEvent( "rise-local-messaging-connection", { detail: { isConnected: _connected } }));
+    window.dispatchEvent( new CustomEvent( "rise-local-messaging-connection", { detail: { isConnected: isConnected() } }));
   }
 
   function _validatePlayer( name ) {
@@ -176,7 +198,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function broadcastMessage( message ) {
-    if ( !message || !_connected ) {
+    if ( !message || !isConnected()) {
       return;
     }
 
@@ -244,7 +266,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function isConnected() {
-    return _connected;
+    return ( getConnectionType() === "websocket" && _useViewerWebsocketConnection ) ? top.RiseVision.Viewer.LocalMessaging.canConnect() : _connected;
   }
 
   function receiveMessages( handler ) {
