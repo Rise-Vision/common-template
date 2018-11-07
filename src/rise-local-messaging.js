@@ -137,7 +137,9 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _receiveWindowMessages( handler ) {
-    top.receiveFromPlayer( "local-messaging", handler );
+    top.receiveFromPlayer( "local-messaging", data => {
+      data.topic && typeof data.topic === "string" && handler( data );
+    });
   }
 
   function _resetForAutomatedTests() {
