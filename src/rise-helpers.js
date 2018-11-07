@@ -23,7 +23,7 @@ RisePlayerConfiguration.Helpers = (() => {
     }
 
     RisePlayerConfiguration.LocalMessaging.receiveMessages( message => {
-      if ( invoked || message.topic.toUpperCase() !== "CLIENT-LIST" ) {
+      if ( invoked || !message.topic || message.topic.toUpperCase() !== "CLIENT-LIST" ) {
         return;
       }
 
