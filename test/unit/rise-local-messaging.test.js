@@ -379,3 +379,75 @@ describe( "websocket connection", function() {
   });
 
 });
+
+describe( "websocket connection via Viewer", function() {
+  beforeEach( function() {
+    top.RiseVision = {
+      Viewer: {
+        LocalMessaging: {
+          canConnect: function() {
+            return true;
+          },
+          receiveMessages: function() {},
+          write: function() {}
+        }
+      }
+    };
+    top.PrimusLMS = { connect: function() {} };
+  });
+
+  afterEach( function() {
+    delete top.RiseVision;
+    delete top.PrimusLMS;
+  });
+
+  it( "should send connection event and not open new websocket connection", function( done ) {
+    var connectionHandler = function( evt ) {
+        expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.true;
+        expect( evt.detail ).to.deep.equal({ isConnected: true });
+        expect( spy ).to.not.have.been.called;
+
+        window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
+        spy.restore();
+
+        done();
+      },
+      spy = sinon.spy( top.PrimusLMS, "connect" );
+
+    window.addEventListener( "rise-local-messaging-connection", connectionHandler );
+
+    RisePlayerConfiguration.LocalMessaging.configure({ player: "electron", connectionType: "websocket", detail: { serverUrl: "http://localhost:8080" } });
+  });
+
+  it( "should provide Viewer connection status when 'isConnected' called", function() {
+    var spy = sinon.spy( top.RiseVision.Viewer.LocalMessaging, "canConnect" );
+
+    expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.true;
+    expect( spy ).to.have.been.called;
+
+    spy.restore();
+  });
+
+  it( "should execute Viewer 'write' when 'broadcastMessage' called", function() {
+    var spy = sinon.spy( top.RiseVision.Viewer.LocalMessaging, "write" );
+
+    RisePlayerConfiguration.LocalMessaging.broadcastMessage({ topic: "TEST" });
+
+    expect( spy ).to.have.been.calledWith({ topic: "TEST" });
+
+    spy.restore();
+  });
+
+  it( "should execute Viewer 'receiveMessages' when 'receiveMessages' called", function() {
+    var spy = sinon.spy( top.RiseVision.Viewer.LocalMessaging, "receiveMessages" ),
+      handler = function() {
+        return "test"
+      };
+
+    RisePlayerConfiguration.LocalMessaging.receiveMessages( handler );
+
+    expect( spy ).to.have.been.calledWith( handler );
+
+    spy.restore();
+  });
+});
