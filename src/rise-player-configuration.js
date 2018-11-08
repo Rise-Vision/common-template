@@ -1,12 +1,7 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  ComponentLoader: null,
   configure: ( playerInfo, localMessagingInfo ) => {
-
-    if ( !RisePlayerConfiguration.ComponentLoader ) {
-      throw new Error( "RiseComponentLoader script was not loaded" );
-    }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
 
