@@ -212,7 +212,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - fix/e2e
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
@@ -232,7 +232,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - fix/e2e
       - deploy-e2e-page:
           stage: stable
           name: deploy-e2e-page-stable
@@ -253,7 +253,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - fix/e2e
       - test-e2e-electron:
           stage: stable
           displayId: U2SQ87Y5QM64
