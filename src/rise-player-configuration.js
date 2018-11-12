@@ -1,12 +1,7 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  ComponentLoader: null,
   configure: ( playerInfo, localMessagingInfo ) => {
-
-    if ( !RisePlayerConfiguration.ComponentLoader ) {
-      throw new Error( "RiseComponentLoader script was not loaded" );
-    }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
 
@@ -31,6 +26,18 @@ const RisePlayerConfiguration = {
     if ( RisePlayerConfiguration.isPreview()) {
       RisePlayerConfiguration.sendComponentsReadyEvent();
     } else {
+      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+        const handler = ( event ) => {
+          if ( event.detail.isConnected ) {
+            window.removeEventListener( "rise-local-messaging-connection", handler );
+
+            RisePlayerConfiguration.sendComponentsReadyEvent();
+          }
+        };
+
+        window.addEventListener( "rise-local-messaging-connection", handler );
+      }
+
       RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
     }
 

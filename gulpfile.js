@@ -21,8 +21,7 @@
       "src/rise-helpers.js",
       "src/rise-heartbeat.js",
       "src/rise-logger.js",
-      "src/rise-local-storage.js",
-      "src/rise-component-loader.js",
+      "src/rise-local-storage.js"
     ];
 
   gulp.task( "clean", function( cb ) {
