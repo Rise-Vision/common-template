@@ -142,9 +142,18 @@ jobs:
       - run:
           name: run the test
           command: |
+            if [ << parameters.stage >> = "beta" ]
+            then
+              INSTALLER_STAGE="beta/"
+            else
+              INSTALLER_STAGE=""
+            fi
             EXPECTED_SNAPSHOT_URL=$SCREENSHOTS_BASE/<< parameters.displayId >>.jpg
             cd rise-launcher-electron-e2e
-            node test-display-runner.js << parameters.displayId >> $EXPECTED_SNAPSHOT_URL 20 << parameters.stage >>
+            curl $EXPECTED_SNAPSHOT_URL > expected-screenshot.jpg
+            curl https://storage.googleapis.com/install-versions.risevision.com/{$INSTALLER_STAGE}installer-lnx-64.sh > installer.sh
+            chmod +x installer.sh
+            node test-display-runner-using-downloaded-installer.js << parameters.displayId >> 20
       - run: mkdir output
       - run: mv ./rise-launcher-electron-e2e/*screenshot.jpg output
       - store_artifacts:
