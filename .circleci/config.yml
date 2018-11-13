@@ -126,6 +126,8 @@ jobs:
         type: string
       displayId:
         type: string
+      installerPath:
+        type: string
     docker: &E2EIMAGE
       - image: jenkinsrise/jenkinsrise-cci-image-launcher-electron-e2e:0.0.2
         environment:
@@ -140,11 +142,18 @@ jobs:
       - run: echo "displayid=<< parameters.displayId >>" > $PLAYER_CONFIG
       - run: echo proxy= >> $PLAYER_CONFIG
       - run:
-          name: run the test
+          name: prepare the test
           command: |
             EXPECTED_SNAPSHOT_URL=$SCREENSHOTS_BASE/<< parameters.displayId >>.jpg
             cd rise-launcher-electron-e2e
-            node test-display-runner.js << parameters.displayId >> $EXPECTED_SNAPSHOT_URL 20 << parameters.stage >>
+            curl $EXPECTED_SNAPSHOT_URL > expected-screenshot.jpg
+            curl << parameters.installerPath >>installer-lnx-64.sh > installer.sh
+            chmod +x installer.sh
+      - run:
+          name: run the test
+          command: |
+            cd rise-launcher-electron-e2e
+            node test-display-runner-using-downloaded-installer.js << parameters.displayId >> 20
       - run: mkdir output
       - run: mv ./rise-launcher-electron-e2e/*screenshot.jpg output
       - store_artifacts:
@@ -212,7 +221,7 @@ workflows:
           filters:
             branches:
               only:
-                - fix/e2e
+                - master
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
@@ -232,7 +241,7 @@ workflows:
           filters:
             branches:
               only:
-                - fix/e2e
+                - master
       - deploy-e2e-page:
           stage: stable
           name: deploy-e2e-page-stable
@@ -246,6 +255,7 @@ workflows:
       - test-e2e-electron:
           stage: beta
           displayId: 9YP68DHZ4HUJ
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
           name: test-e2e-electron-beta
           requires:
             - deploy-stage
@@ -253,10 +263,11 @@ workflows:
           filters:
             branches:
               only:
-                - fix/e2e
+                - master
       - test-e2e-electron:
           stage: stable
           displayId: U2SQ87Y5QM64
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
           name: test-e2e-electron-stable
           requires:
             - deploy-stage
@@ -269,7 +280,7 @@ workflows:
           stage: beta
           name: deploy-beta
           requires:
-            - deploy-stage
+            - test-e2e-electron-beta
             - gcloud-setup
           filters:
             branches:
