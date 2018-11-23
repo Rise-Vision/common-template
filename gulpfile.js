@@ -20,6 +20,7 @@
       "src/rise-local-messaging.js",
       "src/rise-helpers.js",
       "src/rise-heartbeat.js",
+      "src/rise-licensing.js",
       "src/rise-logger.js",
       "src/rise-local-storage.js"
     ];

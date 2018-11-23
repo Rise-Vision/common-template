@@ -1,0 +1,6 @@
+RisePlayerConfiguration.Licensing = (() => {
+
+  return {
+  }
+
+})();

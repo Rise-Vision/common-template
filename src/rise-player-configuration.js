@@ -17,6 +17,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Helpers ) {
       throw new Error( "RiseHelpers script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.Licensing ) {
+      throw new Error( "RiseLicensing script was not loaded" );
+    }
     if ( !RisePlayerConfiguration.Heartbeat ) {
       throw new Error( "RiseHeartbeat script was not loaded" );
     }
