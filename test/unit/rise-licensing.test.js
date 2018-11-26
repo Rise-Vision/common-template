@@ -123,7 +123,7 @@ describe( "Licensing", function() {
       RisePlayerConfiguration.Licensing.start();
     });
 
-    it( "should report RPP authorization if takes some time to receive it", function( done ) {
+    it( "should report storage authorization if takes some time to receive it", function( done ) {
       sinon.stub( RisePlayerConfiguration.LocalMessaging, "receiveMessages", function( handler ) {
         setTimeout( function() {
           handler({ topic: "storage-licensing-update", isAuthorized: true });
