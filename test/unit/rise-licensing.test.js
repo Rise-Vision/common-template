@@ -89,6 +89,44 @@ describe( "Licensing", function() {
       RisePlayerConfiguration.Licensing.onRppLicenseStatusChange( handler );
     });
 
+    it( "should ignore messages with no isAuthorized property", function( done ) {
+      sinon.stub( RisePlayerConfiguration.LocalMessaging, "receiveMessages", function( handler ) {
+        handler({ topic: "rpp-licensing-update" });
+
+        setTimeout( function() {
+          handler({ topic: "rpp-licensing-update", isAuthorized: true });
+        }, 1000 );
+      });
+
+      var handler = function( message ) {
+        expect( message ).to.deep.equal({ authorized: true });
+
+        done();
+      }
+
+      RisePlayerConfiguration.Licensing.start();
+      RisePlayerConfiguration.Licensing.onRppLicenseStatusChange( handler );
+    });
+
+    it( "should ignore messages with other topics", function( done ) {
+      sinon.stub( RisePlayerConfiguration.LocalMessaging, "receiveMessages", function( handler ) {
+        handler({ topic: "rpp-invalid-topic" });
+
+        setTimeout( function() {
+          handler({ topic: "rpp-licensing-update", isAuthorized: true });
+        }, 1000 );
+      });
+
+      var handler = function( message ) {
+        expect( message ).to.deep.equal({ authorized: true });
+
+        done();
+      }
+
+      RisePlayerConfiguration.Licensing.start();
+      RisePlayerConfiguration.Licensing.onRppLicenseStatusChange( handler );
+    });
+
   });
 
   describe( "Storage", function() {
