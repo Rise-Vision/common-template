@@ -49,6 +49,9 @@ const RisePlayerConfiguration = {
       Object.freeze( RisePlayerConfiguration );
     }
   },
+  isConfigured() {
+    return !!RisePlayerConfiguration.getPlayerInfo;
+  },
   getChromeVersion: function() {
     const info = RisePlayerConfiguration.getPlayerInfo();
 
