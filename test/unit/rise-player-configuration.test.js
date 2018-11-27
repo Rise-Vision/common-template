@@ -25,6 +25,24 @@ describe( "RisePlayerConfiguration", function() {
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
 
+  describe( "isConfigured", function() {
+
+    beforeEach( function() {
+      RisePlayerConfiguration.getPlayerInfo = undefined;
+    });
+
+    it( "should not be configured if configure() function has not been called", function() {
+      expect( RisePlayerConfiguration.isConfigured()).to.be.false;
+    });
+
+    it( "should be configured if configure() function has been called", function() {
+      RisePlayerConfiguration.configure({ displayId: "id" });
+
+      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+    });
+
+  });
+
   describe( "getPlayerInfo", function() {
 
     it( "should return the player info", function() {
