@@ -31,11 +31,11 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.getPlayerInfo = undefined;
     });
 
-    it( "should not be configured if configre() function has not been called", function() {
+    it( "should not be configured if configure() function has not been called", function() {
       expect( RisePlayerConfiguration.isConfigured()).to.be.false;
     });
 
-    it( "should be configured if configre() function has been called", function() {
+    it( "should be configured if configure() function has been called", function() {
       RisePlayerConfiguration.configure({ displayId: "id" });
 
       expect( RisePlayerConfiguration.isConfigured()).to.be.true;
