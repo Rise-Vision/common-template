@@ -1,9 +1,42 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  configure: ( playerInfo, localMessagingInfo ) => {
+  configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
 
-    RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
+    function initialize() {
+      RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
+
+      RisePlayerConfiguration.Logger.configure();
+
+      if ( RisePlayerConfiguration.isPreview()) {
+        RisePlayerConfiguration.sendComponentsReadyEvent();
+      } else {
+        if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+          const handler = ( event ) => {
+            if ( event.detail.isConnected ) {
+              window.removeEventListener( "rise-local-messaging-connection", handler );
+
+              RisePlayerConfiguration.sendComponentsReadyEvent();
+            }
+          };
+
+          window.addEventListener( "rise-local-messaging-connection", handler );
+        }
+
+        RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+      }
+
+      // lock down RisePlayerConfiguration object
+      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+        Object.freeze( RisePlayerConfiguration );
+      }
+    }
+
+    function canUseEndpointForDisplayId() {
+      const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
+
+      return !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview";
+    }
 
     if ( !RisePlayerConfiguration.LocalMessaging ) {
       throw new Error( "RiseLocalMessaging script was not loaded" );
@@ -24,29 +57,14 @@ const RisePlayerConfiguration = {
       throw new Error( "RiseHeartbeat script was not loaded" );
     }
 
-    RisePlayerConfiguration.Logger.configure();
-
-    if ( RisePlayerConfiguration.isPreview()) {
-      RisePlayerConfiguration.sendComponentsReadyEvent();
+    if ( canUseEndpointForDisplayId()) {
+      RisePlayerConfiguration.Helpers.getDisplayIdByEndpoint( displayId => {
+        // fallback on playerInfo.displayId value if displays/ endpoint failed
+        playerInfo.displayId = displayId ? displayId : playerInfo.displayId;
+        initialize();
+      });
     } else {
-      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-        const handler = ( event ) => {
-          if ( event.detail.isConnected ) {
-            window.removeEventListener( "rise-local-messaging-connection", handler );
-
-            RisePlayerConfiguration.sendComponentsReadyEvent();
-          }
-        };
-
-        window.addEventListener( "rise-local-messaging-connection", handler );
-      }
-
-      RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
-    }
-
-    // lock down RisePlayerConfiguration object
-    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-      Object.freeze( RisePlayerConfiguration );
+      initialize();
     }
   },
   isConfigured() {

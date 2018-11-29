@@ -8,6 +8,12 @@ RisePlayerConfiguration.Helpers = (() => {
     return names.every( name => _clients.indexOf( name ) >= 0 );
   }
 
+  function _getDisplaysEndpointURL() {
+    const playerType = RisePlayerConfiguration.LocalMessaging.getPlayerType();
+
+    return playerType === "electron" ? "https://localhost:9495/displays" : "http://127.0.0.1:9494/displays";
+  }
+
   function isTestEnvironment() {
     return window.env && window.env.RISE_ENV && window.env.RISE_ENV === "test";
   }
@@ -40,13 +46,43 @@ RisePlayerConfiguration.Helpers = (() => {
     });
   }
 
+  function getDisplayIdByEndpoint( callback ) {
+    const xmlhttp = new XMLHttpRequest();
+    const serverUrl = _getDisplaysEndpointURL();
+
+    xmlhttp.onreadystatechange = () => {
+      try {
+        if ( xmlhttp.readyState === 4 && xmlhttp.status === 200 ) {
+          try {
+            const responseObject = JSON.parse( xmlhttp.responseText );
+
+            callback( responseObject.displayId );
+          } catch ( err ) {
+            console.log( "displays endpoint: parse error", err );
+            callback( null );
+          }
+        } else {
+          console.log( "displays endpoint: request failed", xmlhttp.status );
+          callback( null );
+        }
+      } catch ( err ) {
+        console.debug( "Caught exception: ", err.message );
+        callback( null );
+      }
+    };
+
+    xmlhttp.open( "GET", serverUrl );
+    xmlhttp.send();
+  }
+
   function reset() {
     _clients = [];
   }
 
   const exposedFunctions = {
     isTestEnvironment: isTestEnvironment,
-    onceClientsAreAvailable: onceClientsAreAvailable
+    onceClientsAreAvailable: onceClientsAreAvailable,
+    getDisplayIdByEndpoint: getDisplayIdByEndpoint
   };
 
   if ( isTestEnvironment()) {
