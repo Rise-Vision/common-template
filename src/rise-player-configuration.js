@@ -3,40 +3,15 @@
 const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
 
-    function initialize() {
-      RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
+    const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
 
-      RisePlayerConfiguration.Logger.configure();
+    if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
+      const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
 
-      if ( RisePlayerConfiguration.isPreview()) {
-        RisePlayerConfiguration.sendComponentsReadyEvent();
-      } else {
-        if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-          const handler = ( event ) => {
-            if ( event.detail.isConnected ) {
-              window.removeEventListener( "rise-local-messaging-connection", handler );
-
-              RisePlayerConfiguration.sendComponentsReadyEvent();
-            }
-          };
-
-          window.addEventListener( "rise-local-messaging-connection", handler );
-        }
-
-        RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
-      }
-
-      // lock down RisePlayerConfiguration object
-      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-        Object.freeze( RisePlayerConfiguration );
-      }
+      playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
     }
 
-    function canUseEndpointForDisplayId() {
-      const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
-
-      return !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview";
-    }
+    RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
 
     if ( !RisePlayerConfiguration.LocalMessaging ) {
       throw new Error( "RiseLocalMessaging script was not loaded" );
@@ -57,14 +32,29 @@ const RisePlayerConfiguration = {
       throw new Error( "RiseHeartbeat script was not loaded" );
     }
 
-    if ( canUseEndpointForDisplayId()) {
-      RisePlayerConfiguration.Helpers.getDisplayIdByEndpoint( displayId => {
-        // fallback on playerInfo.displayId value if displays/ endpoint failed
-        playerInfo.displayId = displayId ? displayId : playerInfo.displayId;
-        initialize();
-      });
+    RisePlayerConfiguration.Logger.configure();
+
+    if ( RisePlayerConfiguration.isPreview()) {
+      RisePlayerConfiguration.sendComponentsReadyEvent();
     } else {
-      initialize();
+      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+        const handler = ( event ) => {
+          if ( event.detail.isConnected ) {
+            window.removeEventListener( "rise-local-messaging-connection", handler );
+
+            RisePlayerConfiguration.sendComponentsReadyEvent();
+          }
+        };
+
+        window.addEventListener( "rise-local-messaging-connection", handler );
+      }
+
+      RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+    }
+
+    // lock down RisePlayerConfiguration object
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+      Object.freeze( RisePlayerConfiguration );
     }
   },
   isConfigured() {
