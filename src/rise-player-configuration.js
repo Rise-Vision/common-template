@@ -1,7 +1,15 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  configure: ( playerInfo, localMessagingInfo ) => {
+  configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
+
+    const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
+
+    if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
+      const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
+
+      playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
+    }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
 
