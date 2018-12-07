@@ -28,7 +28,10 @@ describe( "log-entry", function() {
         playerVersion: "2018.01.01.10.00",
         ip: "213.21.45.40",
         chromeVersion: "68.34"
-      }, {});
+      }, {
+        player: "chromeos",
+        connectionType: "window"
+      });
     });
 
     it( "should complete the log entry with the predefined values", function() {
@@ -50,6 +53,7 @@ describe( "log-entry", function() {
         "event": "test event",
         "event_details": "test data",
         "player": {
+          "type": "chromeos",
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
           "os": "Ubuntu 64",
@@ -80,6 +84,7 @@ describe( "log-entry", function() {
         "event": "test event",
         "event_details": '{"content":"test data"}',
         "player": {
+          "type": "chromeos",
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
           "os": "Ubuntu 64",
@@ -108,6 +113,7 @@ describe( "log-entry", function() {
         "level": "info",
         "event": "test event",
         "player": {
+          "type": "chromeos",
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
           "os": "Ubuntu 64",
@@ -138,6 +144,7 @@ describe( "log-entry", function() {
         "event": "test event",
         "event_details": null,
         "player": {
+          "type": "chromeos",
           "ip": "213.21.45.40",
           "version": "2018.01.01.10.00",
           "os": "Ubuntu 64",
