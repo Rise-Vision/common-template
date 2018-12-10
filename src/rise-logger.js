@@ -179,6 +179,11 @@ RisePlayerConfiguration.Logger = (() => {
       entry.event_details = JSON.stringify( entry.event_details );
     }
 
+    // Since Logger is configured prior to LocalMessaging, player type is not available when common entry values are initially defined
+    if ( _commonEntryValues && _commonEntryValues.player && !_commonEntryValues.player.type ) {
+      _commonEntryValues.player.type = RisePlayerConfiguration.LocalMessaging.getPlayerType() || "";
+    }
+
     return Object.assign( entry, {
       "ts": new Date().toISOString(),
       "source": componentData.name,
