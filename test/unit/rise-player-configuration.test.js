@@ -53,12 +53,6 @@ describe( "RisePlayerConfiguration", function() {
       });
     });
 
-    it( "should not return the player info if there was no configuration", function() {
-      RisePlayerConfiguration.configure();
-
-      expect( RisePlayerConfiguration.getPlayerInfo()).to.be.undefined;
-    });
-
   });
 
   describe( "getDisplayId", function() {
@@ -75,12 +69,6 @@ describe( "RisePlayerConfiguration", function() {
       expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
     });
 
-    it( "should not return the display id if there was no configuration", function() {
-      RisePlayerConfiguration.configure();
-
-      expect( RisePlayerConfiguration.getDisplayId()).to.be.null;
-    });
-
   });
 
   describe( "getCompanyId", function() {
@@ -95,12 +83,6 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.configure({});
 
       expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
-    });
-
-    it( "should not return the company id if there was no configuration", function() {
-      RisePlayerConfiguration.configure();
-
-      expect( RisePlayerConfiguration.getDisplayId()).to.be.null;
     });
 
   });
@@ -129,6 +111,39 @@ describe( "RisePlayerConfiguration", function() {
       window.addEventListener( "rise-components-ready", connectionHandler );
 
       RisePlayerConfiguration.configure({ displayId: "preview" });
+    });
+
+  });
+
+  describe( "player injected getRisePlayerConfiguration", function() {
+
+    beforeEach( function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "ABC",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      }
+    });
+
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should use player injected configuration if no arguments were provided to configure() function", function() {
+      RisePlayerConfiguration.configure();
+
+      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+
+      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+        displayId: "ABC", companyId: "123"
+      });
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
+      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
     });
 
   });

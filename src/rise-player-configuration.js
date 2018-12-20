@@ -1,14 +1,24 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
+  configure: ( playerInfo, localMessagingInfo ) => {
+    if ( !playerInfo && !localMessagingInfo ) {
+      // ouside of viewer or inside of viewer
+      const getConfiguration = window.getRisePlayerConfiguration ||
+        window.top.getRisePlayerConfiguration;
 
-    const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
+      if ( typeof getConfiguration === "function" ) {
+        const configuration = getConfiguration();
 
-    if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
-      const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
-
-      playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
+        if ( configuration && configuration.playerInfo && configuration.localMessagingInfo ) {
+          playerInfo = configuration.playerInfo;
+          localMessagingInfo = configuration.localMessagingInfo;
+        } else {
+          throw new Error( `The configuration object is not valid: ${ JSON.stringify( configuration ) }` );
+        }
+      } else {
+        throw new Error( "No configuration was provided" );
+      }
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
