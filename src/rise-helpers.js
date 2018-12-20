@@ -40,30 +40,13 @@ RisePlayerConfiguration.Helpers = (() => {
     });
   }
 
-  function getDisplayIdFromViewer() {
-    let displayId = null;
-
-    try {
-      const href = top.location.href;
-      const reg = new RegExp( "[?&]id=([^&#]*)", "i" );
-      const string = reg.exec( href );
-
-      displayId = string ? string[ 1 ] : null;
-    } catch ( err ) {
-      console.log( "can't retrieve display id via Viewer", err );
-    }
-
-    return displayId;
-  }
-
   function reset() {
     _clients = [];
   }
 
   const exposedFunctions = {
     isTestEnvironment: isTestEnvironment,
-    onceClientsAreAvailable: onceClientsAreAvailable,
-    getDisplayIdFromViewer: getDisplayIdFromViewer
+    onceClientsAreAvailable: onceClientsAreAvailable
   };
 
   if ( isTestEnvironment()) {
