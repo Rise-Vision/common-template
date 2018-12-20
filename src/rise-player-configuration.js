@@ -1,7 +1,7 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  configure: ( playerInfo, localMessagingInfo ) => {
+  configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
     if ( !playerInfo && !localMessagingInfo ) {
       // outside of viewer or inside of viewer
       const getConfiguration = window.getRisePlayerConfiguration ||
@@ -18,6 +18,15 @@ const RisePlayerConfiguration = {
         }
       } else {
         throw new Error( "No configuration was provided" );
+      }
+    } else {
+      // remove this block once all demos are updated
+      const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
+
+      if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
+        const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
+
+        playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
       }
     }
 
