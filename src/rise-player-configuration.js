@@ -3,7 +3,7 @@
 const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo ) => {
     if ( !playerInfo && !localMessagingInfo ) {
-      // ouside of viewer or inside of viewer
+      // outside of viewer or inside of viewer
       const getConfiguration = window.getRisePlayerConfiguration ||
         window.top.getRisePlayerConfiguration;
 
