@@ -2,13 +2,32 @@
 
 const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
+    if ( !playerInfo && !localMessagingInfo ) {
+      // outside of viewer or inside of viewer
+      const getConfiguration = window.getRisePlayerConfiguration ||
+        window.top.getRisePlayerConfiguration;
 
-    const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
+      if ( typeof getConfiguration === "function" ) {
+        const configuration = getConfiguration();
 
-    if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
-      const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
+        if ( configuration && configuration.playerInfo && configuration.localMessagingInfo ) {
+          playerInfo = configuration.playerInfo;
+          localMessagingInfo = configuration.localMessagingInfo;
+        } else {
+          throw new Error( `The configuration object is not valid: ${ JSON.stringify( configuration ) }` );
+        }
+      } else {
+        throw new Error( "No configuration was provided" );
+      }
+    } else {
+      // remove this block once all demos are updated
+      const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
 
-      playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
+      if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
+        const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
+
+        playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
+      }
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
