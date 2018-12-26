@@ -19,8 +19,6 @@ const RisePlayerConfiguration = {
       } else {
         throw new Error( "No configuration was provided" );
       }
-    } else {
-      throw new Error( "No configuration was provided" );
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
