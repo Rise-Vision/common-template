@@ -1,7 +1,7 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
-  configure: ( playerInfo, localMessagingInfo, usePlayerInfoForDisplayId = false ) => {
+  configure: ( playerInfo, localMessagingInfo ) => {
     if ( !playerInfo && !localMessagingInfo ) {
       // outside of viewer or inside of viewer
       const getConfiguration = window.getRisePlayerConfiguration ||
