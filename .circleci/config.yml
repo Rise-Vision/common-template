@@ -255,7 +255,7 @@ workflows:
       - test-e2e-electron:
           stage: beta
           displayId: 9YP68DHZ4HUJ
-          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
           name: test-e2e-electron-beta
           requires:
             - deploy-stage
