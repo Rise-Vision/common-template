@@ -20,14 +20,7 @@ const RisePlayerConfiguration = {
         throw new Error( "No configuration was provided" );
       }
     } else {
-      // remove this block once all demos are updated
-      const playerInfoDisplayId = playerInfo ? playerInfo.displayId : null;
-
-      if ( !usePlayerInfoForDisplayId && !RisePlayerConfiguration.Helpers.isTestEnvironment() && playerInfoDisplayId !== "preview" ) {
-        const displayId = RisePlayerConfiguration.Helpers.getDisplayIdFromViewer();
-
-        playerInfo.displayId = displayId ? displayId : playerInfoDisplayId;
-      }
+      throw new Error( "No configuration was provided" );
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
