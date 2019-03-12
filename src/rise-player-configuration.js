@@ -1,4 +1,4 @@
-/* eslint-disable one-var */
+/* eslint-disable no-console, one-var */
 
 const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo ) => {
@@ -90,6 +90,15 @@ const RisePlayerConfiguration = {
     var playerInfo = RisePlayerConfiguration.getPlayerInfo();
 
     return playerInfo ? playerInfo.displayId : null;
+  },
+  getPresentationId: function() {
+    var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+
+    if ( playerInfo && playerInfo.presentationId ) {
+      return playerInfo.presentationId;
+    }
+
+    return RisePlayerConfiguration.Helpers.getHttpParameter( "presentationId" );
   },
   isPreview: function() {
     return RisePlayerConfiguration.getDisplayId() === "preview";

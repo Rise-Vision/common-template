@@ -40,11 +40,26 @@ RisePlayerConfiguration.Helpers = (() => {
     });
   }
 
+  function getHttpParameter( name ) {
+    try {
+      const href = top.location.href;
+      const regex = new RegExp( `[?&]${ name }=([^&#]*)`, "i" );
+      const match = regex.exec( href );
+
+      return match ? match[ 1 ] : null;
+    } catch ( err ) {
+      console.log( "can't retrieve HTTP parameter", err );
+
+      return null;
+    }
+  }
+
   function reset() {
     _clients = [];
   }
 
   const exposedFunctions = {
+    getHttpParameter: getHttpParameter,
     isTestEnvironment: isTestEnvironment,
     onceClientsAreAvailable: onceClientsAreAvailable
   };
