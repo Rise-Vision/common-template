@@ -1,4 +1,4 @@
-/* eslint-disable no-console, one-var */
+/* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo ) => {
