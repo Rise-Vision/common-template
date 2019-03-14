@@ -41,4 +41,16 @@ describe( "Watch", function() {
     expect( call.args[ 1 ]).to.be.a( "function" );
   });
 
+  it( "should not send watch if presentation id is not present", function() {
+
+    RisePlayerConfiguration.getPresentationId.restore();
+    sinon.stub( RisePlayerConfiguration, "getPresentationId", function() {
+      return null;
+    });
+
+    RisePlayerConfiguration.Watch.watchAttributeDataFile();
+
+    expect( RisePlayerConfiguration.LocalStorage.watchSingleFile.called ).to.be.false;
+  });
+
 });
