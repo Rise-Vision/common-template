@@ -110,6 +110,10 @@ const RisePlayerConfiguration = {
     Promise.resolve()
       .then(() => {
         window.dispatchEvent( new CustomEvent( "rise-components-ready" ));
+
+        if ( !RisePlayerConfiguration.isPreview()) {
+          RisePlayerConfiguration.Watch.watchAttributeDataFile();
+        }
       });
   },
   Helpers: null,
