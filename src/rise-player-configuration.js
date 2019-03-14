@@ -91,6 +91,15 @@ const RisePlayerConfiguration = {
 
     return playerInfo ? playerInfo.displayId : null;
   },
+  getPresentationId: function() {
+    var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+
+    if ( playerInfo && playerInfo.presentationId ) {
+      return playerInfo.presentationId;
+    }
+
+    return RisePlayerConfiguration.Helpers.getHttpParameter( "presentationId" );
+  },
   isPreview: function() {
     return RisePlayerConfiguration.getDisplayId() === "preview";
   },

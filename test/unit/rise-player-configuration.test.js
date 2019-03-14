@@ -4,12 +4,18 @@
 
 describe( "RisePlayerConfiguration", function() {
 
-  var _localMessaging,
+  var _helpers,
+    _localMessaging,
     _logger;
 
   beforeEach( function() {
+    _helpers = RisePlayerConfiguration.Helpers;
     _logger = RisePlayerConfiguration.Logger;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
+
+    RisePlayerConfiguration.Helpers = {
+      isTestEnvironment: _helpers.isTestEnvironment
+    };
 
     RisePlayerConfiguration.Logger = {
       configure: function() {}
@@ -21,6 +27,7 @@ describe( "RisePlayerConfiguration", function() {
   });
 
   afterEach( function() {
+    RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.Logger = _logger;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
@@ -83,6 +90,36 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.configure({});
 
       expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
+    });
+
+  });
+
+  describe( "getPresentationId", function() {
+
+    it( "should return the presentation id", function() {
+      RisePlayerConfiguration.configure({ presentationId: "id" });
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+    });
+
+    it( "should not return the presentation id if it was not provided", function() {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+        return null;
+      }
+
+      RisePlayerConfiguration.configure({});
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.be.null;
+    });
+
+    it( "should return the presentation id if it's available as HTTP parameter", function() {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+        return "id";
+      }
+
+      RisePlayerConfiguration.configure({});
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
     });
 
   });
