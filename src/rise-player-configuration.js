@@ -41,6 +41,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Heartbeat ) {
       throw new Error( "RiseHeartbeat script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.Watch ) {
+      throw new Error( "RiseWatch script was not loaded" );
+    }
 
     RisePlayerConfiguration.Logger.configure();
 

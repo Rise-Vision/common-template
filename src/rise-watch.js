@@ -1,0 +1,5 @@
+RisePlayerConfiguration.Watch = (() => {
+
+  return {};
+
+})();
