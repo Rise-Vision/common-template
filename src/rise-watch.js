@@ -8,6 +8,7 @@ RisePlayerConfiguration.Watch = (() => {
     const presentationId = RisePlayerConfiguration.getPresentationId();
 
     if ( !presentationId ) {
+      // current templates won't have a presentation id, so they will make this far
       console.log( "No presentation id available; can't send attribute data file watch" );
 
       return;
