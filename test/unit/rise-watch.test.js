@@ -30,15 +30,10 @@ describe( "Watch", function() {
 
     RisePlayerConfiguration.Watch.watchAttributeDataFile();
 
-    expect( RisePlayerConfiguration.LocalStorage.watchSingleFile.called ).to.be.true;
-
-    var call = RisePlayerConfiguration.LocalStorage.watchSingleFile.getCall( 0 );
-
-    expect( call ).to.be.ok;
-    expect( call.args[ 0 ]).to.equal(
-      "risevision-company-notifications/COMPANY_ID/template-data/PRESENTATION_ID/published/attribute-data.json"
+    expect( RisePlayerConfiguration.LocalStorage.watchSingleFile ).to.have.been.calledWith(
+      "risevision-company-notifications/COMPANY_ID/template-data/PRESENTATION_ID/published/attribute-data.json",
+      RisePlayerConfiguration.Watch.handleFileUpdateMessage
     );
-    expect( call.args[ 1 ]).to.be.a( "function" );
   });
 
   it( "should not send watch if presentation id is not present", function() {

@@ -24,13 +24,24 @@ RisePlayerConfiguration.Watch = (() => {
       TEMPLATE_COMMON_CONFIG.GCS_ATTRIBUTE_DATA_FILE
     }`;
 
-    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, () => {
-      // handle response
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleFileUpdateMessage );
+  }
+
+  function _handleFileUpdateMessage( message ) {
+    // handle response in a following PR
+    console.log( JSON.stringify( message ));
+  }
+
+  const exposedFunctions = {
+    watchAttributeDataFile: watchAttributeDataFile
+  };
+
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    Object.assign( exposedFunctions, {
+      handleFileUpdateMessage: _handleFileUpdateMessage
     });
   }
 
-  return {
-    watchAttributeDataFile: watchAttributeDataFile
-  };
+  return exposedFunctions;
 
 })();
