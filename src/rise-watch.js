@@ -28,8 +28,38 @@ RisePlayerConfiguration.Watch = (() => {
   }
 
   function _handleFileUpdateMessage( message ) {
-    // handle response in a following PR
-    console.log( JSON.stringify( message ));
+    if ( !message.status ) {
+      return;
+    }
+
+    switch ( message.status ) {
+    case "FILE-ERROR":
+      _handleFileUpdateError( message ); break;
+
+    case "CURRENT":
+      _handleFileAvailable( message.fileUrl ); break;
+
+    case "NOEXIST":
+    case "DELETED":
+      _handleFileDoesntExist(); break;
+    }
+  }
+
+  function _handleFileUpdateError() {
+    // TODO next PR
+    console.log( "file update error" );
+  }
+
+  function _handleFileAvailable( fileUrl ) {
+    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
+
+    console.log( fileUrl );
+    console.log( JSON.stringify( elements.map( element => element.tagName )));
+  }
+
+  function _handleFileDoesntExist() {
+    // TODO next PR
+    console.log( "file doesn't exist" );
   }
 
   const exposedFunctions = {
