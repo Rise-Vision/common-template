@@ -1,9 +1,52 @@
 
-/* global describe, it, expect, afterEach, beforeEach, sinon */
+/* global describe, document, it, expect, afterEach, beforeEach, sinon */
 
 "use strict";
 
-describe( "window connection", function() {
+describe( "Helpers", function() {
+
+  afterEach( function() {
+    RisePlayerConfiguration.Helpers.reset();
+
+    document.getElementsByTagName.restore();
+  });
+
+  describe( "getRiseElements", function() {
+
+    beforeEach( function() {
+      sinon.stub( document, "getElementsByTagName", function() {
+        return [
+          { tagName: "HTML" },
+          { tagName: "HEAD" },
+          { tagName: "BODY" },
+          {
+            tagName: "RISE-DATA-IMAGE"
+          },
+          {
+            tagName: "RISE-DATA-FINANCIAL"
+          },
+          {
+            tagName: "RISE-IMAGE"
+          },
+          { tagName: "P" }
+        ];
+      });
+    });
+
+    it( "should get list of rise elements", function() {
+      var elements = RisePlayerConfiguration.Helpers.getRiseElements();
+
+      expect( elements ).to.be.ok;
+      expect( elements.length ).to.equal( 3 );
+      expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-IMAGE" );
+      expect( elements[ 1 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
+      expect( elements[ 2 ].tagName ).to.equal( "RISE-IMAGE" );
+    });
+  });
+
+});
+
+describe( "Helpers / window connection", function() {
 
   afterEach( function() {
     delete top.postToPlayer;
@@ -28,7 +71,7 @@ describe( "window connection", function() {
 
 });
 
-describe( "websocket connection", function() {
+describe( "Helpers / websocket connection", function() {
 
   var socketInstance,
     clock;

@@ -1,8 +1,9 @@
-/* eslint-disable no-console, one-var */
+/* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.Helpers = (() => {
 
   let _clients = [];
+  let _riseElements = null;
 
   function _clientsAreAvailable( names ) {
     return names.every( name => _clients.indexOf( name ) >= 0 );
@@ -54,12 +55,33 @@ RisePlayerConfiguration.Helpers = (() => {
     }
   }
 
+  function getRiseElements() {
+    if ( _riseElements === null ) {
+      _riseElements = [];
+
+      const all = document.getElementsByTagName( "*" );
+
+      for ( var i = 0; i < all.length; i++ ) {
+        const element = all[ i ];
+        const name = element.tagName.toLowerCase();
+
+        if ( /^rise-/.test( name )) {
+          _riseElements.push( element );
+        }
+      }
+    }
+
+    return _riseElements;
+  }
+
   function reset() {
     _clients = [];
+    _riseElements = null;
   }
 
   const exposedFunctions = {
     getHttpParameter: getHttpParameter,
+    getRiseElements: getRiseElements,
     isTestEnvironment: isTestEnvironment,
     onceClientsAreAvailable: onceClientsAreAvailable
   };
