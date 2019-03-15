@@ -32,16 +32,18 @@ RisePlayerConfiguration.Watch = (() => {
       return;
     }
 
+    console.log( JSON.stringify( message ));
+
     switch ( message.status ) {
     case "FILE-ERROR":
-      _handleFileUpdateError( message ); break;
+      return _handleFileUpdateError( message );
 
     case "CURRENT":
-      _handleFileAvailable( message.fileUrl ); break;
+      return _handleFileAvailable( message.fileUrl );
 
     case "NOEXIST":
     case "DELETED":
-      _handleFileDoesntExist(); break;
+      return _handleFileDoesntExist();
     }
   }
 
@@ -51,10 +53,22 @@ RisePlayerConfiguration.Watch = (() => {
   }
 
   function _handleFileAvailable( fileUrl ) {
+    console.log( `AVAILABLE ${ fileUrl }` );
     const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
-    console.log( fileUrl );
     console.log( JSON.stringify( elements.map( element => element.tagName )));
+
+    // return fetch( fileUrl )
+    //   .then( response => response.json())
+    //   .then( console.log )
+    //   .catch( console.error );
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener( "load", () => console.log( xhr.responseText ));
+    xhr.addEventListener( "error", console.error );
+    xhr.addEventListener( "abort", console.error );
+    xhr.open( "GET", fileUrl );
+    xhr.send();
   }
 
   function _handleFileDoesntExist() {
