@@ -74,6 +74,11 @@ RisePlayerConfiguration.Helpers = (() => {
     return _riseElements;
   }
 
+  function getRiseEditableElements() {
+    return getRiseElements()
+      .filter( element => !element.hasAttribute( "non-editable" ))
+  }
+
   function reset() {
     _clients = [];
     _riseElements = null;
@@ -82,6 +87,7 @@ RisePlayerConfiguration.Helpers = (() => {
   const exposedFunctions = {
     getHttpParameter: getHttpParameter,
     getRiseElements: getRiseElements,
+    getRiseEditableElements: getRiseEditableElements,
     isTestEnvironment: isTestEnvironment,
     onceClientsAreAvailable: onceClientsAreAvailable
   };

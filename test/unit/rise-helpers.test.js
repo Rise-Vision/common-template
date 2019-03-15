@@ -5,6 +5,35 @@
 
 describe( "Helpers", function() {
 
+  beforeEach( function() {
+    sinon.stub( document, "getElementsByTagName", function() {
+      return [
+        { tagName: "HTML" },
+        { tagName: "HEAD" },
+        { tagName: "BODY" },
+        {
+          tagName: "RISE-DATA-IMAGE",
+          hasAttribute: function() {
+            return true;
+          }
+        },
+        {
+          tagName: "RISE-DATA-FINANCIAL",
+          hasAttribute: function() {
+            return false;
+          }
+        },
+        {
+          tagName: "RISE-IMAGE",
+          hasAttribute: function() {
+            return false;
+          }
+        },
+        { tagName: "P" }
+      ];
+    });
+  });
+
   afterEach( function() {
     RisePlayerConfiguration.Helpers.reset();
 
@@ -12,26 +41,6 @@ describe( "Helpers", function() {
   });
 
   describe( "getRiseElements", function() {
-
-    beforeEach( function() {
-      sinon.stub( document, "getElementsByTagName", function() {
-        return [
-          { tagName: "HTML" },
-          { tagName: "HEAD" },
-          { tagName: "BODY" },
-          {
-            tagName: "RISE-DATA-IMAGE"
-          },
-          {
-            tagName: "RISE-DATA-FINANCIAL"
-          },
-          {
-            tagName: "RISE-IMAGE"
-          },
-          { tagName: "P" }
-        ];
-      });
-    });
 
     it( "should get list of rise elements", function() {
       var elements = RisePlayerConfiguration.Helpers.getRiseElements();
@@ -41,6 +50,18 @@ describe( "Helpers", function() {
       expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-IMAGE" );
       expect( elements[ 1 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
       expect( elements[ 2 ].tagName ).to.equal( "RISE-IMAGE" );
+    });
+  });
+
+  describe( "getRiseEditableElements", function() {
+
+    it( "should get list of rise editable elements", function() {
+      var elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
+
+      expect( elements ).to.be.ok;
+      expect( elements.length ).to.equal( 2 );
+      expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
+      expect( elements[ 1 ].tagName ).to.equal( "RISE-IMAGE" );
     });
   });
 
