@@ -79,6 +79,40 @@ RisePlayerConfiguration.Helpers = (() => {
       .filter( element => !element.hasAttribute( "non-editable" ))
   }
 
+  function getLocalMessagingTextContent( fileUrl ) {
+    return new Promise(( resolve, reject ) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.addEventListener( "load", () => {
+        if ( xhr.status === 200 ) {
+          resolve( xhr.responseText );
+        } else {
+          reject( `${ xhr.status } : ${ xhr.statusText } : ${ fileUrl }` );
+        }
+      });
+      xhr.addEventListener( "error", event =>
+        reject( `Request failed: ${ JSON.stringify( event )} : ${ fileUrl }` )
+      );
+      xhr.addEventListener( "abort", event =>
+        reject( `Request aborted: ${ JSON.stringify( event )} : ${ fileUrl }` )
+      );
+
+      xhr.open( "GET", fileUrl );
+
+      xhr.send();
+    });
+  }
+
+  function getLocalMessagingJsonContent( fileUrl ) {
+    return getLocalMessagingTextContent( fileUrl ).then( content =>
+      Promise.resolve().then(() =>
+        JSON.parse( content )
+      ).catch( error =>
+        Promise.reject( `Error: ${ error.stack }\nContent: ${ content }` )
+      )
+    );
+  }
+
   function reset() {
     _clients = [];
     _riseElements = null;
@@ -86,6 +120,8 @@ RisePlayerConfiguration.Helpers = (() => {
 
   const exposedFunctions = {
     getHttpParameter: getHttpParameter,
+    getLocalMessagingJsonContent: getLocalMessagingJsonContent,
+    getLocalMessagingTextContent: getLocalMessagingTextContent,
     getRiseElements: getRiseElements,
     getRiseEditableElements: getRiseEditableElements,
     isTestEnvironment: isTestEnvironment,

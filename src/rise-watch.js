@@ -24,54 +24,50 @@ RisePlayerConfiguration.Watch = (() => {
       TEMPLATE_COMMON_CONFIG.GCS_ATTRIBUTE_DATA_FILE
     }`;
 
-    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleFileUpdateMessage );
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleAttributeDataFileUpdateMessage );
   }
 
-  function _handleFileUpdateMessage( message ) {
+  function _handleAttributeDataFileUpdateMessage( message ) {
     if ( !message.status ) {
       return;
     }
 
     console.log( JSON.stringify( message ));
 
-    switch ( message.status ) {
+    switch ( message.status.toUpperCase()) {
     case "FILE-ERROR":
-      return _handleFileUpdateError( message );
+      return _handleAttributeDataFileUpdateError( message );
 
     case "CURRENT":
-      return _handleFileAvailable( message.fileUrl );
+      return _handleAttributeDataFileAvailable( message.fileUrl );
 
     case "NOEXIST":
     case "DELETED":
-      return _handleFileDoesntExist();
+      return _handleAttributeDataFileDoesntExist();
     }
   }
 
-  function _handleFileUpdateError() {
+  function _handleAttributeDataFileUpdateError() {
     // TODO next PR
-    console.log( "file update error" );
+    console.error( "file update error" );
   }
 
-  function _handleFileAvailable( fileUrl ) {
+  function _handleAttributeDataFileAvailable( fileUrl ) {
     console.log( `AVAILABLE ${ fileUrl }` );
     const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
-    console.log( JSON.stringify( elements.map( element => element.tagName )));
-
-    // return fetch( fileUrl )
-    //   .then( response => response.json())
-    //   .then( console.log )
-    //   .catch( console.error );
-    const xhr = new XMLHttpRequest();
-
-    xhr.addEventListener( "load", () => console.log( xhr.responseText ));
-    xhr.addEventListener( "error", console.error );
-    xhr.addEventListener( "abort", console.error );
-    xhr.open( "GET", fileUrl );
-    xhr.send();
+    return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
+      .then( data => {
+        console.log( JSON.stringify( data ));
+        console.log( JSON.stringify( elements.map( element => element.tagName )));
+      })
+      .catch( error => {
+        // TODO proper handling next PR
+        console.error( JSON.stringify( error ));
+      });
   }
 
-  function _handleFileDoesntExist() {
+  function _handleAttributeDataFileDoesntExist() {
     // TODO next PR
     console.log( "file doesn't exist" );
   }
@@ -82,7 +78,7 @@ RisePlayerConfiguration.Watch = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
-      handleFileUpdateMessage: _handleFileUpdateMessage
+      handleAttributeDataFileUpdateMessage: _handleAttributeDataFileUpdateMessage
     });
   }
 
