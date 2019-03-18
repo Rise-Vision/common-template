@@ -9,7 +9,7 @@ describe( "Watch", function() {
     expect( RisePlayerConfiguration.Watch ).to.be.ok;
   });
 
-  describe( "watchSingleFile", function() {
+  describe( "watchAttributeDataFile", function() {
 
     beforeEach( function() {
       sinon.stub( RisePlayerConfiguration.LocalStorage, "watchSingleFile" );
@@ -52,7 +52,7 @@ describe( "Watch", function() {
 
   });
 
-  describe( "watchSingleFile", function() {
+  describe( "handleAttributeDataFileUpdateMessage", function() {
 
     beforeEach( function() {
       sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
