@@ -3,6 +3,8 @@
 
 RisePlayerConfiguration.Watch = (() => {
 
+  var _startEventSent = false;
+
   function watchAttributeDataFile() {
     const companyId = RisePlayerConfiguration.getCompanyId();
     const presentationId = RisePlayerConfiguration.getPresentationId();
@@ -43,7 +45,7 @@ RisePlayerConfiguration.Watch = (() => {
 
     case "NOEXIST":
     case "DELETED":
-      return _handleAttributeDataFileDoesntExist();
+      return _sendStartEvent();
     }
 
     return Promise.resolve();
@@ -53,17 +55,17 @@ RisePlayerConfiguration.Watch = (() => {
     // TODO next PR
     console.error( "file update error" );
 
-    return Promise.resolve();
+    return _sendStartEvent();
   }
 
   function _handleAttributeDataFileAvailable( fileUrl ) {
     console.log( `AVAILABLE ${ fileUrl }` );
-    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
-        console.log( JSON.stringify( data ));
-        console.log( JSON.stringify( elements.map( element => element.tagName )));
+        _updateComponentsProperties( data );
+
+        return _sendStartEvent();
       })
       .catch( error => {
         // TODO proper handling next PR
@@ -71,11 +73,28 @@ RisePlayerConfiguration.Watch = (() => {
       });
   }
 
-  function _handleAttributeDataFileDoesntExist() {
-    // TODO next PR
-    console.log( "file doesn't exist" );
+  function _updateComponentsProperties( data ) {
+    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
+
+    console.log( JSON.stringify( data ));
+    console.log( JSON.stringify( elements.map( element => element.tagName )));
+  }
+
+  function _sendStartEvent() {
+    if ( !_startEventSent ) {
+      RisePlayerConfiguration.Helpers.getRiseEditableElements()
+        .forEach( component =>
+          RisePlayerConfiguration.Helpers.sendStartEvent( component )
+        );
+
+      _startEventSent = true;
+    }
 
     return Promise.resolve();
+  }
+
+  function _reset() {
+    _startEventSent = false;
   }
 
   const exposedFunctions = {
@@ -84,7 +103,8 @@ RisePlayerConfiguration.Watch = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
-      handleAttributeDataFileUpdateMessage: _handleAttributeDataFileUpdateMessage
+      handleAttributeDataFileUpdateMessage: _handleAttributeDataFileUpdateMessage,
+      reset: _reset
     });
   }
 

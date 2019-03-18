@@ -113,6 +113,16 @@ RisePlayerConfiguration.Helpers = (() => {
     );
   }
 
+  function sendStartEvent( component ) {
+    // Start the component once it's configured;
+    // but if it's already configured the listener won't work,
+    // so we directly send the request also.
+    component.addEventListener( "configured", () =>
+      component.dispatchEvent( new CustomEvent( "start" ))
+    );
+    component.dispatchEvent( new CustomEvent( "start" ));
+  }
+
   function reset() {
     _clients = [];
     _riseElements = null;
@@ -125,7 +135,8 @@ RisePlayerConfiguration.Helpers = (() => {
     getRiseElements: getRiseElements,
     getRiseEditableElements: getRiseEditableElements,
     isTestEnvironment: isTestEnvironment,
-    onceClientsAreAvailable: onceClientsAreAvailable
+    onceClientsAreAvailable: onceClientsAreAvailable,
+    sendStartEvent: sendStartEvent
   };
 
   if ( isTestEnvironment()) {
