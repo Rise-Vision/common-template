@@ -29,7 +29,7 @@ RisePlayerConfiguration.Watch = (() => {
 
   function _handleAttributeDataFileUpdateMessage( message ) {
     if ( !message.status ) {
-      return;
+      return Promise.resolve();
     }
 
     console.log( JSON.stringify( message ));
@@ -45,11 +45,15 @@ RisePlayerConfiguration.Watch = (() => {
     case "DELETED":
       return _handleAttributeDataFileDoesntExist();
     }
+
+    return Promise.resolve();
   }
 
   function _handleAttributeDataFileUpdateError() {
     // TODO next PR
     console.error( "file update error" );
+
+    return Promise.resolve();
   }
 
   function _handleAttributeDataFileAvailable( fileUrl ) {
@@ -70,6 +74,8 @@ RisePlayerConfiguration.Watch = (() => {
   function _handleAttributeDataFileDoesntExist() {
     // TODO next PR
     console.log( "file doesn't exist" );
+
+    return Promise.resolve();
   }
 
   const exposedFunctions = {

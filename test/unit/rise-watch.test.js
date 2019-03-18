@@ -69,6 +69,16 @@ describe( "Watch", function() {
       RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
     });
 
+    it( "should do nothing if there is no status", function() {
+
+      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({})
+        .then( function() {
+          expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
+          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.false;
+        });
+
+    });
+
     it( "should update attribute data on all editable elements", function() {
 
       return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
@@ -78,6 +88,42 @@ describe( "Watch", function() {
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.true;
           expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
+        });
+
+    });
+
+    it( "should just send start if file does not exist", function() {
+
+      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+        status: "NOEXIST"
+      })
+        .then( function() {
+          expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
+          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.false;
+        });
+
+    });
+
+    it( "should just send if file was deleted", function() {
+
+      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+        status: "DELETED"
+      })
+        .then( function() {
+          expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
+          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.false;
+        });
+
+    });
+
+    it( "should send start if there was a file error", function() {
+
+      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+        status: "FILE-ERROR"
+      })
+        .then( function() {
+          expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
+          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.false;
         });
 
     });
