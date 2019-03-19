@@ -117,7 +117,13 @@ RisePlayerConfiguration.Watch = (() => {
   function _setProperty( element, property, value ) {
     const componentId = element.id;
 
-    console.log( `Setting property '${ property }' of component ${ componentId } to value: '${ value }'` );
+    console.log( `Setting property '${
+      property
+    }' of component ${
+      componentId
+    } to value: '${
+      JSON.stringify( value )
+    }'` );
 
     try {
       element[ property ] = value;
