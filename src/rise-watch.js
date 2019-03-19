@@ -34,8 +34,6 @@ RisePlayerConfiguration.Watch = (() => {
       return Promise.resolve();
     }
 
-    console.log( JSON.stringify( message ));
-
     switch ( message.status.toUpperCase()) {
     case "FILE-ERROR":
       return _handleAttributeDataFileUpdateError( message );
@@ -59,12 +57,9 @@ RisePlayerConfiguration.Watch = (() => {
   }
 
   function _handleAttributeDataFileAvailable( fileUrl ) {
-    console.log( `AVAILABLE ${ fileUrl }` );
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
-        console.log( JSON.stringify( data ));
-
         _updateComponentsProperties( data );
 
         return _sendStartEvent();
