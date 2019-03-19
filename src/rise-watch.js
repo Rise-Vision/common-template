@@ -3,6 +3,12 @@
 
 RisePlayerConfiguration.Watch = (() => {
 
+  const WATCH_COMPONENT_DATA = {
+    id: "Watch",
+    name: "Watch",
+    version: "N/A"
+  };
+
   var _startEventSent = false;
 
   function watchAttributeDataFile() {
@@ -11,7 +17,11 @@ RisePlayerConfiguration.Watch = (() => {
 
     if ( !presentationId ) {
       // current templates won't have a presentation id, so they will make this far
-      console.log( "No presentation id available; can't send attribute data file watch" );
+      RisePlayerConfiguration.Logger.error(
+        WATCH_COMPONENT_DATA,
+        "no presentation id",
+        "Can't send attribute data file watch"
+      );
 
       return;
     }
@@ -49,9 +59,10 @@ RisePlayerConfiguration.Watch = (() => {
     return Promise.resolve();
   }
 
-  function _handleAttributeDataFileUpdateError() {
-    // TODO proper handling next PR
-    console.error( "file update error" );
+  function _handleAttributeDataFileUpdateError( message ) {
+    RisePlayerConfiguration.Logger.error(
+      WATCH_COMPONENT_DATA, "attribute data file error", message
+    );
 
     return _sendStartEvent();
   }
@@ -65,8 +76,9 @@ RisePlayerConfiguration.Watch = (() => {
         return _sendStartEvent();
       })
       .catch( error => {
-        // TODO proper handling next PR
-        console.error( JSON.stringify( error ));
+        RisePlayerConfiguration.Logger.error(
+          WATCH_COMPONENT_DATA, "attribute data file read error", error.stack
+        );
       });
   }
 
@@ -84,10 +96,11 @@ RisePlayerConfiguration.Watch = (() => {
       const element = _elementForId( id );
 
       if ( !element ) {
-        // TODO: proper handling, next PR
-        console.warn( `Can't set properties. No element found with id ${ id }` );
-
-        return;
+        return RisePlayerConfiguration.Logger.warning(
+          WATCH_COMPONENT_DATA,
+          "component not found for id in attribute data",
+          { componentId: id }
+        );
       }
 
       keys.forEach( key => _setProperty( element, key, component[ key ]));
@@ -101,14 +114,24 @@ RisePlayerConfiguration.Watch = (() => {
     return filtered.length === 0 ? null : filtered[ 0 ];
   }
 
-  function _setProperty( element, key, value ) {
-    console.log( `Setting property '${ key }' of component ${ element.id } to value: '${ value }'` );
+  function _setProperty( element, property, value ) {
+    const componentId = element.id;
+
+    console.log( `Setting property '${ property }' of component ${ componentId } to value: '${ value }'` );
 
     try {
-      element[ key ] = value;
+      element[ property ] = value;
     } catch ( error ) {
-      // TODO: proper handling, next PR
-      console.error( error );
+      RisePlayerConfiguration.Logger.error(
+        WATCH_COMPONENT_DATA,
+        "write component property error",
+        {
+          componentId: componentId,
+          property: property,
+          value: value,
+          error: error.stack
+        }
+      );
     }
   }
 
