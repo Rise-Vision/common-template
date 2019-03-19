@@ -52,7 +52,7 @@ RisePlayerConfiguration.Watch = (() => {
   }
 
   function _handleAttributeDataFileUpdateError() {
-    // TODO next PR
+    // TODO proper handling next PR
     console.error( "file update error" );
 
     return _sendStartEvent();
@@ -63,6 +63,8 @@ RisePlayerConfiguration.Watch = (() => {
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
+        console.log( JSON.stringify( data ));
+
         _updateComponentsProperties( data );
 
         return _sendStartEvent();
@@ -74,10 +76,38 @@ RisePlayerConfiguration.Watch = (() => {
   }
 
   function _updateComponentsProperties( data ) {
+    const components = data.components || [];
     const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
-    console.log( JSON.stringify( data ));
-    console.log( JSON.stringify( elements.map( element => element.tagName )));
+    components.forEach( component => {
+      const keys = Object.keys( component ).filter( key => key !== "id" );
+
+      if ( keys.length === 0 ) {
+        return;
+      }
+
+      const element = elements.find( element => element.id === component.id );
+
+      if ( !element ) {
+        // TODO: proper handling, next PR
+        console.warn( `Can't set properties. No element found with id ${ component.id }` );
+
+        return;
+      }
+
+      keys.forEach( key => _setProperty( element, key, component[ key ]));
+    });
+  }
+
+  function _setProperty( element, key, value ) {
+    console.log( `Setting property '${ key }' of component ${ element.id } to value: '${ value }'` );
+
+    try {
+      element[ key ] = value;
+    } catch ( error ) {
+      // TODO: proper handling, next PR
+      console.error( error );
+    }
   }
 
   function _sendStartEvent() {
