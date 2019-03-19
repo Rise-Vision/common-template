@@ -86,17 +86,24 @@ RisePlayerConfiguration.Watch = (() => {
         return;
       }
 
-      const element = elements.find( element => element.id === component.id );
+      const id = component.id;
+      const element = _elementForId( elements, id );
 
       if ( !element ) {
         // TODO: proper handling, next PR
-        console.warn( `Can't set properties. No element found with id ${ component.id }` );
+        console.warn( `Can't set properties. No element found with id ${ id }` );
 
         return;
       }
 
       keys.forEach( key => _setProperty( element, key, component[ key ]));
     });
+  }
+
+  function _elementForId( elements, id ) {
+    const filtered = elements.filter( element => element.id === id );
+
+    return filtered.length === 0 ? null : filtered[ 0 ];
   }
 
   function _setProperty( element, key, value ) {

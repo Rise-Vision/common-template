@@ -58,16 +58,28 @@ describe( "Watch", function() {
 
   describe( "handleAttributeDataFileUpdateMessage", function() {
 
+    var editableElements;
+
     beforeEach( function() {
+
+      editableElements = [
+        { id: "rise-data-image-01" },
+        { id: "rise-data-financial-01" }
+      ];
+
       sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
-        return Promise.resolve({});
+        return Promise.resolve({
+          components: [
+            {
+              id: "rise-data-financial-01",
+              symbols: "AAPL.O|AMZN.O|FB.O|GOOGL.O"
+            }
+          ]
+        });
       });
 
       sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
-        return [
-          { id: "rise-data-image-01" },
-          { id: "rise-data-financial-01" }
-        ];
+        return editableElements;
       });
 
       sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
@@ -100,6 +112,16 @@ describe( "Watch", function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.true;
           expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
           expect( RisePlayerConfiguration.Helpers.sendStartEvent ).to.have.been.called.twice;
+
+          expect( editableElements ).to.deep.equal([
+            {
+              id: "rise-data-image-01"
+            },
+            {
+              id: "rise-data-financial-01",
+              symbols: "AAPL.O|AMZN.O|FB.O|GOOGL.O"
+            }
+          ]);
         });
 
     });
