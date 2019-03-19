@@ -22,8 +22,8 @@ RisePlayerConfiguration.Logger = (() => {
     rows: [ { insertId: "" } ]
   };
   const LOGGER_COMPONENT_DATA = {
+    name: "RisePlayerConfiguration",
     id: "Logger",
-    name: "Logger",
     version: "N/A"
   };
   const THROTTLE_DELAY = 1000;
