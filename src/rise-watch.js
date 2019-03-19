@@ -3,6 +3,8 @@
 
 RisePlayerConfiguration.Watch = (() => {
 
+  var _startEventSent = false;
+
   function watchAttributeDataFile() {
     const companyId = RisePlayerConfiguration.getCompanyId();
     const presentationId = RisePlayerConfiguration.getPresentationId();
@@ -24,12 +26,107 @@ RisePlayerConfiguration.Watch = (() => {
       TEMPLATE_COMMON_CONFIG.GCS_ATTRIBUTE_DATA_FILE
     }`;
 
-    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleFileUpdateMessage );
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleAttributeDataFileUpdateMessage );
   }
 
-  function _handleFileUpdateMessage( message ) {
-    // handle response in a following PR
-    console.log( JSON.stringify( message ));
+  function _handleAttributeDataFileUpdateMessage( message ) {
+    if ( !message.status ) {
+      return Promise.resolve();
+    }
+
+    switch ( message.status.toUpperCase()) {
+    case "FILE-ERROR":
+      return _handleAttributeDataFileUpdateError( message );
+
+    case "CURRENT":
+      return _handleAttributeDataFileAvailable( message.fileUrl );
+
+    case "NOEXIST":
+    case "DELETED":
+      return _sendStartEvent();
+    }
+
+    return Promise.resolve();
+  }
+
+  function _handleAttributeDataFileUpdateError() {
+    // TODO proper handling next PR
+    console.error( "file update error" );
+
+    return _sendStartEvent();
+  }
+
+  function _handleAttributeDataFileAvailable( fileUrl ) {
+
+    return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
+      .then( data => {
+        _updateComponentsProperties( data );
+
+        return _sendStartEvent();
+      })
+      .catch( error => {
+        // TODO proper handling next PR
+        console.error( JSON.stringify( error ));
+      });
+  }
+
+  function _updateComponentsProperties( data ) {
+    const components = data.components || [];
+
+    components.forEach( component => {
+      const keys = Object.keys( component ).filter( key => key !== "id" );
+
+      if ( keys.length === 0 ) {
+        return;
+      }
+
+      const id = component.id;
+      const element = _elementForId( id );
+
+      if ( !element ) {
+        // TODO: proper handling, next PR
+        console.warn( `Can't set properties. No element found with id ${ id }` );
+
+        return;
+      }
+
+      keys.forEach( key => _setProperty( element, key, component[ key ]));
+    });
+  }
+
+  function _elementForId( id ) {
+    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
+    const filtered = elements.filter( element => element.id === id );
+
+    return filtered.length === 0 ? null : filtered[ 0 ];
+  }
+
+  function _setProperty( element, key, value ) {
+    console.log( `Setting property '${ key }' of component ${ element.id } to value: '${ value }'` );
+
+    try {
+      element[ key ] = value;
+    } catch ( error ) {
+      // TODO: proper handling, next PR
+      console.error( error );
+    }
+  }
+
+  function _sendStartEvent() {
+    if ( !_startEventSent ) {
+      RisePlayerConfiguration.Helpers.getRiseEditableElements()
+        .forEach( component =>
+          RisePlayerConfiguration.Helpers.sendStartEvent( component )
+        );
+
+      _startEventSent = true;
+    }
+
+    return Promise.resolve();
+  }
+
+  function _reset() {
+    _startEventSent = false;
   }
 
   const exposedFunctions = {
@@ -38,7 +135,8 @@ RisePlayerConfiguration.Watch = (() => {
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
-      handleFileUpdateMessage: _handleFileUpdateMessage
+      handleAttributeDataFileUpdateMessage: _handleAttributeDataFileUpdateMessage,
+      reset: _reset
     });
   }
 

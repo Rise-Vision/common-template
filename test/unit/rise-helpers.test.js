@@ -1,5 +1,5 @@
-
-/* global describe, document, it, expect, afterEach, beforeEach, sinon */
+/* global assert, describe, document, it, expect, after, afterEach, before, beforeEach, sinon */
+/* eslint-disable one-var, vars-on-top */
 
 "use strict";
 
@@ -63,6 +63,75 @@ describe( "Helpers", function() {
       expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
       expect( elements[ 1 ].tagName ).to.equal( "RISE-IMAGE" );
     });
+  });
+
+  describe( "getLocalMessagingJsonContent", function() {
+
+    var xhr,
+      requests;
+
+    before( function() {
+      xhr = sinon.useFakeXMLHttpRequest();
+
+      xhr.onCreate = function( request ) {
+        requests.push( request );
+      };
+    });
+
+    beforeEach( function() {
+      requests = [];
+    });
+
+    after( function() {
+      xhr.restore();
+    });
+
+    it( "should get a text response", function() {
+
+      var text = JSON.stringify({ success: true });
+
+      var promise = RisePlayerConfiguration.Helpers.getLocalMessagingTextContent( "" )
+        .then( function( content ) {
+          expect( content ).to.deep.equal( text );
+        });
+
+      requests[ 0 ].respond( 200, { "Content-Type": "text/json" }, text );
+
+      return promise;
+    });
+
+    it( "should get a JSON response", function() {
+
+      var expectedAnswer = { success: true };
+      var text = JSON.stringify( expectedAnswer );
+
+      var promise = RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( "" )
+        .then( function( content ) {
+          expect( content ).to.deep.equal( expectedAnswer );
+        });
+
+      requests[ 0 ].respond( 200, { "Content-Type": "text/json" }, text );
+
+      return promise;
+    });
+
+    it( "should throw an error if JSON is not well formed", function() {
+
+      var promise = RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( "" )
+        .then( function() {
+          assert.fail();
+        })
+        .catch( function( error ) {
+          expect( error ).to.be.ok;
+        });
+
+      var text = "INVALID JSON CONTENT";
+
+      requests[ 0 ].respond( 200, { "Content-Type": "text/json" }, text );
+
+      return promise;
+    });
+
   });
 
 });
