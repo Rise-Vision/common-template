@@ -77,7 +77,6 @@ RisePlayerConfiguration.Watch = (() => {
 
   function _updateComponentsProperties( data ) {
     const components = data.components || [];
-    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
     components.forEach( component => {
       const keys = Object.keys( component ).filter( key => key !== "id" );
@@ -87,7 +86,7 @@ RisePlayerConfiguration.Watch = (() => {
       }
 
       const id = component.id;
-      const element = _elementForId( elements, id );
+      const element = _elementForId( id );
 
       if ( !element ) {
         // TODO: proper handling, next PR
@@ -100,7 +99,8 @@ RisePlayerConfiguration.Watch = (() => {
     });
   }
 
-  function _elementForId( elements, id ) {
+  function _elementForId( id ) {
+    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
     const filtered = elements.filter( element => element.id === id );
 
     return filtered.length === 0 ? null : filtered[ 0 ];
