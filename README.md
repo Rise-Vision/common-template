@@ -37,7 +37,7 @@ The following BQ entries are sent as source *Watch* and component id *Watch*:
 
 - ERROR **attribute data file RLS error**: A local storage error occurred when waiting file update for the attribute data file. The detail will contain the message sent by local storage module.
 
-- ERROR **attribute data file read error**: An error occurred when the file URL for a file was read, or it's content was parsed as JSON. The detail will contain more specific information about the root cause.
+- ERROR **attribute data file read error**: An error occurred when the file URL for a file was read, or when its content was parsed as JSON. The detail will contain more specific information about the root cause.
 
 - ERROR **write component property error**: A property could not be set. The detail contains the error stack, the component id and property, and the value that couldn't be set.
 
