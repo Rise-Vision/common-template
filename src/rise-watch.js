@@ -4,8 +4,8 @@
 RisePlayerConfiguration.Watch = (() => {
 
   const WATCH_COMPONENT_DATA = {
+    name: "RisePlayerConfiguration",
     id: "Watch",
-    name: "Watch",
     version: "N/A"
   };
 

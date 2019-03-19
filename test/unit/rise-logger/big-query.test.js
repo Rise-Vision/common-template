@@ -326,7 +326,7 @@ describe( "Big Query logging", function() {
           expect( entry.level ).to.equal( "severe" );
           expect( entry.event ).to.equal( "invalid component data" );
           expect( entry.platform ).to.equal( "content" );
-          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.source ).to.equal( "RisePlayerConfiguration" );
           expect( entry.version ).to.equal( "N/A" );
           expect( entry.component.id ).to.equal( "Logger" );
         });
@@ -349,7 +349,7 @@ describe( "Big Query logging", function() {
           expect( entry.level ).to.equal( "severe" );
           expect( entry.event ).to.equal( "invalid component data" );
           expect( entry.platform ).to.equal( "content" );
-          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.source ).to.equal( "RisePlayerConfiguration" );
           expect( entry.version ).to.equal( "N/A" );
           expect( entry.component.id ).to.equal( "Logger" );
         });
@@ -372,7 +372,7 @@ describe( "Big Query logging", function() {
           expect( entry.level ).to.equal( "severe" );
           expect( entry.event ).to.equal( "invalid component data" );
           expect( entry.platform ).to.equal( "content" );
-          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.source ).to.equal( "RisePlayerConfiguration" );
           expect( entry.version ).to.equal( "N/A" );
           expect( entry.component.id ).to.equal( "Logger" );
         });
@@ -395,7 +395,7 @@ describe( "Big Query logging", function() {
           expect( entry.level ).to.equal( "severe" );
           expect( entry.event ).to.equal( "invalid component data" );
           expect( entry.platform ).to.equal( "content" );
-          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.source ).to.equal( "RisePlayerConfiguration" );
           expect( entry.version ).to.equal( "N/A" );
           expect( entry.component.id ).to.equal( "Logger" );
         });
@@ -499,7 +499,7 @@ describe( "Big Query logging", function() {
           expect( entry.level ).to.equal( "severe" );
           expect( entry.event ).to.equal( "invalid additional fields value" );
           expect( entry.platform ).to.equal( "content" );
-          expect( entry.source ).to.equal( "Logger" );
+          expect( entry.source ).to.equal( "RisePlayerConfiguration" );
           expect( entry.version ).to.equal( "N/A" );
           expect( entry.component.id ).to.equal( "Logger" );
         });
