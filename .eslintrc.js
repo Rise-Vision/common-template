@@ -19,6 +19,8 @@ module.exports = {
     ]
   },
   "globals": {
-    "RisePlayerConfiguration": true
+    "RisePlayerConfiguration": true,
+    "TEMPLATE_PRODUCT_CODE": true,
+    "TEMPLATE_VERSION": true
   }
 };
