@@ -37,6 +37,7 @@ describe( "configure", function() {
     RisePlayerConfiguration.configure({
       displayId: "DISPLAY_ID",
       companyId: "COMPANY_ID",
+      presentationId: "PRESENTATION_ID",
       playerType: "beta",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"
@@ -54,6 +55,11 @@ describe( "configure", function() {
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
         "chrome_version": null
+      },
+      "template": {
+        "product_code": "TEMPLATE_PRODUCT_CODE",
+        "template_version": "TEMPLATE_VERSION",
+        "presentation_id": "PRESENTATION_ID"
       }
     });
   });
@@ -62,6 +68,7 @@ describe( "configure", function() {
     RisePlayerConfiguration.configure({
       displayId: "DISPLAY_ID",
       companyId: "COMPANY_ID",
+      presentationId: "PRESENTATION_ID",
       playerType: "stable",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00"
@@ -79,6 +86,11 @@ describe( "configure", function() {
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
         "chrome_version": null
+      },
+      "template": {
+        "product_code": "TEMPLATE_PRODUCT_CODE",
+        "template_version": "TEMPLATE_VERSION",
+        "presentation_id": "PRESENTATION_ID"
       }
     });
   });
@@ -87,6 +99,7 @@ describe( "configure", function() {
     RisePlayerConfiguration.configure({
       displayId: "DISPLAY_ID",
       companyId: "COMPANY_ID",
+      presentationId: "PRESENTATION_ID",
       playerType: "beta",
       os: "Ubuntu 64",
       playerVersion: "2018.01.01.10.00",
@@ -105,6 +118,11 @@ describe( "configure", function() {
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
         "chrome_version": "68.34"
+      },
+      "template": {
+        "product_code": "TEMPLATE_PRODUCT_CODE",
+        "template_version": "TEMPLATE_VERSION",
+        "presentation_id": "PRESENTATION_ID"
       }
     });
   });
