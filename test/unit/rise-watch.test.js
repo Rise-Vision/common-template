@@ -5,7 +5,26 @@
 
 describe( "Watch", function() {
 
+  var editableElements;
+
+  beforeEach( function() {
+
+    editableElements = [
+      { id: "rise-data-image-01" },
+      { id: "rise-data-financial-01" }
+    ];
+
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
+      return editableElements;
+    });
+
+    sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
+  });
+
   afterEach( function() {
+    RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
+    RisePlayerConfiguration.Helpers.sendStartEvent.restore();
+
     RisePlayerConfiguration.Watch.reset();
   });
 
@@ -52,21 +71,15 @@ describe( "Watch", function() {
       RisePlayerConfiguration.Watch.watchAttributeDataFile();
 
       expect( RisePlayerConfiguration.LocalStorage.watchSingleFile.called ).to.be.false;
+      expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
+      expect( RisePlayerConfiguration.Helpers.sendStartEvent.called ).to.be.true;
     });
 
   });
 
   describe( "handleAttributeDataFileUpdateMessage", function() {
 
-    var editableElements;
-
     beforeEach( function() {
-
-      editableElements = [
-        { id: "rise-data-image-01" },
-        { id: "rise-data-financial-01" }
-      ];
-
       sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
         return Promise.resolve({
           components: [
@@ -77,18 +90,10 @@ describe( "Watch", function() {
           ]
         });
       });
-
-      sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
-        return editableElements;
-      });
-
-      sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
     });
 
     afterEach( function() {
       RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.restore();
-      RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
-      RisePlayerConfiguration.Helpers.sendStartEvent.restore();
     });
 
     it( "should do nothing if there is no status", function() {
