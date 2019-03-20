@@ -23,6 +23,7 @@ describe( "log-entry", function() {
       RisePlayerConfiguration.configure({
         displayId: "DISPLAY_ID",
         companyId: "COMPANY_ID",
+        presentationId: "PRESENTATION_ID",
         playerType: "beta",
         os: "Ubuntu 64",
         playerVersion: "2018.01.01.10.00",
@@ -61,6 +62,11 @@ describe( "log-entry", function() {
         },
         "component": {
           "id": "rise-data-image-01"
+        },
+        "template": {
+          "product_code": "TEMPLATE_PRODUCT_CODE",
+          "version": "TEMPLATE_VERSION",
+          "presentation_id": "PRESENTATION_ID"
         }
       });
     });
@@ -92,6 +98,11 @@ describe( "log-entry", function() {
         },
         "component": {
           "id": "rise-data-image-01"
+        },
+        "template": {
+          "product_code": "TEMPLATE_PRODUCT_CODE",
+          "version": "TEMPLATE_VERSION",
+          "presentation_id": "PRESENTATION_ID"
         }
       });
     });
@@ -121,6 +132,11 @@ describe( "log-entry", function() {
         },
         "component": {
           "id": "rise-data-image-01"
+        },
+        "template": {
+          "product_code": "TEMPLATE_PRODUCT_CODE",
+          "version": "TEMPLATE_VERSION",
+          "presentation_id": "PRESENTATION_ID"
         }
       });
     });
@@ -152,6 +168,11 @@ describe( "log-entry", function() {
         },
         "component": {
           "id": "rise-data-image-01"
+        },
+        "template": {
+          "product_code": "TEMPLATE_PRODUCT_CODE",
+          "version": "TEMPLATE_VERSION",
+          "presentation_id": "PRESENTATION_ID"
         }
       });
     });
