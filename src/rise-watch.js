@@ -23,7 +23,7 @@ RisePlayerConfiguration.Watch = (() => {
         "Can't send attribute data file watch"
       );
 
-      return;
+      return _sendStartEvent();
     }
 
     const filePath = `${
