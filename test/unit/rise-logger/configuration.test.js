@@ -58,7 +58,7 @@ describe( "configure", function() {
       },
       "template": {
         "product_code": "TEMPLATE_PRODUCT_CODE",
-        "template_version": "TEMPLATE_VERSION",
+        "version": "TEMPLATE_VERSION",
         "presentation_id": "PRESENTATION_ID"
       }
     });
@@ -89,7 +89,7 @@ describe( "configure", function() {
       },
       "template": {
         "product_code": "TEMPLATE_PRODUCT_CODE",
-        "template_version": "TEMPLATE_VERSION",
+        "version": "TEMPLATE_VERSION",
         "presentation_id": "PRESENTATION_ID"
       }
     });
@@ -121,7 +121,7 @@ describe( "configure", function() {
       },
       "template": {
         "product_code": "TEMPLATE_PRODUCT_CODE",
-        "template_version": "TEMPLATE_VERSION",
+        "version": "TEMPLATE_VERSION",
         "presentation_id": "PRESENTATION_ID"
       }
     });
