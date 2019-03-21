@@ -65,13 +65,16 @@ jobs:
       - run: git clone https://github.com/Rise-Vision/rise-data-image.git
       - run: |
           VERSION=$(cat version-string/version)
+          DEST_FILE=rise-data-image/e2e/rise-data-image-electron.html
           sed "
             s!__STAGE__/common!staging/common/$VERSION!;
             s/__STAGE__/<< parameters.stage >>/;
             s!staging/components/rise-data-image/__VERSION__!<< parameters.stage >>/components/rise-data-image!;
             s/__PLAYER__/electron/;
             s/__CONNECTION__/websocket/;
-          " rise-data-image/e2e/rise-data-image.html > rise-data-image/e2e/rise-data-image-electron.html
+          " rise-data-image/e2e/rise-data-image.html > $DEST_FILE
+          NEW_EXPR="<head><script>var TEMPLATE_PRODUCT_CODE='';var TEMPLATE_VERSION='';</script>"
+          sed -i.bak '0,/<head>/{s@<head>@'"$NEW_EXPR"'@}' $DEST_FILE && rm $DEST_FILE.bak
       - run: cp rise-data-image/e2e/polymer-e2e-electron.json rise-data-image/polymer.json
       - run: |
           cd rise-data-image
