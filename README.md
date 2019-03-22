@@ -42,3 +42,10 @@ The following BQ entries are sent as source *Watch* and component id *Watch*:
 - ERROR **write component property error**: A property could not be set. The detail contains the error stack, the component id and property, and the value that couldn't be set.
 
 - WARNING **component not found for id in attribute data**: A component was customized in an attribute data file, but could not be found in the template page. The id of the component is sent as detail.
+
+## Events
+
+RisePlayerConfiguration sends the following events:
+
+- **rise-components-ready**: Sent once to the window object when Local Messaging connection has been accomplished for the first time, and instructs all components in the page that they can begin doing requests like watch, licensing and logging. Preview mode also sends this event even if there is no Local Messaging connection, so components can start working in this environment.
+- **rise-local-messaging-connection**: Sent to the window object when Local Messaging connection status has changed. It provides an argument with a nested property *detail.isConnected* that indicates if connection to Local Messaging was successful or not. This event may be sent multiple times depending on the status of the connection.
