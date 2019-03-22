@@ -1,6 +1,11 @@
 /* eslint-disable one-var */
 
 const RisePlayerConfiguration = {
+  RISE_PLAYER_CONFIGURATION_DATA: {
+    name: "RisePlayerConfiguration",
+    id: "RisePlayerConfiguration",
+    version: "N/A"
+  },
   configure: ( playerInfo, localMessagingInfo ) => {
     if ( !playerInfo && !localMessagingInfo ) {
       // outside of viewer or inside of viewer
@@ -112,6 +117,11 @@ const RisePlayerConfiguration = {
         window.dispatchEvent( new CustomEvent( "rise-components-ready" ));
 
         if ( !RisePlayerConfiguration.isPreview()) {
+          RisePlayerConfiguration.Logger.info(
+            RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA,
+            "rise-components-ready"
+          );
+
           RisePlayerConfiguration.Watch.watchAttributeDataFile();
         }
       });
