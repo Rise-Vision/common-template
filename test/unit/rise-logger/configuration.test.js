@@ -127,6 +127,39 @@ describe( "configure", function() {
     });
   });
 
+  it( "should apply empty string fallback for TEMPLATE_PRODUCT_CODE or TEMPLATE_VERSION when they are not injected", function() {
+    window.mockNoInjectedConstants();
+
+    RisePlayerConfiguration.configure({
+      displayId: "DISPLAY_ID",
+      companyId: "COMPANY_ID",
+      presentationId: "PRESENTATION_ID",
+      playerType: "stable",
+      os: "Ubuntu 64",
+      playerVersion: "2018.01.01.10.00"
+    }, {});
+
+    expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
+      "platform": "content",
+      "display_id": "DISPLAY_ID",
+      "company_id": "COMPANY_ID",
+      "rollout_stage": "stable",
+      "player": {
+        "ip": null,
+        "version": "2018.01.01.10.00",
+        "os": "Ubuntu 64",
+        "chrome_version": null
+      },
+      "template": {
+        "product_code": "",
+        "version": "",
+        "presentation_id": "PRESENTATION_ID"
+      }
+    });
+
+    window.resetInjectedConstants();
+  });
+
   it( "should fail if player version is not provided", function() {
     try {
       RisePlayerConfiguration.configure({
