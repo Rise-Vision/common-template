@@ -79,8 +79,8 @@ RisePlayerConfiguration.Logger = (() => {
         "chrome_version": chromeVersion
       },
       "template": {
-        "product_code": TEMPLATE_PRODUCT_CODE,
-        "version": TEMPLATE_VERSION,
+        "product_code": TEMPLATE_PRODUCT_CODE ? TEMPLATE_PRODUCT_CODE : "",
+        "version": TEMPLATE_VERSION ? TEMPLATE_VERSION : "",
         "presentation_id": RisePlayerConfiguration.getPresentationId()
       }
     };
