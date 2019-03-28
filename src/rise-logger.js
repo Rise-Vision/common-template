@@ -81,6 +81,7 @@ RisePlayerConfiguration.Logger = (() => {
       "template": {
         "product_code": TEMPLATE_PRODUCT_CODE ? TEMPLATE_PRODUCT_CODE : "",
         "version": TEMPLATE_VERSION ? TEMPLATE_VERSION : "",
+        "name": TEMPLATE_NAME ? TEMPLATE_NAME : "",
         "presentation_id": RisePlayerConfiguration.getPresentationId()
       }
     };
