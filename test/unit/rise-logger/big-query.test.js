@@ -482,6 +482,29 @@ describe( "Big Query logging", function() {
           });
         });
 
+        it( "should not log extra underscored parameters", function() {
+          RisePlayerConfiguration.Logger.error(
+            COMPONENT_DATA,
+            "video download failed once more",
+            "http://video.com/matrix.wmv",
+            {
+              "storage": { "file_path": "./videos/matrix.wmv" },
+              "_option": "this is not a bq entry"
+            }
+          );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          var body = JSON.parse( requests[ 1 ].requestBody );
+          var entry = body.rows[ 0 ].json;
+
+          expect( entry.storage ).to.deep.equal({
+            "file_path": "./videos/matrix.wmv"
+          });
+          expect( entry._option ).to.be.undefined;
+        });
+
         it( "should log a severe entry if the extra parameters are not an object", function() {
           RisePlayerConfiguration.Logger.error(
             COMPONENT_DATA,

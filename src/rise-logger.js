@@ -235,7 +235,13 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
-    const params = Object.assign({}, additionalFields, {
+    const params = additionalFields ? Object.keys( additionalFields )
+      .filter( key => key && key.charAt( 0 ) != "_" )
+      .reduce(( struct, field ) => ({
+        [ field ]: additionalFields[ field ]
+      }), {}) : {};
+
+    Object.assign( params, {
       "level": level,
       "event": event,
       "event_details": eventDetails || ""
