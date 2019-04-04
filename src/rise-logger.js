@@ -3,6 +3,8 @@
 
 RisePlayerConfiguration.Logger = (() => {
 
+  const ALREADY_LOGGED_ENTRIES_STORAGE_KEY = "RISE_VISION_ALREADY_LOGGED_ENTRIES";
+
   const GOOGLE_APIS_BASE = "https://www.googleapis.com";
   const REFRESH_URL = GOOGLE_APIS_BASE + "/oauth2/v3/token" +
     "?client_id=" + TEMPLATE_COMMON_CONFIG.LOGGER_CLIENT_ID +
@@ -79,9 +81,9 @@ RisePlayerConfiguration.Logger = (() => {
         "chrome_version": chromeVersion
       },
       "template": {
-        "product_code": window.TEMPLATE_PRODUCT_CODE ? window.TEMPLATE_PRODUCT_CODE : "",
-        "version": window.TEMPLATE_VERSION ? window.TEMPLATE_VERSION : "",
-        "name": window.TEMPLATE_NAME ? window.TEMPLATE_NAME : "",
+        "product_code": RisePlayerConfiguration.getTemplateProductCode(),
+        "version": RisePlayerConfiguration.getTemplateVersion(),
+        "name": RisePlayerConfiguration.getTemplateName(),
         "presentation_id": RisePlayerConfiguration.getPresentationId()
       }
     };
@@ -235,9 +237,83 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
+    if ( _shouldNotLog( componentData, event, additionalFields )) {
+      return;
+    }
+
     const params = _getLogParams( level, event, eventDetails, additionalFields );
 
     _log( componentData, params );
+  }
+
+  function _shouldNotLog( componentData, event, additionalFields ) {
+    if ( !additionalFields || !additionalFields._logAtMostOncePerDay ) {
+      return false;
+    }
+
+    try {
+      const entries = _loadAlreadyLoggedEntries();
+
+      const entryKey = _entryKeyFor( componentData, event );
+      const alreadyLogged = entries.alreadyLogged.includes( entryKey );
+
+      if ( !alreadyLogged ) {
+        entries.alreadyLogged.push( entryKey );
+
+        _saveAlreadyLoggedEntries( entries );
+      }
+
+      return alreadyLogged;
+    } catch ( error ) {
+      console.error( error );
+
+      return false;
+    }
+  }
+
+  function _loadAlreadyLoggedEntries() {
+    const value = window.sessionStorage.getItem( ALREADY_LOGGED_ENTRIES_STORAGE_KEY );
+    const data = value ? JSON.parse( value ) : {};
+    const currentDate = _currentDate();
+
+    if ( !data.date || data.date !== currentDate ) {
+      data.date = currentDate;
+      data.alreadyLogged = [];
+
+      _saveAlreadyLoggedEntries( data );
+    }
+
+    return data;
+  }
+
+  function _saveAlreadyLoggedEntries( entries ) {
+    const text = JSON.stringify( entries );
+
+    window.sessionStorage.setItem( ALREADY_LOGGED_ENTRIES_STORAGE_KEY, text );
+  }
+
+  function _entryKeyFor( componentData, event ) {
+    return `${
+      RisePlayerConfiguration.getPresentationId()
+    }:${
+      RisePlayerConfiguration.getTemplateVersion()
+    }:${
+      componentData.id
+    }:${
+      event
+    }`;
+  }
+
+  function _currentDate() {
+    const today = new Date();
+
+    return `${
+      today.getFullYear()
+    }-${
+      today.getMonth() + 1
+    }-${
+      today.getDate()
+    }`;
   }
 
   function _getLogParams( level, event, eventDetails, additionalFields ) {
