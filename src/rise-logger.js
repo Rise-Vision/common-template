@@ -235,6 +235,12 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
+    const params = _getLogParams( level, event, eventDetails, additionalFields );
+
+    _log( componentData, params );
+  }
+
+  function _getLogParams( level, event, eventDetails, additionalFields ) {
     const params = additionalFields ? Object.keys( additionalFields )
       .filter( key => key && key.charAt( 0 ) != "_" )
       .reduce(( struct, field ) => ({
@@ -247,7 +253,7 @@ RisePlayerConfiguration.Logger = (() => {
       "event_details": eventDetails || ""
     });
 
-    _log( componentData, params );
+    return params;
   }
 
   function severe( componentData, event, eventDetails, additionalFields ) {
