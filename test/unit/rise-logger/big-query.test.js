@@ -1,5 +1,5 @@
-/* eslint-disable one-var, vars-on-top */
-/* global describe, it, expect, after, afterEach, before, beforeEach, sinon */
+/* eslint-disable newline-after-var, one-var, vars-on-top */
+/* global describe, it, expect, after, afterEach, before, beforeEach, sinon, window */
 
 "use strict";
 
@@ -567,6 +567,114 @@ describe( "Big Query logging", function() {
           RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "low level trace" );
 
           expect( requests.length ).to.equal( 0 );
+        });
+
+        describe( "alreadyLogged", function() {
+
+          var DATA;
+
+          beforeEach( function() {
+            DATA = {
+              date: RisePlayerConfiguration.Logger.currentDate(),
+              alreadyLogged: [
+                RisePlayerConfiguration.Logger.entryKeyFor( COMPONENT_DATA, "broken" )
+              ]
+            };
+
+            sinon.stub( window.sessionStorage, "setItem", function() {});
+          });
+
+          afterEach( function() {
+            window.sessionStorage.setItem.restore();
+            window.sessionStorage.getItem.restore();
+          });
+
+          it( "should not log an event if it was already logged", function() {
+
+            sinon.stub( window.sessionStorage, "getItem", function() {
+              return JSON.stringify( DATA );
+            });
+
+            RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "broken", "", {
+              _logAtMostOncePerDay: true
+            });
+
+            expect( requests.length ).to.equal( 0 );
+            expect( window.sessionStorage.setItem ).to.not.have.been.called;
+          });
+
+          it( "should log an event if it was not already logged", function() {
+            sinon.stub( window.sessionStorage, "getItem", function() {
+              return JSON.stringify({
+                date: RisePlayerConfiguration.Logger.currentDate(),
+                alreadyLogged: []
+              });
+            });
+
+            RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "broken", "", {
+              _logAtMostOncePerDay: true
+            });
+
+            expect( requests.length ).to.equal( 2 );
+            expect( window.sessionStorage.setItem ).to.have.been.called;
+
+            var call = window.sessionStorage.setItem.lastCall;
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+
+            var value = call.args[ 1 ];
+            expect( value ).to.be.ok;
+
+            var data = JSON.parse( value );
+            expect( data ).to.deep.equal( DATA );
+          });
+
+          it( "should log an event if there is no stored data", function() {
+            sinon.stub( window.sessionStorage, "getItem", function() {
+              return null;
+            });
+
+            RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "broken", "", {
+              _logAtMostOncePerDay: true
+            });
+
+            expect( requests.length ).to.equal( 2 );
+            expect( window.sessionStorage.setItem ).to.have.been.called;
+
+            var call = window.sessionStorage.setItem.lastCall;
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+
+            var value = call.args[ 1 ];
+            expect( value ).to.be.ok;
+
+            var data = JSON.parse( value );
+            expect( data ).to.deep.equal( DATA );
+          });
+
+          it( "should log an event if the date has changed", function() {
+            sinon.stub( window.sessionStorage, "getItem", function() {
+              return JSON.stringify({
+                date: "other date",
+                alreadyLogged: DATA.alreadyLogged
+              });
+            });
+
+            RisePlayerConfiguration.Logger.error( COMPONENT_DATA, "broken", "", {
+              _logAtMostOncePerDay: true
+            });
+
+            expect( requests.length ).to.equal( 2 );
+            expect( window.sessionStorage.setItem ).to.have.been.called;
+
+            var call = window.sessionStorage.setItem.lastCall;
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+
+            var value = call.args[ 1 ];
+            expect( value ).to.be.ok;
+
+            var data = JSON.parse( value );
+            expect( data ).to.deep.equal( DATA );
+          });
+
         });
 
       });

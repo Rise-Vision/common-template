@@ -253,9 +253,8 @@ RisePlayerConfiguration.Logger = (() => {
 
     try {
       const entries = _loadAlreadyLoggedEntries();
-
       const entryKey = _entryKeyFor( componentData, event );
-      const alreadyLogged = entries.alreadyLogged.includes( entryKey );
+      const alreadyLogged = entries.alreadyLogged.indexOf( entryKey ) >= 0;
 
       if ( !alreadyLogged ) {
         entries.alreadyLogged.push( entryKey );
@@ -364,6 +363,8 @@ RisePlayerConfiguration.Logger = (() => {
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
       createLogEntryFor: _createLogEntryFor,
+      currentDate: _currentDate,
+      entryKeyFor: _entryKeyFor,
       getCommonEntryValues: () => _commonEntryValues,
       getInsertData: _getInsertData,
       isDebugEnabled: () => _debugEnabled,
