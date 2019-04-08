@@ -108,6 +108,15 @@ const RisePlayerConfiguration = {
 
     return RisePlayerConfiguration.Helpers.getHttpParameter( "presentationId" );
   },
+  getTemplateProductCode() {
+    return window.TEMPLATE_PRODUCT_CODE ? window.TEMPLATE_PRODUCT_CODE : "";
+  },
+  getTemplateVersion() {
+    return window.TEMPLATE_VERSION ? window.TEMPLATE_VERSION : "";
+  },
+  getTemplateName() {
+    return window.TEMPLATE_NAME ? window.TEMPLATE_NAME : "";
+  },
   isPreview: function() {
     return RisePlayerConfiguration.getDisplayId() === "preview";
   },
