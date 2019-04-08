@@ -26,6 +26,11 @@ RisePlayerConfiguration.Watch = (() => {
       return _sendStartEvent();
     }
 
+    // No need to get attribute data or sending start if there are no editable elements.
+    if ( RisePlayerConfiguration.Helpers.getRiseEditableElements().length === 0 ) {
+      return;
+    }
+
     const filePath = `${
       TEMPLATE_COMMON_CONFIG.GCS_COMPANY_BUCKET
     }/${
