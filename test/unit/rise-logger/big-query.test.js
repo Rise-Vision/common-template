@@ -619,7 +619,7 @@ describe( "Big Query logging", function() {
             expect( window.sessionStorage.setItem ).to.have.been.called;
 
             var call = window.sessionStorage.setItem.lastCall;
-            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_LOGGED_ENTRIES" );
 
             var value = call.args[ 1 ];
             expect( value ).to.be.ok;
@@ -641,7 +641,7 @@ describe( "Big Query logging", function() {
             expect( window.sessionStorage.setItem ).to.have.been.called;
 
             var call = window.sessionStorage.setItem.lastCall;
-            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_LOGGED_ENTRIES" );
 
             var value = call.args[ 1 ];
             expect( value ).to.be.ok;
@@ -666,7 +666,7 @@ describe( "Big Query logging", function() {
             expect( window.sessionStorage.setItem ).to.have.been.called;
 
             var call = window.sessionStorage.setItem.lastCall;
-            expect( call.args[ 0 ]).to.equal( "RISE_VISION_ALREADY_LOGGED_ENTRIES" );
+            expect( call.args[ 0 ]).to.equal( "RISE_VISION_LOGGED_ENTRIES" );
 
             var value = call.args[ 1 ];
             expect( value ).to.be.ok;

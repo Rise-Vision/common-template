@@ -3,7 +3,7 @@
 
 RisePlayerConfiguration.Logger = (() => {
 
-  const ALREADY_LOGGED_ENTRIES_STORAGE_KEY = "RISE_VISION_ALREADY_LOGGED_ENTRIES";
+  const LOGGED_ENTRIES_STORAGE_KEY = "RISE_VISION_LOGGED_ENTRIES";
 
   const GOOGLE_APIS_BASE = "https://www.googleapis.com";
   const REFRESH_URL = GOOGLE_APIS_BASE + "/oauth2/v3/token" +
@@ -252,14 +252,14 @@ RisePlayerConfiguration.Logger = (() => {
     }
 
     try {
-      const entries = _loadAlreadyLoggedEntries();
+      const entries = _loadLoggedEntries();
       const entryKey = _entryKeyFor( componentData, event );
       const alreadyLogged = entries.alreadyLogged.indexOf( entryKey ) >= 0;
 
       if ( !alreadyLogged ) {
         entries.alreadyLogged.push( entryKey );
 
-        _saveAlreadyLoggedEntries( entries );
+        _saveLoggedEntries( entries );
       }
 
       return alreadyLogged;
@@ -270,8 +270,8 @@ RisePlayerConfiguration.Logger = (() => {
     }
   }
 
-  function _loadAlreadyLoggedEntries() {
-    const value = window.sessionStorage.getItem( ALREADY_LOGGED_ENTRIES_STORAGE_KEY );
+  function _loadLoggedEntries() {
+    const value = window.sessionStorage.getItem( LOGGED_ENTRIES_STORAGE_KEY );
     const data = value ? JSON.parse( value ) : {};
     const currentDate = _currentDate();
 
@@ -279,16 +279,16 @@ RisePlayerConfiguration.Logger = (() => {
       data.date = currentDate;
       data.alreadyLogged = [];
 
-      _saveAlreadyLoggedEntries( data );
+      _saveLoggedEntries( data );
     }
 
     return data;
   }
 
-  function _saveAlreadyLoggedEntries( entries ) {
+  function _saveLoggedEntries( entries ) {
     const text = JSON.stringify( entries );
 
-    window.sessionStorage.setItem( ALREADY_LOGGED_ENTRIES_STORAGE_KEY, text );
+    window.sessionStorage.setItem( LOGGED_ENTRIES_STORAGE_KEY, text );
   }
 
   function _entryKeyFor( componentData, event ) {
