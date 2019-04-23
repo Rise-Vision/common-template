@@ -97,7 +97,7 @@ const RisePlayerConfiguration = {
   getDisplayId: function() {
     var playerInfo = RisePlayerConfiguration.getPlayerInfo();
 
-    return playerInfo ? playerInfo.displayId : null;
+    return playerInfo ? playerInfo.displayId || "preview" : "preview";
   },
   getPresentationId: function() {
     var playerInfo = RisePlayerConfiguration.getPlayerInfo();
