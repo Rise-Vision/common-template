@@ -194,21 +194,6 @@ describe( "configure", function() {
     }
   });
 
-  it( "should fail if display id is not provided", function() {
-    try {
-      RisePlayerConfiguration.configure({
-        companyId: "COMPANY_ID",
-        playerType: "beta",
-        playerVersion: "2018.01.01.10.00",
-        os: "Ubuntu 64"
-      }, {});
-
-      expect.fail();
-    } catch ( error ) {
-      expect( error.message ).to.equal( "No display id was provided" );
-    }
-  });
-
   it( "should fail if company id is not provided", function() {
     try {
       RisePlayerConfiguration.configure({

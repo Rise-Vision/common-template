@@ -70,10 +70,10 @@ describe( "RisePlayerConfiguration", function() {
       expect( RisePlayerConfiguration.getDisplayId()).to.equal( "id" );
     });
 
-    it( "should not return the display id if it was not provided", function() {
+    it( "should return 'preview' as the value of display id if display id was not provided", function() {
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
     });
 
   });
@@ -89,7 +89,7 @@ describe( "RisePlayerConfiguration", function() {
     it( "should not return the company id if it was not provided", function() {
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.be.undefined;
+      expect( RisePlayerConfiguration.getCompanyId()).to.be.undefined;
     });
 
   });
