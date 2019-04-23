@@ -61,9 +61,6 @@ RisePlayerConfiguration.Logger = (() => {
     if ( !playerOs ) {
       throw new Error( "No operating system was provided" );
     }
-    if ( !displayId ) {
-      throw new Error( "No display id was provided" );
-    }
     if ( !companyId ) {
       throw new Error( "No company id was provided" );
     }
