@@ -79,6 +79,18 @@ RisePlayerConfiguration.Helpers = (() => {
       .filter( element => !element.hasAttribute( "non-editable" ))
   }
 
+  function getRisePlayerConfiguration() {
+    let configuration = null;
+
+    try {
+      configuration = window.getRisePlayerConfiguration || window.top.getRisePlayerConfiguration;
+    } catch ( err ) {
+      console.log( err );
+    }
+
+    return configuration;
+  }
+
   function getLocalMessagingTextContent( fileUrl ) {
     return new Promise(( resolve, reject ) => {
       const xhr = new XMLHttpRequest();
@@ -134,6 +146,7 @@ RisePlayerConfiguration.Helpers = (() => {
     getLocalMessagingTextContent: getLocalMessagingTextContent,
     getRiseElements: getRiseElements,
     getRiseEditableElements: getRiseEditableElements,
+    getRisePlayerConfiguration: getRisePlayerConfiguration,
     isTestEnvironment: isTestEnvironment,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent
