@@ -23,7 +23,8 @@
       "src/rise-licensing.js",
       "src/rise-logger.js",
       "src/rise-local-storage.js",
-      "src/rise-watch.js"
+      "src/rise-watch.js",
+      "src/rise-preview.js"
     ];
 
   gulp.task( "clean", function( cb ) {

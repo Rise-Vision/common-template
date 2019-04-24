@@ -2,7 +2,7 @@
 
 RisePlayerConfiguration.Preview = (() => {
 
-  function _receiveData() {
+  function _receiveData( event ) {
     if ( event.origin.indexOf( "risevision.com" ) === -1 ) {
       return;
     }
@@ -21,6 +21,12 @@ RisePlayerConfiguration.Preview = (() => {
   const exposedFunctions = {
     startListeningForData: startListeningForData
   };
+
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    Object.assign( exposedFunctions, {
+      receiveData: _receiveData
+    });
+  }
 
   return exposedFunctions;
 

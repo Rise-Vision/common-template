@@ -14,7 +14,8 @@ describe( "RisePlayerConfiguration", function() {
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
 
     RisePlayerConfiguration.Helpers = {
-      isTestEnvironment: _helpers.isTestEnvironment
+      isTestEnvironment: _helpers.isTestEnvironment,
+      getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration
     };
 
     RisePlayerConfiguration.Logger = {
