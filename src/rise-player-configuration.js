@@ -9,8 +9,7 @@ const RisePlayerConfiguration = {
   configure: ( playerInfo, localMessagingInfo ) => {
     if ( !playerInfo && !localMessagingInfo ) {
       // outside of viewer or inside of viewer
-      const getConfiguration = window.getRisePlayerConfiguration ||
-        window.top.getRisePlayerConfiguration;
+      const getConfiguration = RisePlayerConfiguration.Helpers.getRisePlayerConfiguration();
 
       if ( typeof getConfiguration === "function" ) {
         const configuration = getConfiguration();
@@ -21,8 +20,6 @@ const RisePlayerConfiguration = {
         } else {
           throw new Error( `The configuration object is not valid: ${ JSON.stringify( configuration ) }` );
         }
-      } else {
-        throw new Error( "No configuration was provided" );
       }
     }
 
@@ -48,6 +45,9 @@ const RisePlayerConfiguration = {
     }
     if ( !RisePlayerConfiguration.Watch ) {
       throw new Error( "RiseWatch script was not loaded" );
+    }
+    if ( !RisePlayerConfiguration.Preview ) {
+      throw new Error( "RisePreview script was not loaded" );
     }
 
     RisePlayerConfiguration.Logger.configure();
@@ -132,6 +132,8 @@ const RisePlayerConfiguration = {
           );
 
           RisePlayerConfiguration.Watch.watchAttributeDataFile();
+        } else {
+          RisePlayerConfiguration.Preview.startListeningForData();
         }
       });
   },
