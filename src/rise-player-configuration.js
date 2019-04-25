@@ -1,4 +1,4 @@
-/* eslint-disable one-var */
+/* eslint-disable no-console, one-var */
 
 const RisePlayerConfiguration = {
   RISE_PLAYER_CONFIGURATION_DATA: {
@@ -21,6 +21,8 @@ const RisePlayerConfiguration = {
           throw new Error( `The configuration object is not valid: ${ JSON.stringify( configuration ) }` );
         }
       }
+    } else {
+      console.log( "player configuration not present, running in Preview mode" );
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;

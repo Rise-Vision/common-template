@@ -40,7 +40,7 @@ RisePlayerConfiguration.Logger = (() => {
 
   function configure() {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
-    const rolloutStage = playerInfo.playerType;
+    const rolloutStage = playerInfo && playerInfo.playerType;
 
     if ( RisePlayerConfiguration.isPreview() ||
       ( rolloutStage !== "beta" && rolloutStage !== "stable" )) {
@@ -216,7 +216,7 @@ RisePlayerConfiguration.Logger = (() => {
 
     const entry = _createLogEntryFor( componentData, params );
 
-    if ( !_bigQueryLoggingEnabled ) {
+    if ( !_bigQueryLoggingEnabled && params.level !== "info" ) {
       return console.log( JSON.stringify( entry ));
     }
 

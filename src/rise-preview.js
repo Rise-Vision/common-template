@@ -9,9 +9,7 @@ RisePlayerConfiguration.Preview = (() => {
 
     const data = JSON.parse( event.data );
 
-    console.log( "received message with attribute data", data );
-
-    // TODO: apply data to components
+    RisePlayerConfiguration.AttributeData.update( data );
   }
 
   function startListeningForData() {

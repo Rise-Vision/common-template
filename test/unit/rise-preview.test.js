@@ -1,28 +1,30 @@
-/* global describe, it, sinon, expect */
+/* global describe, it, sinon, expect, beforeEach, afterEach */
 /* eslint-disable no-console */
 
 "use strict";
 
 describe( "Preview", function() {
 
-  it( "should receive data from a 'message'", function() {
-    sinon.stub( console, "log" );
+  var updateStub;
 
+  beforeEach( function() {
+    updateStub = sinon.stub( RisePlayerConfiguration.AttributeData, "update" );
+  });
+
+  afterEach( function() {
+    updateStub.restore();
+  });
+
+  it( "should receive data from a 'message'", function() {
     RisePlayerConfiguration.Preview.receiveData({ origin: "https://widgets.risevision.com", data: JSON.stringify({ testData: "test" }) });
 
-    expect( console.log ).to.have.been.calledWith( "received message with attribute data", { testData: "test" });
-
-    console.log.restore();
+    expect( updateStub ).to.have.been.calledWith({ testData: "test" });
   });
 
   it( "should not execute on message if origin not from risevision.com", function() {
-    sinon.stub( console, "log" );
-
     RisePlayerConfiguration.Preview.receiveData({ origin: "https://test.com", data: JSON.stringify({ testData: "test" }) });
 
-    expect( console.log ).to.not.have.been.called;
-
-    console.log.restore();
+    expect( updateStub ).to.not.have.been.called;
   });
 
 });
