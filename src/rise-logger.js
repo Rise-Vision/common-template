@@ -216,7 +216,7 @@ RisePlayerConfiguration.Logger = (() => {
 
     const entry = _createLogEntryFor( componentData, params );
 
-    if ( !_bigQueryLoggingEnabled ) {
+    if ( !_bigQueryLoggingEnabled && params.level !== "info" ) {
       return console.log( JSON.stringify( entry ));
     }
 
