@@ -25,7 +25,9 @@
       "src/rise-local-storage.js",
       "src/rise-watch.js",
       "src/rise-preview.js",
-      "src/rise-attribute-data.js"
+      "src/rise-attribute-data.js",
+      "src/rise-attribute-data-watch.js",
+      "src/rise-display-data.js"
     ];
 
   gulp.task( "clean", function( cb ) {

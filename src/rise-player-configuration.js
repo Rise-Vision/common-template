@@ -51,6 +51,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Preview ) {
       throw new Error( "RisePreview script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.DisplayData ) {
+      throw new Error( "DisplayData script was not loaded" );
+    }
 
     RisePlayerConfiguration.Logger.configure();
 
@@ -133,7 +136,7 @@ const RisePlayerConfiguration = {
             "rise-components-ready"
           );
 
-          RisePlayerConfiguration.Watch.watchAttributeDataFile();
+          RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile();
         } else {
           RisePlayerConfiguration.Preview.startListeningForData();
         }

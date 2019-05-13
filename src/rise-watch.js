@@ -1,95 +1,63 @@
-/* global TEMPLATE_COMMON_CONFIG */
 /* eslint-disable no-console, one-var */
 
 RisePlayerConfiguration.Watch = (() => {
 
-  const WATCH_COMPONENT_DATA = {
+  const WATCH_DATA_FILE = {
     name: "RisePlayerConfiguration",
     id: "Watch",
     version: "N/A"
   };
 
-  function watchAttributeDataFile() {
-    const companyId = RisePlayerConfiguration.getCompanyId();
-    const presentationId = RisePlayerConfiguration.getPresentationId();
-
-    if ( !presentationId ) {
-      // current templates won't have a presentation id, so they will make this far
-      RisePlayerConfiguration.Logger.error(
-        WATCH_COMPONENT_DATA,
-        "no presentation id",
-        "Can't send attribute data file watch"
-      );
-
-      return RisePlayerConfiguration.AttributeData.sendStartEvent();
-    }
-
-    // No need to get attribute data or sending start if there are no editable elements.
-    if ( RisePlayerConfiguration.Helpers.getRiseEditableElements().length === 0 ) {
-      return;
-    }
-
-    const filePath = `${
-      TEMPLATE_COMMON_CONFIG.GCS_COMPANY_BUCKET
-    }/${
-      companyId
-    }/template-data/${
-      presentationId
-    }/published/${
-      TEMPLATE_COMMON_CONFIG.GCS_ATTRIBUTE_DATA_FILE
-    }`;
-
-    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, _handleAttributeDataFileUpdateMessage );
+  function watchDataFile( filePath, handlerSuccess, handlerError ) {
+    RisePlayerConfiguration.LocalStorage.watchSingleFile( filePath, message => {
+      return _handleFileUpdateMessage( message, handlerSuccess, handlerError );
+    });
   }
 
-  function _handleAttributeDataFileUpdateMessage( message ) {
+  function _handleFileUpdateMessage( message, handlerSuccess, handlerError ) {
     if ( !message.status ) {
       return Promise.resolve();
     }
 
     switch ( message.status.toUpperCase()) {
-    case "FILE-ERROR":
-      return _handleAttributeDataFileUpdateError( message );
-
     case "CURRENT":
-      return _handleAttributeDataFileAvailable( message.fileUrl );
+      return _handleFileAvailable( message.fileUrl, handlerSuccess );
 
+    case "FILE-ERROR":
+      RisePlayerConfiguration.Logger.error(
+        WATCH_DATA_FILE, "data file error", message
+      );
+      // falls through
     case "NOEXIST":
     case "DELETED":
-      return RisePlayerConfiguration.AttributeData.sendStartEvent();
+      if ( handlerError ) {
+        return handlerError( message );
+      }
     }
 
     return Promise.resolve();
   }
 
-  function _handleAttributeDataFileUpdateError( message ) {
-    RisePlayerConfiguration.Logger.error(
-      WATCH_COMPONENT_DATA, "attribute data file error", message
-    );
-
-    return RisePlayerConfiguration.AttributeData.sendStartEvent();
-  }
-
-  function _handleAttributeDataFileAvailable( fileUrl ) {
+  function _handleFileAvailable( fileUrl, handlerSuccess ) {
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
-        return RisePlayerConfiguration.AttributeData.update( data );
+        return handlerSuccess( data );
       })
       .catch( error => {
         RisePlayerConfiguration.Logger.error(
-          WATCH_COMPONENT_DATA, "attribute data file read error", error.stack
+          WATCH_DATA_FILE, "data file read error", error.stack
         );
       });
   }
 
   const exposedFunctions = {
-    watchAttributeDataFile: watchAttributeDataFile
+    watchDataFile: watchDataFile
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
     Object.assign( exposedFunctions, {
-      handleAttributeDataFileUpdateMessage: _handleAttributeDataFileUpdateMessage
+      handleFileUpdateMessage: _handleFileUpdateMessage
     });
   }
 

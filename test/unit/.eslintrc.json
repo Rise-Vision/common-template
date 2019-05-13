@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "var": "always",
+    "vars-on-top": 0
+  },
+  "globals" : {
+
+    /* mocha */
+    "expect": true,
+    "require" : true,
+    "describe" : true,
+    "beforeEach" : true,
+    "afterEach" : true,
+    "it" : true,
+    "spyOn" : true,
+    "xit" : true,
+    "xdescribe" : true,
+
+    /* sinon */
+    "sinon" : true
+  }
+}

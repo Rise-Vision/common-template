@@ -1,81 +1,41 @@
-/* global afterEach, beforeEach, describe, it, expect, sinon */
-/* eslint-disable vars-on-top */
-
 "use strict";
 
 describe( "Watch", function() {
-
-  var editableElements;
-
-  beforeEach( function() {
-
-    editableElements = [
-      { id: "rise-data-image-01" },
-      { id: "rise-data-financial-01" }
-    ];
-
-    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
-      return editableElements;
-    });
-  });
-
-  afterEach( function() {
-    RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
-  });
 
   it( "should exist", function() {
     expect( RisePlayerConfiguration.Watch ).to.be.ok;
   });
 
-  describe( "watchAttributeDataFile", function() {
+  describe( "watchDataFile", function() {
 
     beforeEach( function() {
       sinon.stub( RisePlayerConfiguration.LocalStorage, "watchSingleFile" );
-
-      sinon.stub( RisePlayerConfiguration, "getCompanyId", function() {
-        return "COMPANY_ID";
-      });
-      sinon.stub( RisePlayerConfiguration, "getPresentationId", function() {
-        return "PRESENTATION_ID";
-      });
-      sinon.stub( RisePlayerConfiguration.AttributeData, "sendStartEvent", function() {
-        return Promise.resolve();
-      });
     });
 
     afterEach( function() {
-      RisePlayerConfiguration.getCompanyId.restore();
-      RisePlayerConfiguration.getPresentationId.restore();
       RisePlayerConfiguration.LocalStorage.watchSingleFile.restore();
-      RisePlayerConfiguration.AttributeData.sendStartEvent.restore();
     });
 
     it( "should send watch for attribute data file", function() {
-      RisePlayerConfiguration.Watch.watchAttributeDataFile();
+      RisePlayerConfiguration.Watch.watchDataFile( "risevision-company-notifications/data-file.json" );
 
       expect( RisePlayerConfiguration.LocalStorage.watchSingleFile ).to.have.been.calledWith(
-        "risevision-company-notifications/COMPANY_ID/template-data/PRESENTATION_ID/published/attribute-data.json",
-        RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage
+        "risevision-company-notifications/data-file.json",
+        sinon.match.func
       );
-    });
-
-    it( "should not send watch if presentation id is not present", function() {
-
-      RisePlayerConfiguration.getPresentationId.restore();
-      sinon.stub( RisePlayerConfiguration, "getPresentationId", function() {
-        return null;
-      });
-
-      RisePlayerConfiguration.Watch.watchAttributeDataFile();
-
-      expect( RisePlayerConfiguration.LocalStorage.watchSingleFile.called ).to.be.false;
-      expect( RisePlayerConfiguration.AttributeData.sendStartEvent.called ).to.be.true;
     });
 
   });
 
-  describe( "handleAttributeDataFileUpdateMessage", function() {
+  describe( "handleFileUpdateMessage", function() {
+    var handlerSuccessStub,
+      handlerErrorStub;
+
     beforeEach( function() {
+      handlerSuccessStub = sinon.stub();
+      handlerErrorStub = sinon.spy( function() {
+        return Promise.resolve();
+      });
       sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
         return Promise.resolve({
           components: [
@@ -86,37 +46,29 @@ describe( "Watch", function() {
           ]
         });
       });
-      sinon.stub( RisePlayerConfiguration.AttributeData, "sendStartEvent", function() {
-        return Promise.resolve();
-      });
-      sinon.stub( RisePlayerConfiguration.AttributeData, "update", function() {
-        return Promise.resolve();
-      });
     });
 
     afterEach( function() {
       RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.restore();
-      RisePlayerConfiguration.AttributeData.sendStartEvent.restore();
-      RisePlayerConfiguration.AttributeData.update.restore();
     });
 
     it( "should do nothing if there is no status", function() {
-      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({})
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({}, handlerSuccessStub, handlerErrorStub )
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.update.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.sendStartEvent.called ).to.be.false;
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.false;
         });
     });
 
     it( "should execute updating components with attribute data", function() {
-      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
         status: "CURRENT",
         fileUrl: "http://localhost/sample"
-      })
+      }, handlerSuccessStub, handlerErrorStub )
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.true;
-          expect( RisePlayerConfiguration.AttributeData.update ).to.have.been.calledWith({
+          expect( handlerSuccessStub ).to.have.been.calledWith({
             components: [
               {
                 id: "rise-data-financial-01",
@@ -124,44 +76,45 @@ describe( "Watch", function() {
               }
             ]
           });
+          expect( handlerErrorStub.called ).to.be.false;
         });
     });
 
     it( "should just send start if file does not exist", function() {
 
-      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
         status: "NOEXIST"
-      })
+      }, handlerSuccessStub, handlerErrorStub )
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.update.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.sendStartEvent.called ).to.be.true;
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.true;
         });
 
     });
 
     it( "should just send start if file was deleted", function() {
 
-      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
         status: "DELETED"
-      })
+      }, handlerSuccessStub, handlerErrorStub )
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.update.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.sendStartEvent.called ).to.be.true;
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.true;
         });
 
     });
 
     it( "should just send start if there was a file error", function() {
 
-      return RisePlayerConfiguration.Watch.handleAttributeDataFileUpdateMessage({
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
         status: "FILE-ERROR"
-      })
+      }, handlerSuccessStub, handlerErrorStub )
         .then( function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.update.called ).to.be.false;
-          expect( RisePlayerConfiguration.AttributeData.sendStartEvent.called ).to.be.true;
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.true;
         });
 
     });

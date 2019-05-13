@@ -4,7 +4,9 @@
   "description": "Common scripts for Rise Templates",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "eslint . && gulp test"
+    "pretest": "eslint .",
+    "test": "gulp test",
+    "pretty": "eslint . --fix"
   },
   "repository": {
     "type": "git",
