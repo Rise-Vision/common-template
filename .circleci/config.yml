@@ -65,6 +65,7 @@ jobs:
       - run: git clone https://github.com/Rise-Vision/rise-image.git
       - run: |
           cd rise-image
+          echo temporary use of branch
           git checkout e2e/create-tests
       - run: |
           VERSION=$(cat version-string/version)
