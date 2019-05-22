@@ -194,7 +194,7 @@ workflows:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - generate-version:
           requires:
             - install
@@ -204,7 +204,7 @@ workflows:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - deploy-stage:
           requires:
             - build_and_test
@@ -216,7 +216,7 @@ workflows:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - build-e2e-page:
           stage: beta
           name: build-e2e-page-beta
@@ -227,7 +227,7 @@ workflows:
             branches:
               only:
                 - master
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
@@ -248,7 +248,7 @@ workflows:
             branches:
               only:
                 - master
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - deploy-e2e-page:
           stage: stable
           name: deploy-e2e-page-stable
@@ -271,7 +271,7 @@ workflows:
             branches:
               only:
                 - master
-                - /^(e2e)[/].*/
+                - /^e2e[/].*/
       - test-e2e-electron:
           stage: stable
           displayId: 3AEP9BWZEKFN
