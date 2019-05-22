@@ -61,25 +61,24 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: echo build rise-data-image e2e page << parameters.stage >>
-      - run: git clone https://github.com/Rise-Vision/rise-data-image.git
+      - run: echo build rise-image e2e page << parameters.stage >>
+      - run: git clone https://github.com/Rise-Vision/rise-image.git
       - run: |
           VERSION=$(cat version-string/version)
-          DEST_FILE=rise-data-image/e2e/rise-data-image-electron.html
+          DEST_FILE=rise-image/e2e/rise-image-electron.html
           sed "
             s!__STAGE__/common!staging/common/$VERSION!;
             s/__STAGE__/<< parameters.stage >>/;
-            s!staging/components/rise-data-image/__VERSION__!<< parameters.stage >>/components/rise-data-image!;
-            s/__PLAYER__/electron/;
-            s/__CONNECTION__/websocket/;
-          " rise-data-image/e2e/rise-data-image.html > $DEST_FILE
-      - run: cp rise-data-image/e2e/polymer-e2e-electron.json rise-data-image/polymer.json
+            s!staging/components/rise-image/__VERSION__!<< parameters.stage >>/components/rise-image!;
+          " rise-image/e2e/rise-image.html > $DEST_FILE
+      - run: cp rise-image/e2e/polymer-e2e-electron.json rise-image/polymer.json
       - run: |
-          cd rise-data-image
+          cd rise-image
+          git checkout e2e/create-tests
           npm install
           polymer build
       - persist_to_workspace:
-          root: ./rise-data-image/build
+          root: ./rise-image/build
           paths:
             - base
 
@@ -99,7 +98,7 @@ jobs:
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
-          gsutil acl -r ch -u AllUsers:R $TARGET
+          gsutil -m acl -r ch -u AllUsers:R $TARGET
 
   deploy-e2e-page:
     parameters:
@@ -115,11 +114,11 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          TARGET=$WIDGETS_BASE/<< parameters.stage >>/e2e/rise-data-image/electron
-          echo Deploying << parameters.stage >> electron e2e page for rise-data-image
-          gsutil rsync -d -r base $TARGET
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/e2e/rise-image/electron
+          echo Deploying << parameters.stage >> electron e2e page for rise-image
+          gsutil -m rsync -d -r base $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
-          gsutil acl -r ch -u AllUsers:R $TARGET
+          gsutil -m acl -r ch -u AllUsers:R $TARGET
 
   test-e2e-electron:
     parameters:
@@ -177,7 +176,7 @@ jobs:
           TARGET=$WIDGETS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
-          gsutil acl -r ch -u AllUsers:R $TARGET
+          gsutil -m acl -r ch -u AllUsers:R $TARGET
 
 workflows:
   workflow1:
@@ -260,7 +259,7 @@ workflows:
                 - build/stable
       - test-e2e-electron:
           stage: beta
-          displayId: 9YP68DHZ4HUJ
+          displayId: NEWSF2QM2B2F
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
           name: test-e2e-electron-beta
           requires:
@@ -273,7 +272,7 @@ workflows:
                 - /^(e2e)[/].*/
       - test-e2e-electron:
           stage: stable
-          displayId: U2SQ87Y5QM64
+          displayId: 3AEP9BWZEKFN
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/
           name: test-e2e-electron-stable
           requires:
