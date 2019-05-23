@@ -64,10 +64,6 @@ jobs:
       - run: echo build rise-image e2e page << parameters.stage >>
       - run: git clone https://github.com/Rise-Vision/rise-image.git
       - run: |
-          cd rise-image
-          echo temporary use of branch
-          git checkout e2e/create-tests
-      - run: |
           VERSION=$(cat version-string/version)
           DEST_FILE=rise-image/e2e/rise-image-electron.html
           sed "
