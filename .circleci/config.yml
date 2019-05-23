@@ -64,12 +64,13 @@ jobs:
       - run: echo build rise-image e2e page << parameters.stage >>
       - run: git clone https://github.com/Rise-Vision/rise-image.git
       - run: |
+          IMAGEMAJOR=$(grep version rise-image/package.json | grep -Po '[0-9]+' | head -1)
           VERSION=$(cat version-string/version)
           DEST_FILE=rise-image/e2e/rise-image-electron.html
           sed "
             s!__STAGE__/common!staging/common/$VERSION!;
             s/__STAGE__/<< parameters.stage >>/;
-            s!staging/components/rise-image/__VERSION__!<< parameters.stage >>/components/rise-image!;
+            s!staging/components/rise-image/__VERSION__!<< parameters.stage >>/components/rise-image/$IMAGEMAJOR!;
           " rise-image/e2e/rise-image.html > $DEST_FILE
       - run: cp rise-image/e2e/polymer-e2e-electron.json rise-image/polymer.json
       - run: |
