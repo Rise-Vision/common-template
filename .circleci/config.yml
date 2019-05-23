@@ -70,7 +70,7 @@ jobs:
           sed "
             s!__STAGE__/common!staging/common/$VERSION!;
             s/__STAGE__/<< parameters.stage >>/;
-            s!staging/components/rise-image/__VERSION__!<< parameters.stage >>/components/$IMAGEMAJOR/rise-image!;
+            s!staging/components/rise-image/__VERSION__!<< parameters.stage >>/components/rise-image/$IMAGEMAJOR!;
           " rise-image/e2e/rise-image.html > $DEST_FILE
       - run: cp rise-image/e2e/polymer-e2e-electron.json rise-image/polymer.json
       - run: |
