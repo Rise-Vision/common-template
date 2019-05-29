@@ -9,7 +9,21 @@ RisePlayerConfiguration.Preview = (() => {
 
     const data = JSON.parse( event.data );
 
-    RisePlayerConfiguration.AttributeData.update( data );
+    switch ( data.type ) {
+    case "attributeData":
+      RisePlayerConfiguration.AttributeData.update( data.value );
+      break;
+    case "displayData":
+      RisePlayerConfiguration.DisplayData.update( data.value );
+      break;
+    case "sendStartEvent":
+      RisePlayerConfiguration.AttributeData.sendStartEvent();
+      break;
+    //defaults to attributData for backwards compatibility
+    default:
+      RisePlayerConfiguration.AttributeData.update( data );
+      break;
+    }
   }
 
   function startListeningForData() {

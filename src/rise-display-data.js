@@ -4,7 +4,7 @@ RisePlayerConfiguration.DisplayData = (() => {
   var displayData = null,
     handlers = [];
 
-  function _handleDisplayData( message ) {
+  function update( message ) {
     RisePlayerConfiguration.Logger.debug( `handle display data message ${JSON.stringify( message )}` );
 
     displayData = message;
@@ -18,7 +18,7 @@ RisePlayerConfiguration.DisplayData = (() => {
     const displayId = RisePlayerConfiguration.getDisplayId(),
       filePath = `risevision-display-notifications/${displayId}/display.json`;
 
-    RisePlayerConfiguration.Watch.watchDataFile( filePath, _handleDisplayData );
+    RisePlayerConfiguration.Watch.watchDataFile( filePath, update );
   }
 
   function onDisplayData( handler ) {
@@ -43,7 +43,8 @@ RisePlayerConfiguration.DisplayData = (() => {
   const exposedFunctions = {
     connectionHandler,
     onDisplayData,
-    onDisplayAddress
+    onDisplayAddress,
+    update
   };
 
   return exposedFunctions;
