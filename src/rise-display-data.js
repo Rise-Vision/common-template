@@ -1,11 +1,11 @@
-/* eslint-disable no-inline-comments */
+/* eslint-disable no-console */
 
 RisePlayerConfiguration.DisplayData = (() => {
   var displayData = null,
     handlers = [];
 
   function update( message ) {
-    RisePlayerConfiguration.Logger.debug( `handle display data message ${JSON.stringify( message )}` );
+    console.log( "handle display data message", message );
 
     displayData = message;
 
