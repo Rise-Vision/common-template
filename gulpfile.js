@@ -27,7 +27,8 @@
       "src/rise-preview.js",
       "src/rise-attribute-data.js",
       "src/rise-attribute-data-watch.js",
-      "src/rise-display-data.js"
+      "src/rise-display-data.js",
+      "src/rise-play-until-done.js",
     ];
 
   gulp.task( "clean", function( cb ) {
