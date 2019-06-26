@@ -54,6 +54,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.DisplayData ) {
       throw new Error( "DisplayData script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.ContentUptime ) {
+      throw new Error( "ContentUptime script was not loaded" );
+    }
 
     RisePlayerConfiguration.Logger.configure();
 

@@ -28,7 +28,8 @@
       "src/rise-attribute-data.js",
       "src/rise-attribute-data-watch.js",
       "src/rise-display-data.js",
-      "src/rise-play-until-done.js",
+      "src/rise-content-uptime.js",
+      "src/rise-play-until-done.js"
     ];
 
   gulp.task( "clean", function( cb ) {
@@ -75,6 +76,7 @@
   gulp.task( "test-unit", factory.testUnitAngular(
     { testFiles: [
       "test/test_env.js",
+      "node_modules/es7-object-polyfill/build/es7-object-polyfill.browser.js",
       "node_modules/promise-polyfill/dist/polyfill.min.js",
       "node_modules/whatwg-fetch/dist/fetch.umd.js",
       "node_modules/dom4/build/dom4.js",
