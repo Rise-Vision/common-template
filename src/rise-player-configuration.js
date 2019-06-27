@@ -51,6 +51,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Preview ) {
       throw new Error( "RisePreview script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.PlayUntilDone ) {
+      throw new Error( "PlayUntilDone script was not loaded" );
+    }
     if ( !RisePlayerConfiguration.DisplayData ) {
       throw new Error( "DisplayData script was not loaded" );
     }
