@@ -8,16 +8,16 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     version: "N/A"
   };
 
-  const LOG_INTERVAL = 60000,
-    doneElements = [];
+  const LOG_INTERVAL = 60000;
+  const doneElements = [];
 
-  function reset() {
-    doneElements.splice( 0, doneElements.length );
+  function _reset() {
+    doneElements.splice( 0 );
   }
 
   function start() {
-    const riseElements = RisePlayerConfiguration.Helpers.getRiseElements(),
-      playUntilDoneElements = riseElements.filter( element => element.hasAttribute( "play-until-done" ));
+    const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
+    const playUntilDoneElements = riseElements.filter( element => element.hasAttribute( "play-until-done" ));
 
     console.log( `Start listening PUD events of ${playUntilDoneElements.length} elements` );
     RisePlayerConfiguration.Logger.info( LOGGER_DATA, "start listening PUD events", { playUntilDoneElements: playUntilDoneElements.length });
@@ -48,7 +48,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
   }
 
   function reportDone() {
-    reset();
+    _reset();
 
     if ( _isInViewer()) {
 
