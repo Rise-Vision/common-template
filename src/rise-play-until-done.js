@@ -8,16 +8,11 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     version: "N/A"
   };
 
-  const SAFE_GUARD_INTERVAL = 60000,
-    MAX_SAFE_GUARD_ATTEMPTS = 4,
-    doneElements = [],
-    respondingElements = new Set();
-  let safeGuardAttempts = 0;
+  const LOG_INTERVAL = 60000,
+    doneElements = [];
 
   function reset() {
     doneElements.splice( 0, doneElements.length );
-    respondingElements.clear();
-    safeGuardAttempts = 0;
   }
 
   function start() {
@@ -29,8 +24,6 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
 
     playUntilDoneElements.forEach( element => {
       element.addEventListener( "report-done", event => {
-        respondingElements.add( element );
-
         if ( event.detail && event.detail.done && doneElements.indexOf( element ) < 0 ) {
           doneElements.push( element );
         }
@@ -41,21 +34,17 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
       });
     });
 
-    function safeGuardCheck() {
-      safeGuardAttempts += 1;
+    function logPlayingElements() {
       const playingElements = playUntilDoneElements.filter( el => doneElements.indexOf( el ) < 0 );
-      const notRespondingElements = playingElements.filter( el => !respondingElements.has( el ));
+      const printElement = el => `${el.tagName}#${el.id}`;
 
-      if ( notRespondingElements.length > 0 && safeGuardAttempts > MAX_SAFE_GUARD_ATTEMPTS ) {
-        console.log( `Force done event because there is ${notRespondingElements.length} not responding elements` );
-        RisePlayerConfiguration.Logger.info( LOGGER_DATA, "force template-done event", { notRespondingElements: notRespondingElements.length });
-        reportDone();
-      } else {
-        playingElements.forEach( el => el.dispatchEvent( new Event( "check-done" )));
-      }
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "PUD state", {
+        playingElements: playingElements.map( printElement ),
+        doneElements: doneElements.map( printElement )
+      });
     }
 
-    setInterval( safeGuardCheck, SAFE_GUARD_INTERVAL );
+    setInterval( logPlayingElements, LOG_INTERVAL );
   }
 
   function reportDone() {
@@ -77,7 +66,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
         return;
       }
 
-      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "sending template-done event" );
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "sending PUD template-done event" );
 
       RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-messaging", () => {
         RisePlayerConfiguration.LocalMessaging.broadcastMessage({
