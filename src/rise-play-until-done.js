@@ -88,3 +88,15 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
   return exposedFunctions;
 
 })();
+
+if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+  const handler = ( event ) => {
+    if ( event.detail.isConnected ) {
+      window.removeEventListener( "rise-local-messaging-connection", handler );
+
+      RisePlayerConfiguration.PlayUntilDone.start();
+    }
+  };
+
+  window.addEventListener( "rise-local-messaging-connection", handler );
+}
