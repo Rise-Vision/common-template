@@ -2,7 +2,53 @@
 
 RisePlayerConfiguration.PlayUntilDone = (() => {
 
+  const LOGGER_DATA = {
+    name: "RisePlayerConfiguration",
+    id: "PlayUntilDone",
+    version: "N/A"
+  };
+
+  const LOG_INTERVAL = 60000;
+  const doneElements = [];
+
+  function _reset() {
+    doneElements.splice( 0 );
+  }
+
+  function start() {
+    const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
+    const playUntilDoneElements = riseElements.filter( element => element.hasAttribute( "play-until-done" ));
+
+    console.log( `Start listening PUD events of ${playUntilDoneElements.length} elements` );
+    RisePlayerConfiguration.Logger.info( LOGGER_DATA, "start listening PUD events", { playUntilDoneElements: playUntilDoneElements.length });
+
+    playUntilDoneElements.forEach( element => {
+      element.addEventListener( "report-done", event => {
+        if ( event.detail && event.detail.done && doneElements.indexOf( element ) < 0 ) {
+          doneElements.push( element );
+        }
+
+        if ( doneElements.length === playUntilDoneElements.length ) {
+          reportDone();
+        }
+      });
+    });
+
+    function logPlayingElements() {
+      const playingElements = playUntilDoneElements.filter( el => doneElements.indexOf( el ) < 0 );
+      const printElement = el => `${el.tagName}#${el.id}`;
+
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "PUD state", {
+        playingElements: playingElements.map( printElement ),
+        doneElements: doneElements.map( printElement )
+      });
+    }
+
+    setInterval( logPlayingElements, LOG_INTERVAL );
+  }
+
   function reportDone() {
+    _reset();
 
     if ( _isInViewer()) {
 
@@ -17,9 +63,10 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
 
       if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {
         console.log( "Not connected to Local Messaging, cannot report done" );
-
         return;
       }
+
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "sending PUD template-done event" );
 
       RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-messaging", () => {
         RisePlayerConfiguration.LocalMessaging.broadcastMessage({
@@ -34,9 +81,22 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
   };
 
   const exposedFunctions = {
-    reportDone
+    reportDone,
+    start
   };
 
   return exposedFunctions;
 
 })();
+
+if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+  const handler = ( event ) => {
+    if ( event.detail.isConnected ) {
+      window.removeEventListener( "rise-local-messaging-connection", handler );
+
+      RisePlayerConfiguration.PlayUntilDone.start();
+    }
+  };
+
+  window.addEventListener( "rise-local-messaging-connection", handler );
+}
