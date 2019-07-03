@@ -29,7 +29,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
         }
 
         if ( doneElements.length === playUntilDoneElements.length ) {
-          RisePlayerConfiguration.PlayUntilDone.reportTemplateDone();
+          this.reportTemplateDone();
         }
       });
     });
