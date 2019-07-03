@@ -49,3 +49,11 @@ RisePlayerConfiguration sends the following events:
 
 - **rise-components-ready**: Sent once to the window object when Local Messaging connection has been accomplished for the first time, and instructs all components in the page that they can begin doing requests like watch, licensing and logging. Preview mode also sends this event even if there is no Local Messaging connection, so components can start working in this environment.
 - **rise-local-messaging-connection**: Sent to the window object when Local Messaging connection status has changed. It provides an argument with a nested property *detail.isConnected* that indicates if connection to Local Messaging was successful or not. This event may be sent multiple times depending on the status of the connection.
+
+### Template Uptime
+RisePlayerConfiguration.ContentUptime reports Template Uptime erros in case of any of the following conditions:
+
+ - When one or more Components are not responding to uptime requests;
+ - When one or more Components are reporting uptime error;
+ - When RisePlayerConfiguration.ContentUptime.setUptimeError() is set to true by the Template designer;
+
