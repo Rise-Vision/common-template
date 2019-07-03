@@ -29,7 +29,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
         }
 
         if ( doneElements.length === playUntilDoneElements.length ) {
-          reportDone();
+          RisePlayerConfiguration.PlayUntilDone.reportTemplateDone();
         }
       });
     });
@@ -47,10 +47,10 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     setInterval( logPlayingElements, LOG_INTERVAL );
   }
 
-  function reportDone() {
+  function reportTemplateDone() {
     _reset();
 
-    if ( _isInViewer()) {
+    if ( RisePlayerConfiguration.Helpers.isInViewer()) {
 
       let message = {
         topic: "template-done",
@@ -62,7 +62,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     } else {
 
       if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {
-        console.log( "Not connected to Local Messaging, cannot report done" );
+        RisePlayerConfiguration.Logger.error( LOGGER_DATA, "not connectted to Local Messaging, cannot send PUD template-done event" );
         return;
       }
 
@@ -76,12 +76,8 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     }
   }
 
-  const _isInViewer = () => {
-    return window.self !== window.top;
-  };
-
   const exposedFunctions = {
-    reportDone,
+    reportTemplateDone,
     start
   };
 
