@@ -13,6 +13,10 @@ RisePlayerConfiguration.Helpers = (() => {
     return window.env && window.env.RISE_ENV && window.env.RISE_ENV === "test";
   }
 
+  function isInViewer() {
+    return window.self !== window.top;
+  }
+
   function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
     const names = typeof requiredClientNames === "string" ?
@@ -148,6 +152,7 @@ RisePlayerConfiguration.Helpers = (() => {
     getRiseEditableElements: getRiseEditableElements,
     getRisePlayerConfiguration: getRisePlayerConfiguration,
     isTestEnvironment: isTestEnvironment,
+    isInViewer: isInViewer,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent
   };
