@@ -51,6 +51,9 @@ const RisePlayerConfiguration = {
     if ( !RisePlayerConfiguration.Preview ) {
       throw new Error( "RisePreview script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.Viewer ) {
+      throw new Error( "RiseViewer script was not loaded" );
+    }
     if ( !RisePlayerConfiguration.PlayUntilDone ) {
       throw new Error( "PlayUntilDone script was not loaded" );
     }
@@ -79,6 +82,10 @@ const RisePlayerConfiguration = {
       }
 
       RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+    }
+
+    if ( RisePlayerConfiguration.Helpers.isInViewer()) {
+      RisePlayerConfiguration.Viewer.startListeningForData();
     }
 
     // lock down RisePlayerConfiguration object

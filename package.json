@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "eslint .",
     "test": "gulp test",
-    "pretty": "eslint . --fix"
+    "pretty": "eslint . --fix",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
