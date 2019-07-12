@@ -23,6 +23,7 @@ describe( "Viewer", function() {
     });
 
     sandbox.stub( window, "addEventListener" );
+    sandbox.stub( window, "dispatchEvent" );
   });
 
   afterEach( function() {
@@ -50,6 +51,7 @@ describe( "Viewer", function() {
 
     expect( riseImage.dispatchEvent ).to.not.have.been.called;
     expect( riseText.dispatchEvent ).to.not.have.been.called;
+    expect( window.dispatchEvent ).to.not.have.been.called;
   });
 
   it( "should dispatch 'rise-presentation-play' event to components", function() {
@@ -60,6 +62,7 @@ describe( "Viewer", function() {
 
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( window.dispatchEvent ).to.have.been.called;
   });
 
   it( "should dispatch 'rise-presentation-stop' event to components", function() {
@@ -70,6 +73,7 @@ describe( "Viewer", function() {
 
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( window.dispatchEvent ).to.have.been.called;
   });
 
 });
