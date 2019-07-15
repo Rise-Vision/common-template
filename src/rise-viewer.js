@@ -22,6 +22,7 @@ RisePlayerConfiguration.Viewer = (() => {
       const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
 
       riseElements.forEach( element => element.dispatchEvent( new Event( topic )));
+      window.dispatchEvent( new Event( topic ));
     }
   }
 
