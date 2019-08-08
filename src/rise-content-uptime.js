@@ -41,7 +41,7 @@ RisePlayerConfiguration.ContentUptime = (() => {
 
     if ( Object.keys( receivedResults ).length === expectedComponentsIds.length ) {
       clearTimeout( resultsTimeout );
-      _sendUptimeResult( _shouldReportUptimeError(), Object.values( receivedResults ));
+      _sendUptimeResult( Object.values( receivedResults ));
     }
   }
 
@@ -63,10 +63,10 @@ RisePlayerConfiguration.ContentUptime = (() => {
       componentsResult.push( result );
     });
 
-    _sendUptimeResult( true, componentsResult );
+    _sendUptimeResult( componentsResult );
   }
 
-  function _sendUptimeResult( error, components = []) {
+  function _sendUptimeResult( components = []) {
     components.forEach( component => {
       component.presentation_id = RisePlayerConfiguration.getPresentationId();
       component.template_product_code = RisePlayerConfiguration.getTemplateProductCode();
@@ -79,7 +79,7 @@ RisePlayerConfiguration.ContentUptime = (() => {
         presentation_id: RisePlayerConfiguration.getPresentationId(),
         template_product_code: RisePlayerConfiguration.getTemplateProductCode(),
         template_version: RisePlayerConfiguration.getTemplateVersion(),
-        error: error
+        error: hasUptimeError
       },
       components
     });
@@ -100,14 +100,6 @@ RisePlayerConfiguration.ContentUptime = (() => {
     hasUptimeError = error;
   }
 
-  function _shouldReportUptimeError() {
-    const hasComponentError = Object.values( receivedResults ).some( result => {
-      return result.error === true || result.error === "true";
-    });
-
-    return hasUptimeError || hasComponentError;
-  }
-
   const exposedFunctions = {
     start: start,
     setUptimeError: setUptimeError
@@ -118,7 +110,9 @@ RisePlayerConfiguration.ContentUptime = (() => {
       _handleMessage: _handleMessage,
       _handleComponentResult: _handleComponentResult,
       _handleNoResponse: _handleNoResponse,
-      _shouldReportUptimeError: _shouldReportUptimeError,
+      _hasUptimeError: function() {
+        return hasUptimeError;
+      },
       _getExpectedComponents: () => expectedComponents,
       _getReceivedResults: () => receivedResults
     });

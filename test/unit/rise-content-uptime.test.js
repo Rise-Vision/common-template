@@ -55,27 +55,19 @@ describe( "ContentUptime", function() {
   });
 
 
-  describe( "setUptimeError() & _shouldReportUptimeError()", function() {
+  describe( "setUptimeError() & hasUptimeError", function() {
     it( "should report no errors by default", function() {
-      expect( RisePlayerConfiguration.ContentUptime._shouldReportUptimeError()).to.be.false;
+      expect( RisePlayerConfiguration.ContentUptime._hasUptimeError()).to.be.false;
     });
 
     it( "should honour the error status when reporting uptime", function() {
       RisePlayerConfiguration.ContentUptime.setUptimeError( true );
 
-      expect( RisePlayerConfiguration.ContentUptime._shouldReportUptimeError()).to.be.true;
+      expect( RisePlayerConfiguration.ContentUptime._hasUptimeError()).to.be.true;
 
       RisePlayerConfiguration.ContentUptime.setUptimeError( false );
 
-      expect( RisePlayerConfiguration.ContentUptime._shouldReportUptimeError()).to.be.false;
-    });
-
-    it( "should report error if a component reports error", function() {
-      RisePlayerConfiguration.ContentUptime._getReceivedResults()[ "rise-text-1" ] = { error: true };
-
-      expect( RisePlayerConfiguration.ContentUptime._shouldReportUptimeError()).to.be.true;
-
-      delete RisePlayerConfiguration.ContentUptime._getReceivedResults()[ "rise-text-1" ];
+      expect( RisePlayerConfiguration.ContentUptime._hasUptimeError()).to.be.false;
     });
   });
 
@@ -95,7 +87,7 @@ describe( "ContentUptime", function() {
       clock.tick( 4000 );
       RisePlayerConfiguration.LocalMessaging.broadcastMessage.should.have.been.calledWith(
         { "topic": "content-uptime-result",
-          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": true },
+          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": false },
           "components": [
             { "component_id": "rise-text-1", "component_type": "rise-text", "responding": false, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" },
             { "component_id": "rise-data-weather-1", "component_type": "rise-data-weather", "responding": false, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" }
@@ -195,7 +187,7 @@ describe( "ContentUptime", function() {
 
       RisePlayerConfiguration.LocalMessaging.broadcastMessage.should.have.been.calledWith(
         { "topic": "content-uptime-result",
-          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": true },
+          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": false },
           "components": [
             { "component_id": "rise-text-1", "component_type": "rise-text", "responding": false, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" },
             { "component_id": "rise-data-weather-1", "component_type": "rise-data-weather", "responding": false, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" }
@@ -212,7 +204,7 @@ describe( "ContentUptime", function() {
 
       RisePlayerConfiguration.LocalMessaging.broadcastMessage.should.have.been.calledWith(
         { "topic": "content-uptime-result",
-          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": true },
+          "template": { "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1", "error": false },
           "components": [
             { "component_id": "rise-text-1", "component_type": "rise-text", "responding": true, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" },
             { "component_id": "rise-data-weather-1", "component_type": "rise-data-weather", "responding": false, "presentation_id": "presentationId", "template_product_code": "pc1", "template_version": "v1" }
