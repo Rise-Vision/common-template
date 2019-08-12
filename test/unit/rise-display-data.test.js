@@ -72,11 +72,24 @@ describe( "DisplayData", function() {
       RisePlayerConfiguration.Watch.watchDataFile.restore();
     });
 
+    it( "should ensure displayData is reset for these tests", function() {
+      var result = null;
+
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result = displayData;
+      });
+
+      RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
+      watchHandler( null );
+
+      expect( result ).to.be.null;
+    });
+
     it( "should wait for display data to be available", function() {
       var result = null;
 
-      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayAddress ) {
-        result = displayAddress;
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result = displayData;
       });
 
       expect( result ).to.be.null;
@@ -92,8 +105,8 @@ describe( "DisplayData", function() {
 
       RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
 
-      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayAddress ) {
-        result = displayAddress;
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result = displayData;
       });
 
       expect( result ).to.equal( "displayData" );
@@ -106,11 +119,11 @@ describe( "DisplayData", function() {
 
       RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
 
-      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayAddress ) {
-        result1 = displayAddress;
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result1 = displayData;
       });
-      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayAddress ) {
-        result2 = displayAddress;
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result2 = displayData;
       });
 
       expect( result1 ).to.equal( "displayData" );
@@ -123,8 +136,8 @@ describe( "DisplayData", function() {
 
       RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
 
-      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayAddress ) {
-        result = displayAddress;
+      RisePlayerConfiguration.DisplayData.onDisplayData( function( displayData ) {
+        result = displayData;
       });
 
       expect( result ).to.equal( "displayData" );

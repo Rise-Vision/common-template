@@ -29,6 +29,7 @@
       "src/rise-attribute-data.js",
       "src/rise-attribute-data-watch.js",
       "src/rise-display-data.js",
+      "src/rise-branding.js",
       "src/rise-content-uptime.js",
       "src/rise-play-until-done.js"
     ];
