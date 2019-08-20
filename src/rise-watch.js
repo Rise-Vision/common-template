@@ -21,7 +21,7 @@ RisePlayerConfiguration.Watch = (() => {
 
     switch ( message.status.toUpperCase()) {
     case "CURRENT":
-      return _handleFileAvailable( message.fileUrl, handlerSuccess );
+      return _handleFileAvailable( message, handlerSuccess );
 
     case "FILE-ERROR":
       RisePlayerConfiguration.Logger.error(
@@ -38,7 +38,8 @@ RisePlayerConfiguration.Watch = (() => {
     return Promise.resolve();
   }
 
-  function _handleFileAvailable( fileUrl, handlerSuccess ) {
+  function _handleFileAvailable( message, handlerSuccess ) {
+    var fileUrl = message.fileUrl;
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
@@ -46,7 +47,10 @@ RisePlayerConfiguration.Watch = (() => {
       })
       .catch( error => {
         RisePlayerConfiguration.Logger.error(
-          WATCH_DATA_FILE, "data file read error", error.stack
+          WATCH_DATA_FILE, "data file read error", {
+            message: message,
+            stack: error.stack
+          }
         );
       });
   }
