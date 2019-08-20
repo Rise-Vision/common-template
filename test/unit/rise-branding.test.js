@@ -67,8 +67,8 @@ describe( "Branding", function() {
       beforeEach( function() {
         displayData = {
           companyBranding: {
-            primaryColor: "blue",
-            secondaryColor: "red"
+            baseColor: "blue",
+            accentColor: "red"
           }
         };
       });
@@ -93,10 +93,10 @@ describe( "Branding", function() {
         RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
 
         expect( styleSheet.cssRules ).to.deep.equal([
-          ".branding-color-primary { color: blue !important; }",
-          ".branding-color-primary-bg { background-color: blue !important; }",
-          ".branding-color-secondary { color: red !important; }",
-          ".branding-color-secondary-bg { background-color: red !important; }"
+          ".branding-color-base { color: blue !important; }",
+          ".branding-color-base-bg { background-color: blue !important; }",
+          ".branding-color-accent { color: red !important; }",
+          ".branding-color-accent-bg { background-color: red !important; }"
         ]);
       });
 
@@ -107,8 +107,8 @@ describe( "Branding", function() {
         styleSheet.cssRules = [];
 
         displayData.companyBranding = {
-          primaryColor: "red",
-          secondaryColor: "blue"
+          baseColor: "red",
+          accentColor: "blue"
         };
 
         watchHandler( displayData );
@@ -117,10 +117,10 @@ describe( "Branding", function() {
         document.head.appendChild.should.have.been.calledTwice;
 
         expect( styleSheet.cssRules ).to.deep.equal([
-          ".branding-color-primary { color: red !important; }",
-          ".branding-color-primary-bg { background-color: red !important; }",
-          ".branding-color-secondary { color: blue !important; }",
-          ".branding-color-secondary-bg { background-color: blue !important; }"
+          ".branding-color-base { color: red !important; }",
+          ".branding-color-base-bg { background-color: red !important; }",
+          ".branding-color-accent { color: blue !important; }",
+          ".branding-color-accent-bg { background-color: blue !important; }"
         ]);
       });
 

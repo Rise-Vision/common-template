@@ -65,14 +65,14 @@ RisePlayerConfiguration.Branding = (() => {
         styleSheet.insertRule( rule, index );
       };
 
-    if ( branding.primaryColor ) {
-      css( ".branding-color-primary", "color: " + branding.primaryColor );
-      css( ".branding-color-primary-bg", "background-color: " + branding.primaryColor );
+    if ( branding.baseColor ) {
+      css( ".branding-color-base", "color: " + branding.baseColor );
+      css( ".branding-color-base-bg", "background-color: " + branding.baseColor );
     }
 
-    if ( branding.secondaryColor ) {
-      css( ".branding-color-secondary", "color: " + branding.secondaryColor );
-      css( ".branding-color-secondary-bg", "background-color: " + branding.secondaryColor );
+    if ( branding.accentColor ) {
+      css( ".branding-color-accent", "color: " + branding.accentColor );
+      css( ".branding-color-accent-bg", "background-color: " + branding.accentColor );
     }
 
     removeStyleElement( brandingStyleElement );
