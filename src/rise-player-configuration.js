@@ -3,10 +3,6 @@
 const RisePlayerConfiguration = (() => {
 
   function _init( playerInfo, localMessagingInfo ) {
-    if ( RisePlayerConfiguration.getPlayerInfo ) {
-      return;
-    }
-
     if ( !playerInfo && !localMessagingInfo ) {
       // outside of viewer or inside of viewer
       const getConfiguration = RisePlayerConfiguration.Helpers.getRisePlayerConfiguration();
@@ -25,7 +21,9 @@ const RisePlayerConfiguration = (() => {
       console.log( "player configuration not present, running in Preview mode" );
     }
 
-    RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
+    if ( !RisePlayerConfiguration.getPlayerInfo ) {
+      RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
+    }
 
     return localMessagingInfo;
   }
