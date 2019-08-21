@@ -12,6 +12,7 @@ describe( "RisePlayerConfiguration", function() {
   beforeEach( function() {
     _sandbox = sinon.sandbox.create();
 
+    RisePlayerConfiguration.getPlayerInfo = undefined;
     _helpers = RisePlayerConfiguration.Helpers;
     _logger = RisePlayerConfiguration.Logger;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
@@ -35,6 +36,7 @@ describe( "RisePlayerConfiguration", function() {
   afterEach( function() {
     _sandbox.restore();
 
+    RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.Logger = _logger;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;

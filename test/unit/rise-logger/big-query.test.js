@@ -29,7 +29,12 @@ describe( "Big Query logging", function() {
     INTERVAL = 3580000,
     clock;
 
+  beforeEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
+  });
+
   afterEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
   });
 
