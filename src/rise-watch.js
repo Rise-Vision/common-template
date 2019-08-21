@@ -40,16 +40,20 @@ RisePlayerConfiguration.Watch = (() => {
 
   function _handleFileAvailable( message, handlerSuccess ) {
     var fileUrl = message.fileUrl;
+    var extractedData;
 
     return RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent( fileUrl )
       .then( data => {
+        extractedData = data;
+
         return handlerSuccess( data );
       })
       .catch( error => {
         RisePlayerConfiguration.Logger.error(
           WATCH_DATA_FILE, "data file read error", {
             message: message,
-            stack: error.stack
+            data: extractedData,
+            stack: error.stack || error
           }
         );
       });
