@@ -49,7 +49,7 @@ RisePlayerConfiguration.Watch = (() => {
         RisePlayerConfiguration.Logger.error(
           WATCH_DATA_FILE, "data file read error", {
             message: message,
-            stack: error.stack
+            stack: error.stack || error
           }
         );
       });
