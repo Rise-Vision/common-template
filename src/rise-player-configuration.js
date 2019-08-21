@@ -141,10 +141,13 @@ const RisePlayerConfiguration = {
   isPreview: function() {
     return RisePlayerConfiguration.getDisplayId() === "preview";
   },
+  dispatchWindowEvent( name ) {
+    window.dispatchEvent( new CustomEvent( name ));
+  },
   sendComponentsReadyEvent() {
-    Promise.resolve()
+    return Promise.resolve()
       .then(() => {
-        window.dispatchEvent( new CustomEvent( "rise-components-ready" ));
+        RisePlayerConfiguration.dispatchWindowEvent( "rise-components-ready" );
 
         if ( !RisePlayerConfiguration.isPreview()) {
           RisePlayerConfiguration.Logger.info(
@@ -154,6 +157,7 @@ const RisePlayerConfiguration = {
 
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile();
         } else {
+          RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
           RisePlayerConfiguration.Preview.startListeningForData();
         }
       });

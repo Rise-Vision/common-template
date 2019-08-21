@@ -6,9 +6,12 @@ describe( "RisePlayerConfiguration", function() {
 
   var _helpers,
     _localMessaging,
-    _logger;
+    _logger,
+    _sandbox;
 
   beforeEach( function() {
+    _sandbox = sinon.sandbox.create();
+
     _helpers = RisePlayerConfiguration.Helpers;
     _logger = RisePlayerConfiguration.Logger;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
@@ -20,7 +23,8 @@ describe( "RisePlayerConfiguration", function() {
     };
 
     RisePlayerConfiguration.Logger = {
-      configure: function() {}
+      configure: function() {},
+      info: function() {}
     };
 
     RisePlayerConfiguration.LocalMessaging = {
@@ -29,6 +33,8 @@ describe( "RisePlayerConfiguration", function() {
   });
 
   afterEach( function() {
+    _sandbox.restore();
+
     RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.Logger = _logger;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
@@ -183,6 +189,44 @@ describe( "RisePlayerConfiguration", function() {
 
       expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
       expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+    });
+
+  });
+
+  describe( "sendComponentsReadyEvent", function() {
+
+    beforeEach( function() {
+      _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
+      _sandbox.stub( RisePlayerConfiguration.AttributeDataWatch, "watchAttributeDataFile" );
+      _sandbox.stub( RisePlayerConfiguration.Preview, "startListeningForData" );
+    });
+
+    it( "should send rise-presentation-play if it's preview", function() {
+      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
+
+      return RisePlayerConfiguration.sendComponentsReadyEvent()
+        .then( function() {
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.twice;
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+
+          RisePlayerConfiguration.Preview.startListeningForData.should.have.been.called;
+          RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.not.have.been.called;
+        });
+    });
+
+    it( "should not send rise-presentation-play if it's not preview", function() {
+      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
+
+      return RisePlayerConfiguration.sendComponentsReadyEvent()
+        .then( function() {
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+          RisePlayerConfiguration.dispatchWindowEvent.should.not.have.been.calledWith( "rise-presentation-play" );
+
+          RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
+          RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
+        });
     });
 
   });
