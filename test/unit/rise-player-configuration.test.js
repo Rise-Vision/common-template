@@ -44,10 +44,6 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "isConfigured", function() {
 
-    beforeEach( function() {
-      RisePlayerConfiguration.getPlayerInfo = undefined;
-    });
-
     it( "should not be configured if configure() function has not been called", function() {
       expect( RisePlayerConfiguration.isConfigured()).to.be.false;
     });
@@ -74,6 +70,39 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "getDisplayId", function() {
 
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should be able to call getDisplayId even if it's not configured", function() {
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
+    });
+
+    it( "should get the display id even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "ABC",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
+    });
+
+    it( "should detect is preview when it's not configured and player info has no display id", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {},
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
+    });
+
     it( "should return the display id", function() {
       RisePlayerConfiguration.configure({ displayId: "id" });
 
@@ -90,6 +119,39 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "getCompanyId", function() {
 
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should be able to call getCompanyId even if it's not configured", function() {
+      expect( RisePlayerConfiguration.getCompanyId()).to.be.null;
+    });
+
+    it( "should get the display id even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "ABC",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+    });
+
+    it( "should not return company id when it's not configured and player info has no company id", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {},
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getCompanyId()).to.be.falsey;
+    });
+
     it( "should return the company id", function() {
       RisePlayerConfiguration.configure({ companyId: "id" });
 
@@ -105,6 +167,39 @@ describe( "RisePlayerConfiguration", function() {
   });
 
   describe( "getPresentationId", function() {
+
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should be able to call getPresentationId even if it's not configured", function() {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+        return null;
+      }
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.be.null;
+    });
+
+    it( "should get the presentation id form an HTTP param even if it's not configured", function() {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+        return "id";
+      }
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+    });
+
+    it( "should get the presentation id even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            presentationId: "id"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+    });
 
     it( "should return the presentation id", function() {
       RisePlayerConfiguration.configure({ presentationId: "id" });
@@ -136,6 +231,42 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "isPreview", function() {
 
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should be able to call preview even if it's not configured", function() {
+      expect( RisePlayerConfiguration.isPreview()).to.be.true;
+    });
+
+    it( "should detect it's preview even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "preview",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.isPreview()).to.be.true;
+    });
+
+    it( "should detect it's not preview even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "ABC",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.isPreview()).to.be.false;
+    });
+
     it( "should be preview if display id is 'preview'", function() {
       RisePlayerConfiguration.configure({ displayId: "preview" });
 
@@ -158,6 +289,37 @@ describe( "RisePlayerConfiguration", function() {
       window.addEventListener( "rise-components-ready", connectionHandler );
 
       RisePlayerConfiguration.configure({ displayId: "preview" });
+    });
+
+  });
+
+  describe( "getChromeVersion", function() {
+
+    afterEach( function() {
+      window.getRisePlayerConfiguration = undefined;
+    });
+
+    it( "should be able to call getChromeVersion even if it's not configured", function() {
+      expect( RisePlayerConfiguration.getChromeVersion()).to.be.null;
+    });
+
+    it( "should get the chrome version even if it's not configured", function() {
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            chromeVersion: "1233"
+          },
+          localMessagingInfo: {}
+        }
+      }
+
+      expect( RisePlayerConfiguration.getChromeVersion()).to.equal( "1233" );
+    });
+
+    it( "should return the chrome version", function() {
+      RisePlayerConfiguration.configure({ chromeVersion: "1234" });
+
+      expect( RisePlayerConfiguration.getChromeVersion()).to.equal( "1234" );
     });
 
   });
