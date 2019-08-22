@@ -2,15 +2,33 @@
 
 const RisePlayerConfiguration = (() => {
 
+  function _getPlayerConfiguration() {
+    // outside of viewer or inside of viewer
+    const getConfiguration = RisePlayerConfiguration.Helpers.getRisePlayerConfiguration();
+
+    if ( typeof getConfiguration !== "function" ) {
+      return null;
+    }
+
+    return getConfiguration();
+  }
+
+  function _getPlayerInfo() {
+    if ( RisePlayerConfiguration.isConfigured()) {
+      return RisePlayerConfiguration.getPlayerInfo();
+    }
+
+    const configuration = _getPlayerConfiguration();
+
+    return configuration && configuration.playerInfo;
+  }
+
   function _init( playerInfo, localMessagingInfo ) {
     if ( !playerInfo && !localMessagingInfo ) {
-      // outside of viewer or inside of viewer
-      const getConfiguration = RisePlayerConfiguration.Helpers.getRisePlayerConfiguration();
+      const configuration = _getPlayerConfiguration();
 
-      if ( typeof getConfiguration === "function" ) {
-        const configuration = getConfiguration();
-
-        if ( configuration && configuration.playerInfo && configuration.localMessagingInfo ) {
+      if ( configuration ) {
+        if ( configuration.playerInfo && configuration.localMessagingInfo ) {
           playerInfo = configuration.playerInfo;
           localMessagingInfo = configuration.localMessagingInfo;
         } else {
@@ -18,12 +36,10 @@ const RisePlayerConfiguration = (() => {
         }
       }
     } else {
-      console.log( "player configuration not present, running in Preview mode" );
+      console.log( "explicit configuration provided, this is likely a test environment" );
     }
 
-    if ( !RisePlayerConfiguration.getPlayerInfo ) {
-      RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
-    }
+    RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
 
     return localMessagingInfo;
   }
@@ -70,6 +86,22 @@ const RisePlayerConfiguration = (() => {
     }
   }
 
+  function _configureLocalMessaging( localMessagingInfo ) {
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+      const handler = ( event ) => {
+        if ( event.detail.isConnected ) {
+          window.removeEventListener( "rise-local-messaging-connection", handler );
+
+          RisePlayerConfiguration.sendComponentsReadyEvent();
+        }
+      };
+
+      window.addEventListener( "rise-local-messaging-connection", handler );
+    }
+
+    RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+  }
+
   return {
     RISE_PLAYER_CONFIGURATION_DATA: {
       name: "RisePlayerConfiguration",
@@ -77,28 +109,16 @@ const RisePlayerConfiguration = (() => {
       version: "N/A"
     },
     configure: ( playerInfo, localMessagingInfo ) => {
-      localMessagingInfo = _init( playerInfo, localMessagingInfo );
-
       _validateAllRequiredObjectsAreAvailable();
+
+      localMessagingInfo = _init( playerInfo, localMessagingInfo );
 
       RisePlayerConfiguration.Logger.configure();
 
       if ( RisePlayerConfiguration.isPreview()) {
         RisePlayerConfiguration.sendComponentsReadyEvent();
       } else {
-        if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-          const handler = ( event ) => {
-            if ( event.detail.isConnected ) {
-              window.removeEventListener( "rise-local-messaging-connection", handler );
-
-              RisePlayerConfiguration.sendComponentsReadyEvent();
-            }
-          };
-
-          window.addEventListener( "rise-local-messaging-connection", handler );
-        }
-
-        RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
+        _configureLocalMessaging( localMessagingInfo );
       }
 
       if ( RisePlayerConfiguration.Helpers.isInViewer()) {
@@ -114,7 +134,7 @@ const RisePlayerConfiguration = (() => {
       return !!RisePlayerConfiguration.getPlayerInfo;
     },
     getChromeVersion: function() {
-      const info = RisePlayerConfiguration.getPlayerInfo();
+      const info = _getPlayerInfo();
 
       if ( info && info.chromeVersion ) {
         return info.chromeVersion;
@@ -125,17 +145,17 @@ const RisePlayerConfiguration = (() => {
       return match ? match[ 2 ] : null;
     },
     getCompanyId: function() {
-      var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+      var playerInfo = _getPlayerInfo();
 
       return playerInfo ? playerInfo.companyId : null;
     },
     getDisplayId: function() {
-      var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+      var playerInfo = _getPlayerInfo();
 
       return playerInfo ? playerInfo.displayId || "preview" : "preview";
     },
     getPresentationId: function() {
-      var playerInfo = RisePlayerConfiguration.getPlayerInfo();
+      var playerInfo = _getPlayerInfo();
 
       if ( playerInfo && playerInfo.presentationId ) {
         return playerInfo.presentationId;
