@@ -5,8 +5,12 @@
 
 describe( "Helpers", function() {
 
+  var _sandbox;
+
   beforeEach( function() {
-    sinon.stub( document, "getElementsByTagName", function() {
+    _sandbox = sinon.sandbox.create();
+
+    _sandbox.stub( document, "getElementsByTagName", function() {
       return [
         { tagName: "HTML" },
         { tagName: "HEAD" },
@@ -37,7 +41,15 @@ describe( "Helpers", function() {
   afterEach( function() {
     RisePlayerConfiguration.Helpers.reset();
 
-    document.getElementsByTagName.restore();
+    _sandbox.restore();
+  });
+
+  describe( "isInViewer", function() {
+    it( "should not be in viewer if it's preview", function() {
+      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
+
+      expect( RisePlayerConfiguration.Helpers.isInViewer()).to.be.false;
+    });
   });
 
   describe( "getRiseElements", function() {
