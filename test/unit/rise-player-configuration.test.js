@@ -407,7 +407,7 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.Viewer.startListeningForData.should.have.been.called;
     });
 
-    it( "should configure DOMContentLoaded to send rise-presentation-play on viewer", function( done ) {
+    it( "should configure DOMContentLoaded to send rise-presentation-play when not on viewer", function( done ) {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
 
       var connectionHandler = function() {

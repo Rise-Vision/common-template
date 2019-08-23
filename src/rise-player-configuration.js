@@ -104,7 +104,7 @@ const RisePlayerConfiguration = (() => {
     RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
   }
 
-  function _configureRisePresentationPlay() {
+  function _sendRisePresentationPlayOnDocumentLoad() {
     window.addEventListener( "DOMContentLoaded", () =>
       RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" )
     );
@@ -136,7 +136,7 @@ const RisePlayerConfiguration = (() => {
       if ( RisePlayerConfiguration.Helpers.isInViewer()) {
         RisePlayerConfiguration.Viewer.startListeningForData();
       } else {
-        _configureRisePresentationPlay();
+        _sendRisePresentationPlayOnDocumentLoad();
       }
 
       if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
