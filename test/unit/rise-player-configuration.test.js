@@ -365,32 +365,64 @@ describe( "RisePlayerConfiguration", function() {
       _sandbox.stub( RisePlayerConfiguration.Preview, "startListeningForData" );
     });
 
-    it( "should send rise-presentation-play if it's preview", function() {
+    it( "should start listening for data if it's preview", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
         .then( function() {
-          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.twice;
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
-          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
 
           RisePlayerConfiguration.Preview.startListeningForData.should.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.not.have.been.called;
         });
     });
 
-    it( "should not send rise-presentation-play if it's not preview", function() {
+    it( "should watch attribute data file if it's not preview", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
         .then( function() {
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
-          RisePlayerConfiguration.dispatchWindowEvent.should.not.have.been.calledWith( "rise-presentation-play" );
 
           RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
         });
+    });
+
+  });
+
+  describe( "Viewer configuration", function() {
+
+    beforeEach( function() {
+      _sandbox.stub( RisePlayerConfiguration.Viewer, "startListeningForData" );
+    });
+
+    it( "should configure viewer", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
+
+      RisePlayerConfiguration.configure();
+
+      RisePlayerConfiguration.Viewer.startListeningForData.should.have.been.called;
+    });
+
+    it( "should configure DOMContentLoaded to send rise-presentation-play on viewer", function( done ) {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+
+      var connectionHandler = function() {
+        window.removeEventListener( "rise-components-ready", connectionHandler );
+
+        done();
+      };
+
+      window.addEventListener( "rise-components-ready", connectionHandler );
+
+      RisePlayerConfiguration.configure();
+
+      RisePlayerConfiguration.Viewer.startListeningForData.should.not.have.been.called;
+
+      RisePlayerConfiguration.dispatchWindowEvent( "DOMContentLoaded" );
     });
 
   });

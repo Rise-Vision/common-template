@@ -34,6 +34,8 @@ const RisePlayerConfiguration = (() => {
         } else {
           throw new Error( `The configuration object is not valid: ${ JSON.stringify( configuration ) }` );
         }
+      } else {
+        console.log( "no injected configuration found, configuring as preview" );
       }
     } else {
       console.log( "explicit configuration provided, this is likely a test environment" );
@@ -102,6 +104,16 @@ const RisePlayerConfiguration = (() => {
     RisePlayerConfiguration.LocalMessaging.configure( localMessagingInfo );
   }
 
+  function _configureRisePresentationPlay() {
+    window.addEventListener( "DOMContentLoaded", () =>
+      RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" )
+    );
+  }
+
+  function _lockDownRisePlayerConfiguration() {
+    Object.freeze( RisePlayerConfiguration );
+  }
+
   return {
     RISE_PLAYER_CONFIGURATION_DATA: {
       name: "RisePlayerConfiguration",
@@ -123,11 +135,12 @@ const RisePlayerConfiguration = (() => {
 
       if ( RisePlayerConfiguration.Helpers.isInViewer()) {
         RisePlayerConfiguration.Viewer.startListeningForData();
+      } else {
+        _configureRisePresentationPlay();
       }
 
-      // lock down RisePlayerConfiguration object
       if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-        Object.freeze( RisePlayerConfiguration );
+        _lockDownRisePlayerConfiguration();
       }
     },
     isConfigured() {
@@ -191,7 +204,6 @@ const RisePlayerConfiguration = (() => {
 
             RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile();
           } else {
-            RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
             RisePlayerConfiguration.Preview.startListeningForData();
           }
         });
