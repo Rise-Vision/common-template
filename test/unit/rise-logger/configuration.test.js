@@ -5,7 +5,12 @@
 
 describe( "configure", function() {
 
+  beforeEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
+  });
+
   afterEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
   });
 

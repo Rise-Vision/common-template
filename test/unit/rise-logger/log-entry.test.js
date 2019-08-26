@@ -11,7 +11,12 @@ describe( "log-entry", function() {
     "version": "2018.01.01.10.00"
   };
 
+  beforeEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
+  });
+
   afterEach( function() {
+    RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
   });
 
