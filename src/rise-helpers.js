@@ -14,7 +14,7 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   function isInViewer() {
-    return window.self !== window.top;
+    return !RisePlayerConfiguration.isPreview() && window.self !== window.top;
   }
 
   function onceClientsAreAvailable( requiredClientNames, action ) {
