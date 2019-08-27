@@ -68,11 +68,13 @@ RisePlayerConfiguration.Branding = (() => {
     if ( branding.baseColor ) {
       css( ".branding-color-base", "color: " + branding.baseColor );
       css( ".branding-color-base-bg", "background-color: " + branding.baseColor );
+      css( ".branding-color-base-fill", "fill: " + branding.baseColor );
     }
 
     if ( branding.accentColor ) {
       css( ".branding-color-accent", "color: " + branding.accentColor );
       css( ".branding-color-accent-bg", "background-color: " + branding.accentColor );
+      css( ".branding-color-accent-fill", "fill: " + branding.accentColor );
     }
 
     removeStyleElement( brandingStyleElement );
