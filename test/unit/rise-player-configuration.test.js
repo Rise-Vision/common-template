@@ -7,10 +7,12 @@ describe( "RisePlayerConfiguration", function() {
   var _helpers,
     _localMessaging,
     _logger,
-    _sandbox;
+    _sandbox,
+    _clock;
 
   beforeEach( function() {
     _sandbox = sinon.sandbox.create();
+    _clock = sinon.useFakeTimers();
 
     RisePlayerConfiguration.getPlayerInfo = undefined;
     _helpers = RisePlayerConfiguration.Helpers;
@@ -20,7 +22,8 @@ describe( "RisePlayerConfiguration", function() {
     RisePlayerConfiguration.Helpers = {
       isInViewer: _helpers.isInViewer,
       isTestEnvironment: _helpers.isTestEnvironment,
-      getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration
+      getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration,
+      getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam
     };
 
     RisePlayerConfiguration.Logger = {
@@ -31,10 +34,13 @@ describe( "RisePlayerConfiguration", function() {
     RisePlayerConfiguration.LocalMessaging = {
       configure: function() {}
     };
+
+    _sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
   });
 
   afterEach( function() {
     _sandbox.restore();
+    _clock.restore();
 
     RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Helpers = _helpers;
@@ -335,7 +341,7 @@ describe( "RisePlayerConfiguration", function() {
           },
           localMessagingInfo: {}
         }
-      }
+      };
     });
 
     afterEach( function() {
@@ -353,6 +359,38 @@ describe( "RisePlayerConfiguration", function() {
 
       expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
       expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+    });
+
+    it( "should wait for player injected configuration when waitForPlayer URL param is set", function( done ) {
+      delete window.getRisePlayerConfiguration;
+      RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam.returns( true );
+
+      RisePlayerConfiguration.configure();
+
+      _clock.tick( 50 );
+
+      window.getRisePlayerConfiguration = function() {
+        return {
+          playerInfo: {
+            displayId: "ABC",
+            companyId: "123"
+          },
+          localMessagingInfo: {}
+        }
+      };
+
+      _clock.tick( 150 );
+
+      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+
+      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+        displayId: "ABC", companyId: "123"
+      });
+
+      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
+      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+
+      done();
     });
 
   });

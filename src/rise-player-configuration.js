@@ -114,35 +114,44 @@ const RisePlayerConfiguration = (() => {
     Object.freeze( RisePlayerConfiguration );
   }
 
+  function configure( playerInfo, localMessagingInfo ) {
+    _validateAllRequiredObjectsAreAvailable();
+
+    const configuration = _getPlayerConfiguration();
+
+    if ( !configuration && RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam()) {
+      setTimeout(() => configure( playerInfo, localMessagingInfo ), 100 );
+      return;
+    }
+
+    localMessagingInfo = _init( playerInfo, localMessagingInfo );
+
+    RisePlayerConfiguration.Logger.configure();
+
+    if ( RisePlayerConfiguration.isPreview()) {
+      RisePlayerConfiguration.sendComponentsReadyEvent();
+    } else {
+      _configureLocalMessaging( localMessagingInfo );
+    }
+
+    if ( RisePlayerConfiguration.Helpers.isInViewer()) {
+      RisePlayerConfiguration.Viewer.startListeningForData();
+    } else {
+      _sendRisePresentationPlayOnDocumentLoad();
+    }
+
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+      _lockDownRisePlayerConfiguration();
+    }
+  }
+
   return {
     RISE_PLAYER_CONFIGURATION_DATA: {
       name: "RisePlayerConfiguration",
       id: "RisePlayerConfiguration",
       version: "N/A"
     },
-    configure: ( playerInfo, localMessagingInfo ) => {
-      _validateAllRequiredObjectsAreAvailable();
-
-      localMessagingInfo = _init( playerInfo, localMessagingInfo );
-
-      RisePlayerConfiguration.Logger.configure();
-
-      if ( RisePlayerConfiguration.isPreview()) {
-        RisePlayerConfiguration.sendComponentsReadyEvent();
-      } else {
-        _configureLocalMessaging( localMessagingInfo );
-      }
-
-      if ( RisePlayerConfiguration.Helpers.isInViewer()) {
-        RisePlayerConfiguration.Viewer.startListeningForData();
-      } else {
-        _sendRisePresentationPlayOnDocumentLoad();
-      }
-
-      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-        _lockDownRisePlayerConfiguration();
-      }
-    },
+    configure: configure,
     isConfigured() {
       return !!RisePlayerConfiguration.getPlayerInfo;
     },

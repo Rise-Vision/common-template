@@ -5,19 +5,25 @@
 
 describe( "log-entry", function() {
 
-  var COMPONENT_DATA = {
-    "id": "rise-data-image-01",
-    "name": "rise-data-image",
-    "version": "2018.01.01.10.00"
-  };
+  var sandbox,
+    COMPONENT_DATA = {
+      "id": "rise-data-image-01",
+      "name": "rise-data-image",
+      "version": "2018.01.01.10.00"
+    };
 
   beforeEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
+
+    sandbox = sinon.sandbox.create();
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
   });
 
   afterEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
+
+    sandbox.restore();
   });
 
   describe( "_createLogEntryFor", function() {

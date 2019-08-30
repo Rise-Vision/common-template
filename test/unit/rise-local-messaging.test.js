@@ -43,23 +43,12 @@ describe( "window connection", function() {
     delete top.receiveFromPlayer;
   });
 
-  it( "should not be connected if window to player messaging not available", function( done ) {
-    var connectionHandler = function( evt ) {
-      expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.false;
-      expect( evt.detail ).to.deep.equal({ isConnected: false });
-
-      window.removeEventListener( "rise-local-messaging-connection", connectionHandler );
-
-      done();
-    };
-
-    window.addEventListener( "rise-local-messaging-connection", connectionHandler );
-
+  it( "should not be connected if window to player messaging not available", function() {
     RisePlayerConfiguration.LocalMessaging.configure({ player: "chromeos", connectionType: "window" });
-
+    expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.false;
   });
 
-  it( "should be connected if window to player messaging available", function( done ) {
+  it( "should be connected if window to player messaging available and client-list message is returned", function( done ) {
     var connectionHandler = function( evt ) {
       expect( RisePlayerConfiguration.LocalMessaging.isConnected()).to.be.true;
       expect( evt.detail ).to.deep.equal({ isConnected: true });
@@ -70,7 +59,9 @@ describe( "window connection", function() {
     };
 
     top.postToPlayer = function() {};
-    top.receiveFromPlayer = function() {};
+    top.receiveFromPlayer = function( name, handler ) {
+      handler({ from: "local-messaging", topic: "client-list" });
+    };
 
     window.addEventListener( "rise-local-messaging-connection", connectionHandler );
 
@@ -118,7 +109,9 @@ describe( "window connection", function() {
 
     beforeEach( function() {
       top.postToPlayer = sinon.spy();
-      top.receiveFromPlayer = function() {};
+      top.receiveFromPlayer = function( name, handler ) {
+        handler({ from: "local-messaging", topic: "client-list" });
+      };
     });
 
     afterEach( function() {
@@ -130,7 +123,8 @@ describe( "window connection", function() {
       RisePlayerConfiguration.LocalMessaging.configure({ player: "chromeos", connectionType: "window" });
       RisePlayerConfiguration.LocalMessaging.broadcastMessage();
 
-      expect( top.postToPlayer ).to.not.have.been.called;
+      // configure calls it once, broadcastMessage doesn't
+      expect( top.postToPlayer ).to.have.been.called.once;
     });
 
     it( "should not attempt to broadcast if no connection available", function() {

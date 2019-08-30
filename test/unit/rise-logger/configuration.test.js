@@ -5,13 +5,20 @@
 
 describe( "configure", function() {
 
+  var sandbox;
+
   beforeEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
+
+    sandbox = sinon.sandbox.create();
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
   });
 
   afterEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
+
+    sandbox.restore();
   });
 
   it( "should not enable BQ logging if no player type is defined", function() {

@@ -95,6 +95,10 @@ RisePlayerConfiguration.Helpers = (() => {
     return configuration;
   }
 
+  function getWaitForPlayerURLParam() {
+    return getHttpParameter( "waitForPlayer" ) === "true";
+  }
+
   function getLocalMessagingTextContent( fileUrl ) {
     return new Promise(( resolve, reject ) => {
       const xhr = new XMLHttpRequest();
@@ -151,6 +155,7 @@ RisePlayerConfiguration.Helpers = (() => {
     getRiseElements: getRiseElements,
     getRiseEditableElements: getRiseEditableElements,
     getRisePlayerConfiguration: getRisePlayerConfiguration,
+    getWaitForPlayerURLParam: getWaitForPlayerURLParam,
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
     onceClientsAreAvailable: onceClientsAreAvailable,
