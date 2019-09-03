@@ -30,6 +30,7 @@ describe( "Branding", function() {
     });
     sandbox.stub( document.head, "appendChild" );
     sandbox.stub( document.head, "removeChild" );
+    sandbox.stub( document.body.style, "setProperty" );
   });
 
   afterEach( function() {
@@ -95,10 +96,10 @@ describe( "Branding", function() {
         expect( styleSheet.cssRules ).to.deep.equal([
           ".branding-color-base { color: blue !important; }",
           ".branding-color-base-bg { background-color: blue !important; }",
-          ".branding-color-base-fill { fill: blue !important; }",
+          ":root { --branding-color-base: blue; }",
           ".branding-color-accent { color: red !important; }",
           ".branding-color-accent-bg { background-color: red !important; }",
-          ".branding-color-accent-fill { fill: red !important; }"
+          ":root { --branding-color-accent: red; }"
         ]);
       });
 
@@ -121,10 +122,10 @@ describe( "Branding", function() {
         expect( styleSheet.cssRules ).to.deep.equal([
           ".branding-color-base { color: red !important; }",
           ".branding-color-base-bg { background-color: red !important; }",
-          ".branding-color-base-fill { fill: red !important; }",
+          ":root { --branding-color-base: red; }",
           ".branding-color-accent { color: blue !important; }",
           ".branding-color-accent-bg { background-color: blue !important; }",
-          ".branding-color-accent-fill { fill: blue !important; }"
+          ":root { --branding-color-accent: blue; }"
         ]);
       });
 
@@ -138,6 +139,7 @@ describe( "Branding", function() {
 
         document.head.removeChild.should.have.been.calledWith( sinon.match.object );
       });
+
     });
   });
 

@@ -56,8 +56,8 @@ RisePlayerConfiguration.Branding = (() => {
     // https://medium.com/@tkh44/writing-a-css-in-js-library-from-scratch-96cd23a017b4
     var styleElement = createStyleElement(),
       styleSheet = styleElement.sheet,
-      css = function( selector, styleString ) {
-        const rule = `${selector} { ${styleString} !important; }`,
+      css = function( selector, styleString, important ) {
+        const rule = `${selector} { ${styleString}${important ? " !important" : ""}; }`,
           index = styleSheet.cssRules.length;
 
         // Note: Rules are added to the bottom of the list
@@ -66,15 +66,17 @@ RisePlayerConfiguration.Branding = (() => {
       };
 
     if ( branding.baseColor ) {
-      css( ".branding-color-base", "color: " + branding.baseColor );
-      css( ".branding-color-base-bg", "background-color: " + branding.baseColor );
-      css( ".branding-color-base-fill", "fill: " + branding.baseColor );
+      css( ".branding-color-base", "color: " + branding.baseColor, true );
+      css( ".branding-color-base-bg", "background-color: " + branding.baseColor, true );
+
+      css( ":root", "--branding-color-base: " + branding.baseColor );
     }
 
     if ( branding.accentColor ) {
-      css( ".branding-color-accent", "color: " + branding.accentColor );
-      css( ".branding-color-accent-bg", "background-color: " + branding.accentColor );
-      css( ".branding-color-accent-fill", "fill: " + branding.accentColor );
+      css( ".branding-color-accent", "color: " + branding.accentColor, true );
+      css( ".branding-color-accent-bg", "background-color: " + branding.accentColor, true );
+
+      css( ":root", "--branding-color-accent: " + branding.accentColor );
     }
 
     removeStyleElement( brandingStyleElement );
