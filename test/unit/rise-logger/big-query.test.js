@@ -27,15 +27,21 @@ describe( "Big Query logging", function() {
       }
     },
     INTERVAL = 3580000,
-    clock;
+    clock,
+    sandbox;
 
   beforeEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
+
+    sandbox = sinon.sandbox.create();
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
   });
 
   afterEach( function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
     RisePlayerConfiguration.Logger.reset();
+
+    sandbox.restore();
   });
 
   describe( "getInsertData", function() {

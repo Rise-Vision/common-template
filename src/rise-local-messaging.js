@@ -9,6 +9,7 @@ RisePlayerConfiguration.LocalMessaging = (() => {
     _clientName,
     _connection,
     _connectionType,
+    _initialWindowConnectionTimer,
     _playerType,
     _initialWebsocketConnectionTimer = null,
     _messageHandlers = [],
@@ -143,8 +144,21 @@ RisePlayerConfiguration.LocalMessaging = (() => {
   }
 
   function _initWindowConnection() {
-    _connected = _isWindowConnectionAvailable();
-    _sendConnectionEvent();
+    if ( _isWindowConnectionAvailable()) {
+      _receiveWindowMessages( message => {
+        if ( _connected ) {
+          return;
+        }
+
+        _connected = message.topic.toUpperCase() === "CLIENT-LIST";
+        _sendConnectionEvent();
+
+        clearTimeout( _initialWindowConnectionTimer );
+      });
+
+      _broadcastWindowMessage({ topic: "client-list-request" });
+    }
+    _initialWindowConnectionTimer = setTimeout( _initWindowConnection, 100 );
   }
 
   function _receiveWebsocketMessages( handler ) {
