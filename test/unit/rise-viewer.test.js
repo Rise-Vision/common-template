@@ -54,10 +54,21 @@ describe( "Viewer", function() {
     expect( window.dispatchEvent ).to.not.have.been.called;
   });
 
-  it( "should dispatch 'rise-presentation-play' event to components", function() {
+  it( "should dispatch 'rise-presentation-play' event to components - online mode", function() {
     RisePlayerConfiguration.Viewer.receiveData({
       data: { topic: "rise-presentation-play" },
       origin: "https://viewer.risevision.com"
+    });
+
+    expect( riseImage.dispatchEvent ).to.have.been.called;
+    expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( window.dispatchEvent ).to.have.been.called;
+  });
+
+  it( "should dispatch 'rise-presentation-play' event to components - offline mode", function() {
+    RisePlayerConfiguration.Viewer.receiveData({
+      data: { topic: "rise-presentation-play" },
+      origin: "file://"
     });
 
     expect( riseImage.dispatchEvent ).to.have.been.called;

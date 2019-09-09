@@ -6,9 +6,7 @@ RisePlayerConfiguration.Viewer = (() => {
   }
 
   function _receiveData( event ) {
-    if ( event.origin.indexOf( "risevision.com" ) === -1 ) {
-      return;
-    }
+    //NOTE: checking for "risevision.com" event.origin will not work in offline mode
 
     const message = event.data;
 
