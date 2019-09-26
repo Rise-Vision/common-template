@@ -124,7 +124,7 @@ describe( "Watch", function() {
           expect( handlerSuccessStub.called ).to.be.false;
           expect( handlerErrorStub.called ).to.be.true;
           expect( RisePlayerConfiguration.Logger.error.called ).to.be.true;
-          expect( RisePlayerConfiguration.Logger.error.lastCall.args[ 1 ]).to.equal( "data file rls error" );
+          expect( RisePlayerConfiguration.Logger.error.lastCall.args[ 1 ]).to.equal( "data file RLS error" );
         });
     });
 
