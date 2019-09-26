@@ -62,7 +62,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     } else {
 
       if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {
-        RisePlayerConfiguration.Logger.error( LOGGER_DATA, "not connectted to Local Messaging, cannot send PUD template-done event" );
+        RisePlayerConfiguration.Logger.error( LOGGER_DATA, "not connected to Local Messaging, cannot send PUD template-done event" );
         return;
       }
 
