@@ -19,13 +19,18 @@ RisePlayerConfiguration.Watch = (() => {
       return Promise.resolve();
     }
 
+    const isInsufficientDiskSpace = message.errorMessage === "Insufficient disk space";
+
     switch ( message.status.toUpperCase()) {
     case "CURRENT":
       return _handleFileAvailable( message, handlerSuccess );
 
     case "FILE-ERROR":
       RisePlayerConfiguration.Logger.error(
-        WATCH_DATA_FILE, "data file error", message
+        WATCH_DATA_FILE,
+        isInsufficientDiskSpace ?
+          "file-insufficient-disk-space-error" : "data file error",
+        message
       );
       // falls through
     case "NOEXIST":
