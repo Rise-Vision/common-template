@@ -36,6 +36,7 @@ describe( "Watch", function() {
       handlerErrorStub = sinon.spy( function() {
         return Promise.resolve();
       });
+
       sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
         return Promise.resolve({
           components: [
@@ -46,10 +47,13 @@ describe( "Watch", function() {
           ]
         });
       });
+
+      sinon.stub( RisePlayerConfiguration.Logger, "error" );
     });
 
     afterEach( function() {
       RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.restore();
+      RisePlayerConfiguration.Logger.error.restore();
     });
 
     it( "should do nothing if there is no status", function() {
@@ -58,6 +62,7 @@ describe( "Watch", function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
           expect( handlerSuccessStub.called ).to.be.false;
           expect( handlerErrorStub.called ).to.be.false;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.false;
         });
     });
 
@@ -77,6 +82,7 @@ describe( "Watch", function() {
             ]
           });
           expect( handlerErrorStub.called ).to.be.false;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.false;
         });
     });
 
@@ -89,6 +95,7 @@ describe( "Watch", function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
           expect( handlerSuccessStub.called ).to.be.false;
           expect( handlerErrorStub.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.false;
         });
 
     });
@@ -102,11 +109,12 @@ describe( "Watch", function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
           expect( handlerSuccessStub.called ).to.be.false;
           expect( handlerErrorStub.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.false;
         });
 
     });
 
-    it( "should just send start if there was a file error", function() {
+    it( "should log error and send start if there was a file error", function() {
 
       return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
         status: "FILE-ERROR"
@@ -115,8 +123,24 @@ describe( "Watch", function() {
           expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
           expect( handlerSuccessStub.called ).to.be.false;
           expect( handlerErrorStub.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.lastCall.args[ 1 ]).to.equal( "data file rls error" );
         });
+    });
 
+    it( "should detect insufficient disk space", function() {
+
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
+        status: "FILE-ERROR",
+        errorMessage: "Insufficient disk space"
+      }, handlerSuccessStub, handlerErrorStub )
+        .then( function() {
+          expect( RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.called ).to.be.false;
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.lastCall.args[ 1 ]).to.equal( "file-insufficient-disk-space-error" );
+        });
     });
 
   });

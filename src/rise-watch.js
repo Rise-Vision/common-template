@@ -29,7 +29,7 @@ RisePlayerConfiguration.Watch = (() => {
       RisePlayerConfiguration.Logger.error(
         WATCH_DATA_FILE,
         isInsufficientDiskSpace ?
-          "file-insufficient-disk-space-error" : "data file error",
+          "file-insufficient-disk-space-error" : "data file rls error",
         message
       );
       // falls through
