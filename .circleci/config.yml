@@ -236,12 +236,12 @@ workflows:
             branches:
               only:
                 - build/stable
-      - build-template-e2e-page:
+      - deploy-component-e2e-page:
           stage: beta
-          name: build-template-e2e-page-beta
+          name: deploy-component-e2e-page-beta
           requires:
-            - build_and_test
-            - generate-version
+            - gcloud-setup
+            - build-component-e2e-page-beta
           filters:
             branches:
               only:
