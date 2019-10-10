@@ -53,7 +53,7 @@ jobs:
           paths:
             - version-string
 
-  build-e2e-page:
+  build-component-e2e-page:
     parameters:
       stage:
         type: string
@@ -100,7 +100,7 @@ jobs:
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
-  deploy-e2e-page:
+  deploy-component-e2e-page:
     parameters:
       stage:
         type: string
@@ -120,7 +120,7 @@ jobs:
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
-  test-e2e-electron:
+  test-component-e2e-electron:
     parameters:
       stage:
         type: string
@@ -215,9 +215,9 @@ workflows:
                 - master
                 - build/stable
                 - /^e2e[/].*/
-      - build-e2e-page:
+      - build-component-e2e-page:
           stage: beta
-          name: build-e2e-page-beta
+          name: build-component-e2e-page-beta
           requires:
             - build_and_test
             - generate-version
@@ -226,9 +226,9 @@ workflows:
               only:
                 - master
                 - /^e2e[/].*/
-      - build-e2e-page:
+      - build-component-e2e-page:
           stage: stable
-          name: build-e2e-page-stable
+          name: build-component-e2e-page-stable
           requires:
             - build_and_test
             - generate-version
@@ -236,48 +236,48 @@ workflows:
             branches:
               only:
                 - build/stable
-      - deploy-e2e-page:
+      - build-template-e2e-page:
           stage: beta
-          name: deploy-e2e-page-beta
+          name: build-template-e2e-page-beta
           requires:
-            - gcloud-setup
-            - build-e2e-page-beta
+            - build_and_test
+            - generate-version
           filters:
             branches:
               only:
                 - master
                 - /^e2e[/].*/
-      - deploy-e2e-page:
+      - deploy-component-e2e-page:
           stage: stable
-          name: deploy-e2e-page-stable
+          name: deploy-component-e2e-page-stable
           requires:
             - gcloud-setup
-            - build-e2e-page-stable
+            - build-component-e2e-page-stable
           filters:
             branches:
               only:
                 - build/stable
-      - test-e2e-electron:
+      - test-component-e2e-electron:
           stage: beta
           displayId: NEWSF2QM2B2F
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
-          name: test-e2e-electron-beta
+          name: test-component-e2e-electron-beta
           requires:
             - deploy-stage
-            - deploy-e2e-page-beta
+            - deploy-component-e2e-page-beta
           filters:
             branches:
               only:
                 - master
                 - /^e2e[/].*/
-      - test-e2e-electron:
+      - test-component-e2e-electron:
           stage: stable
           displayId: 3AEP9BWZEKFN
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/
-          name: test-e2e-electron-stable
+          name: test-component-e2e-electron-stable
           requires:
             - deploy-stage
-            - deploy-e2e-page-stable
+            - deploy-component-e2e-page-stable
           filters:
             branches:
               only:
@@ -286,7 +286,7 @@ workflows:
           stage: beta
           name: deploy-beta
           requires:
-            - test-e2e-electron-beta
+            - test-component-e2e-electron-beta
             - gcloud-setup
           filters:
             branches:
@@ -296,7 +296,7 @@ workflows:
           stage: stable
           name: deploy-stable
           requires:
-            - test-e2e-electron-stable
+            - test-component-e2e-electron-stable
             - gcloud-setup
           filters:
             branches:
