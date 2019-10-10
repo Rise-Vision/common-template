@@ -1,0 +1,24 @@
+{
+  "entrypoint": "src/template.html",
+  "extraDependencies": [
+    "node_modules/@polymer/polymer/**",
+    "node_modules/@webcomponents/webcomponentsjs/**"
+  ],
+  "builds": [
+    {
+      "name": "prod",
+      "preset": "es5-bundled",
+      "addServiceWorker": true,
+      "html": { "minify": true },
+      "css": { "minify": true },
+      "js": { "minify": true },
+      "bundle": {
+        "inlineScripts": true,
+        "stripComments": true
+      }
+    }
+  ],
+  "moduleResolution": "node",
+  "npm": true
+}
+
