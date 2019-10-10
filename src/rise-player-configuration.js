@@ -136,9 +136,9 @@ const RisePlayerConfiguration = (() => {
 
     if ( RisePlayerConfiguration.Helpers.isInViewer()) {
       RisePlayerConfiguration.Viewer.startListeningForData();
-    } else {
-      _sendRisePresentationPlayOnDocumentLoad();
     }
+
+    _sendRisePresentationPlayOnDocumentLoad();
 
     if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
       _lockDownRisePlayerConfiguration();
