@@ -106,15 +106,13 @@ jobs:
         type: string
     docker: *BUILDIMAGE
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run: echo build common-template e2e page << parameters.stage >>
       - run: |
           VERSION=$(cat version-string/version)
           SRC_FILE=e2e/src/template.html
-          ls
-          ls e2e
-          ls e2e/src
           sed -i "s!stable/common!staging/common/$VERSION!" $SRC_FILE
           cat $SRC_FILE
       - run: |
