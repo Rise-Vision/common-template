@@ -114,7 +114,6 @@ jobs:
           VERSION=$(cat version-string/version)
           SRC_FILE=e2e/src/template.html
           sed -i "s!stable/common!staging/common/$VERSION!" $SRC_FILE
-          cat $SRC_FILE
       - run: |
           cd e2e
           npm install
@@ -130,17 +129,31 @@ jobs:
         type: string
     docker: *GCSIMAGE
     steps:
-      - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
-          key: node-cache-{{ checksum "package.json" }}
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
           TARGET=$WIDGETS_BASE/<< parameters.stage >>/e2e/rise-image/electron
           echo Deploying << parameters.stage >> electron e2e page for rise-image
           gsutil -m rsync -d -r base $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil -m acl -r ch -u AllUsers:R $TARGET
+
+  deploy-common-e2e-page:
+    parameters:
+      stage:
+        type: string
+    docker: *GCSIMAGE
+    steps:
+      - attach_workspace:
+          at: .
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/templates/08d85a3642ab0e7f0548b83ae8cdfe6a41dfd8bf
+          echo Deploying << parameters.stage >> e2e page for common-template
+          gsutil -m rsync -d -r base-common $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
@@ -298,6 +311,27 @@ workflows:
           requires:
             - gcloud-setup
             - build-component-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
+      - deploy-common-e2e-page:
+          stage: beta
+          name: deploy-common-e2e-page-beta
+          requires:
+            - gcloud-setup
+            - build-common-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^e2e[/].*/
+      - deploy-common-e2e-page:
+          stage: stable
+          name: deploy-common-e2e-page-stable
+          requires:
+            - gcloud-setup
+            - build-common-e2e-page-stable
           filters:
             branches:
               only:
