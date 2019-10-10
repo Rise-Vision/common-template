@@ -111,8 +111,8 @@ jobs:
       - run: echo build common-template e2e page << parameters.stage >>
       - run: |
           VERSION=$(cat version-string/version)
-          ORIG_FILE=e2e/template-orig.html
-          DEST_FILE=e2e/template.html
+          ORIG_FILE=e2e/src/template-orig.html
+          DEST_FILE=e2e/src/template.html
           cp $DEST_FILE $ORIG_FILE
           sed "s!stable/common!staging/common/$VERSION!" $ORIG_FILE > $DEST_FILE
           cat $DEST_FILE
