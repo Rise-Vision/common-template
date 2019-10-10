@@ -1,1 +1,3 @@
 dist/
+gulpfile.js
+sw-precache-config.js
