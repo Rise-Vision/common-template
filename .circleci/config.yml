@@ -53,6 +53,24 @@ jobs:
           paths:
             - version-string
 
+  deploy-stage:
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          VERSION=$(cat version-string/version)
+          TARGET=$WIDGETS_BASE/staging/common/$VERSION/
+          echo Deploying version $VERSION to common
+          gsutil cp dist/*.js $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil -m acl -r ch -u AllUsers:R $TARGET
+
   build-component-e2e-page:
     parameters:
       stage:
@@ -82,23 +100,30 @@ jobs:
           paths:
             - base
 
-  deploy-stage:
-    docker: *GCSIMAGE
+  build-common-e2e-page:
+    parameters:
+      stage:
+        type: string
+    docker: *BUILDIMAGE
     steps:
-      - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
-          key: node-cache-{{ checksum "package.json" }}
-      - run: mkdir -p ~/.config
-      - run: cp -r gcloud ~/.config
+      - run: echo build common-template e2e page << parameters.stage >>
       - run: |
           VERSION=$(cat version-string/version)
-          TARGET=$WIDGETS_BASE/staging/common/$VERSION/
-          echo Deploying version $VERSION to common
-          gsutil cp dist/*.js $TARGET
-          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
-          gsutil -m acl -r ch -u AllUsers:R $TARGET
+          ORIG_FILE=e2e/template-orig.html
+          DEST_FILE=e2e/template.html
+          cp $DEST_FILE $ORIG_FILE
+          sed "s!stable/common!staging/common/$VERSION!" $ORIG_FILE > $DEST_FILE
+          cat $DEST_FILE
+      - run: |
+          cd e2e
+          npm install
+          polymer build
+      - persist_to_workspace:
+          root: ./e2e/build
+          paths:
+            - base-common
 
   deploy-component-e2e-page:
     parameters:
@@ -229,6 +254,27 @@ workflows:
       - build-component-e2e-page:
           stage: stable
           name: build-component-e2e-page-stable
+          requires:
+            - build_and_test
+            - generate-version
+          filters:
+            branches:
+              only:
+                - build/stable
+      - build-common-e2e-page:
+          stage: beta
+          name: build-common-e2e-page-beta
+          requires:
+            - build_and_test
+            - generate-version
+          filters:
+            branches:
+              only:
+                - master
+                - /^e2e[/].*/
+      - build-common-e2e-page:
+          stage: stable
+          name: build-common-e2e-page-stable
           requires:
             - build_and_test
             - generate-version

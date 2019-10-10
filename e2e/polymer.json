@@ -6,7 +6,7 @@
   ],
   "builds": [
     {
-      "name": "prod",
+      "name": "base-common",
       "preset": "es5-bundled",
       "addServiceWorker": true,
       "html": { "minify": true },
@@ -21,4 +21,3 @@
   "moduleResolution": "node",
   "npm": true
 }
-
