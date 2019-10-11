@@ -157,7 +157,7 @@ jobs:
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
-  test-component-e2e-electron:
+  test-e2e-electron:
     parameters:
       stage:
         type: string
@@ -191,10 +191,14 @@ jobs:
           command: |
             cd rise-launcher-electron-e2e
             node test-display-runner-using-downloaded-installer.js << parameters.displayId >> 20
-      - run: mkdir output
-      - run: mv ./rise-launcher-electron-e2e/*screenshot.jpg output
+      - run:
+          command: |
+            mkdir output
+            mv ./rise-launcher-electron-e2e/*screenshot.jpg output
+          when: always
       - store_artifacts:
           path: output
+          when: always
 
   deploy-production:
     parameters:
@@ -336,7 +340,7 @@ workflows:
             branches:
               only:
                 - build/stable
-      - test-component-e2e-electron:
+      - test-e2e-electron:
           stage: beta
           displayId: NEWSF2QM2B2F
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
@@ -349,7 +353,7 @@ workflows:
               only:
                 - master
                 - /^e2e[/].*/
-      - test-component-e2e-electron:
+      - test-e2e-electron:
           stage: stable
           displayId: 3AEP9BWZEKFN
           installerPath: https://storage.googleapis.com/install-versions.risevision.com/
@@ -361,11 +365,63 @@ workflows:
             branches:
               only:
                 - build/stable
+      - test-e2e-electron:
+          stage: beta
+          displayId: N97C6KMBCA9Y
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
+          name: test-common-single-e2e-electron-beta
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^e2e[/].*/
+      - test-e2e-electron:
+          stage: stable
+          displayId: 3JBY4B4MBUB8
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
+          name: test-common-single-e2e-electron-stable
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
+      - test-e2e-electron:
+          stage: beta
+          displayId: KEKUZJZ3TVZ2
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
+          name: test-common-multiple-e2e-electron-beta
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^e2e[/].*/
+      - test-e2e-electron:
+          stage: stable
+          displayId: TTDNZ5JKX33S
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
+          name: test-common-multiple-e2e-electron-stable
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
       - deploy-production:
           stage: beta
           name: deploy-beta
           requires:
             - test-component-e2e-electron-beta
+            - test-common-single-e2e-electron-beta
+            - test-common-multiple-e2e-electron-beta
             - gcloud-setup
           filters:
             branches:
@@ -376,6 +432,8 @@ workflows:
           name: deploy-stable
           requires:
             - test-component-e2e-electron-stable
+            - test-common-single-e2e-electron-stable
+            - test-common-multiple-e2e-electron-stable
             - gcloud-setup
           filters:
             branches:
