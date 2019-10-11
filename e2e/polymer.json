@@ -8,7 +8,7 @@
     {
       "name": "base-common",
       "preset": "es5-bundled",
-      "addServiceWorker": true,
+      "addServiceWorker": false,
       "html": { "minify": true },
       "css": { "minify": true },
       "js": { "minify": true },
