@@ -135,11 +135,11 @@ const RisePlayerConfiguration = (() => {
       _configureLocalMessaging( localMessagingInfo );
     }
 
-    if ( isInViewer) {
+    if ( isInViewer ) {
       RisePlayerConfiguration.Viewer.startListeningForData();
     }
 
-    if( !isInViewer || RisePlayerConfiguration.Helpers.isFirstPresentationInSchedule()) {
+    if ( !isInViewer || RisePlayerConfiguration.Helpers.isFirstPresentationInSchedule()) {
       _sendRisePresentationPlayOnDocumentLoad();
     }
 

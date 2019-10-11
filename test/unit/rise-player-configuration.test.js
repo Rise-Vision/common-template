@@ -20,6 +20,7 @@ describe( "RisePlayerConfiguration", function() {
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
 
     RisePlayerConfiguration.Helpers = {
+      isFirstPresentationInSchedule: _helpers.isFirstPresentationInSchedule,
       isInViewer: _helpers.isInViewer,
       isTestEnvironment: _helpers.isTestEnvironment,
       getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration,

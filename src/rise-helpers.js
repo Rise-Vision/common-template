@@ -18,7 +18,7 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   function isFirstPresentationInSchedule() {
-    if( !isInViewer()) {
+    if ( !isInViewer()) {
       return false;
     }
 
