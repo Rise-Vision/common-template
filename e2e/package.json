@@ -1,0 +1,16 @@
+{
+  "name": "e2e-common-template",
+  "version": "1.0.0",
+  "description": "E2E test template for common template",
+  "scripts": {
+    "build": "polymer build"
+  },
+  "author": "Rise Vision",
+  "license": "GPL-3.0+",
+  "dependencies": {
+    "@polymer/polymer": "3.1.0",
+    "@webcomponents/webcomponentsjs": "^2.1.1"
+  },
+  "width": "1920",
+  "height": "1080"
+}

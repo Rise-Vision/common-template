@@ -118,6 +118,7 @@ const RisePlayerConfiguration = (() => {
     _validateAllRequiredObjectsAreAvailable();
 
     const configuration = _getPlayerConfiguration();
+    const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();
 
     if ( !configuration && RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam()) {
       setTimeout(() => configure( playerInfo, localMessagingInfo ), 100 );
@@ -134,9 +135,11 @@ const RisePlayerConfiguration = (() => {
       _configureLocalMessaging( localMessagingInfo );
     }
 
-    if ( RisePlayerConfiguration.Helpers.isInViewer()) {
+    if ( isInViewer ) {
       RisePlayerConfiguration.Viewer.startListeningForData();
-    } else {
+    }
+
+    if ( !isInViewer || RisePlayerConfiguration.Viewer.isFirstPresentationInSchedule()) {
       _sendRisePresentationPlayOnDocumentLoad();
     }
 

@@ -1,0 +1,70 @@
+<!doctype html>
+
+<html lang="en">
+<title>E2E common-template</title>
+<head>
+  <script>
+    var TEMPLATE_PRODUCT_CODE='08d85a3642ab0e7f0548b83ae8cdfe6a41dfd8bf';
+    var TEMPLATE_VERSION='1.0.0';
+    var TEMPLATE_NAME='e2e-common-template';
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+  <script type="module">
+    // this and the following block are needed at build time to force the creation of the shared bundle script
+    import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+  </script>
+  <script type="module">
+    import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+  </script>
+  <script src="https://widgets.risevision.com/scripts/primus-local-messaging.js"></script>
+  <script src="https://widgets.risevision.com/stable/common/config-prod.min.js"></script>
+  <script src="https://widgets.risevision.com/stable/common/common-template.min.js"></script>
+  <script src="https://widgets.risevision.com/stable/components/rise-text/2/rise-text.js"></script>
+  <script>
+    if (document.domain.indexOf("localhost") === -1) {
+      try {
+        document.domain = "risevision.com";
+      } catch (err) {
+        // can't set document.domain, risevision.com not an accepted suffix of current document domain
+        console.log("document.domain can't be set", err);
+      }
+    }
+  </script>
+
+  <!-- link to stylesheet -->
+  <style>
+     h1 {
+       font-size: 144px;
+       background-color: green;
+       color: red;
+     }
+  </style>
+</head>
+
+  <body>
+
+    <h1 id="components-ready-data"></h1>
+    <h1 id="play-data"></h1>
+
+    <script>
+      window.addEventListener( "rise-presentation-play", () => {
+        document.getElementById( "components-ready-data" ).innerHTML = "PLAY";
+      });
+    </script>
+
+    <script>
+      window.addEventListener( "rise-components-ready", () => {
+        document.getElementById( "play-data" ).innerHTML = "READY";
+      });
+    </script>
+
+    <script>
+      RisePlayerConfiguration.configure();
+    </script>
+
+  </body>
+</html>
