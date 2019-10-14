@@ -17,23 +17,6 @@ RisePlayerConfiguration.Helpers = (() => {
     return !RisePlayerConfiguration.isPreview() && window.self !== window.top;
   }
 
-  function isFirstPresentationInSchedule() {
-    if ( !isInViewer()) {
-      return false;
-    }
-
-    try {
-      const iframeId = window.frameElement.id;
-
-      return iframeId === "iFrame_sc0_pre0";
-    } catch ( error ) {
-      console.log( "can't retrieve frame id", error );
-
-      // don't assume it's the first if it can be determined.
-      return false;
-    }
-  }
-
   function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
     const names = typeof requiredClientNames === "string" ?
@@ -173,7 +156,6 @@ RisePlayerConfiguration.Helpers = (() => {
     getRiseEditableElements: getRiseEditableElements,
     getRisePlayerConfiguration: getRisePlayerConfiguration,
     getWaitForPlayerURLParam: getWaitForPlayerURLParam,
-    isFirstPresentationInSchedule: isFirstPresentationInSchedule,
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
     onceClientsAreAvailable: onceClientsAreAvailable,

@@ -139,7 +139,7 @@ const RisePlayerConfiguration = (() => {
       RisePlayerConfiguration.Viewer.startListeningForData();
     }
 
-    if ( !isInViewer || RisePlayerConfiguration.Helpers.isFirstPresentationInSchedule()) {
+    if ( !isInViewer || RisePlayerConfiguration.Viewer.isFirstPresentationInSchedule()) {
       _sendRisePresentationPlayOnDocumentLoad();
     }
 
