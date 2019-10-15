@@ -87,13 +87,14 @@ describe( "PlayUntilDone", function() {
   describe( "reportTemplateDone()", function() {
     it( "should send 'template-done' through local messaging when not in viewer", function() {
       sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
-      sandbox.stub( RisePlayerConfiguration.Helpers, "onceClientsAreAvailable" ).yields();
+      var onceClientsAreAvailable = sandbox.stub( RisePlayerConfiguration.Helpers, "onceClientsAreAvailable" ).yields();
 
       sandbox.stub( RisePlayerConfiguration.LocalMessaging, "isConnected" ).returns( true );
       sandbox.stub( RisePlayerConfiguration.LocalMessaging, "broadcastMessage" );
 
       RisePlayerConfiguration.PlayUntilDone.reportTemplateDone();
 
+      sinon.assert.calledWith( onceClientsAreAvailable, "player-electron" );
       RisePlayerConfiguration.LocalMessaging.broadcastMessage.should.have.been.calledWith({ topic: "template-done" });
     });
 

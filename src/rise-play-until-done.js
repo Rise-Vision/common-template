@@ -68,7 +68,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
 
       RisePlayerConfiguration.Logger.info( LOGGER_DATA, "sending PUD template-done event" );
 
-      RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "local-messaging", () => {
+      RisePlayerConfiguration.Helpers.onceClientsAreAvailable( "player-electron", () => {
         RisePlayerConfiguration.LocalMessaging.broadcastMessage({
           topic: "template-done"
         });
