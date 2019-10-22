@@ -106,7 +106,10 @@ const RisePlayerConfiguration = (() => {
 
   function _sendRisePresentationPlayOnDocumentLoad() {
     window.addEventListener( "DOMContentLoaded", () => {
-      setTimeout(() => RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" ), 100 );
+      setTimeout(() => {
+        RisePlayerConfiguration.Logger.info( RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA, "rise-presentation-play" );
+        RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
+      }, 100 );
     });
   }
 
