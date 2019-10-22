@@ -105,9 +105,9 @@ const RisePlayerConfiguration = (() => {
   }
 
   function _sendRisePresentationPlayOnDocumentLoad() {
-    window.addEventListener( "DOMContentLoaded", () =>
-      RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" )
-    );
+    window.addEventListener( "DOMContentLoaded", () => {
+      setTimeout(() => RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" ), 100 );
+    });
   }
 
   function _lockDownRisePlayerConfiguration() {
@@ -201,6 +201,8 @@ const RisePlayerConfiguration = (() => {
       return RisePlayerConfiguration.getDisplayId() === "preview";
     },
     dispatchWindowEvent( name ) {
+      console.log( `Dispatching ${name} event` );
+
       window.dispatchEvent( new CustomEvent( name ));
     },
     sendComponentsReadyEvent() {
