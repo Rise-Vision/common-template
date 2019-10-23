@@ -105,12 +105,18 @@ const RisePlayerConfiguration = (() => {
   }
 
   function _sendRisePresentationPlayOnDocumentLoad() {
-    window.addEventListener( "DOMContentLoaded", () => {
-      setTimeout(() => {
+    const sendRisePresentationPlay = () => {
+      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
         RisePlayerConfiguration.Logger.info( RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA, "rise-presentation-play" );
-        RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
-      }, 100 );
-    });
+      }
+      RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
+    };
+
+    window.addEventListener( "DOMContentLoaded", sendRisePresentationPlay );
+
+    if ( document.readyState === "complete" || document.readyState === "loaded" || document.readyState === "interactive" ) {
+      sendRisePresentationPlay();
+    }
   }
 
   function _lockDownRisePlayerConfiguration() {

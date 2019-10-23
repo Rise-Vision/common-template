@@ -463,6 +463,16 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.dispatchWindowEvent( "DOMContentLoaded" );
     });
 
+    it( "should send rise-presentation-play when not on viewer and document has already finished loading", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+      _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
+
+      RisePlayerConfiguration.configure();
+
+      // document is already loaded because we're running tests on a browser-like environment
+      RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+    });
+
   });
 
 });
