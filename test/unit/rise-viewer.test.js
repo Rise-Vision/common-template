@@ -7,11 +7,9 @@ describe( "Viewer", function() {
 
   var riseImage,
     riseText,
-    sandbox,
-    clock;
+    sandbox;
 
   beforeEach( function() {
-    clock = sinon.useFakeTimers();
     sandbox = sinon.sandbox.create();
 
     riseImage = { id: "rise-image-1", tagName: "rise-image", dispatchEvent: sandbox.spy() };
@@ -41,8 +39,6 @@ describe( "Viewer", function() {
   it( "should not execute on message if origin not from risevision.com", function() {
     RisePlayerConfiguration.Viewer.receiveData({ origin: "https://test.com", data: JSON.stringify({ testData: "test" }) });
 
-    clock.tick( 100 );
-
     expect( riseImage.dispatchEvent ).to.not.have.been.called;
     expect( riseText.dispatchEvent ).to.not.have.been.called;
   });
@@ -52,8 +48,6 @@ describe( "Viewer", function() {
       data: { topic: "other" },
       origin: "https://viewer.risevision.com"
     });
-
-    clock.tick( 100 );
 
     expect( riseImage.dispatchEvent ).to.not.have.been.called;
     expect( riseText.dispatchEvent ).to.not.have.been.called;
@@ -66,8 +60,6 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    clock.tick( 100 );
-
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
     expect( window.dispatchEvent ).to.have.been.called;
@@ -79,8 +71,6 @@ describe( "Viewer", function() {
       origin: "file://"
     });
 
-    clock.tick( 100 );
-
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
     expect( window.dispatchEvent ).to.have.been.called;
@@ -91,8 +81,6 @@ describe( "Viewer", function() {
       data: { topic: "rise-presentation-stop" },
       origin: "https://viewer.risevision.com"
     });
-
-    clock.tick( 100 );
 
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
