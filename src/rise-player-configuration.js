@@ -105,9 +105,18 @@ const RisePlayerConfiguration = (() => {
   }
 
   function _sendRisePresentationPlayOnDocumentLoad() {
-    window.addEventListener( "DOMContentLoaded", () =>
-      RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" )
-    );
+    const sendRisePresentationPlay = () => {
+      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+        RisePlayerConfiguration.Logger.info( RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA, "rise-presentation-play" );
+      }
+      RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
+    };
+
+    window.addEventListener( "DOMContentLoaded", sendRisePresentationPlay );
+
+    if ( document.readyState === "complete" || document.readyState === "loaded" || document.readyState === "interactive" ) {
+      sendRisePresentationPlay();
+    }
   }
 
   function _lockDownRisePlayerConfiguration() {
@@ -201,6 +210,8 @@ const RisePlayerConfiguration = (() => {
       return RisePlayerConfiguration.getDisplayId() === "preview";
     },
     dispatchWindowEvent( name ) {
+      console.log( `Dispatching ${name} event` );
+
       window.dispatchEvent( new CustomEvent( name ));
     },
     sendComponentsReadyEvent() {
