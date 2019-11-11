@@ -1,4 +1,4 @@
-/* global describe, it, sinon, expect, beforeEach, afterEach */
+/* global describe, it, sinon, beforeEach, afterEach */
 /* eslint-disable no-console, brace-style */
 
 "use strict";
