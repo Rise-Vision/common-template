@@ -178,6 +178,7 @@ jobs:
       - run: mkdir ~/rvplayer
       - run: echo "displayid=<< parameters.displayId >>" > $PLAYER_CONFIG
       - run: echo proxy= >> $PLAYER_CONFIG
+      - run: echo "debugviewerurl=https://rvaviewer-test.appspot.com/Viewer.html" >> $PLAYER_CONFIG
       - run:
           name: prepare the test
           command: |
