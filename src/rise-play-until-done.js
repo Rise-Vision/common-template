@@ -51,14 +51,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
     _reset();
 
     if ( RisePlayerConfiguration.Helpers.isInViewer()) {
-
-      let message = {
-        topic: "template-done",
-        frameElementId: window.frameElement ? window.frameElement.id : ""
-      }
-
-      window.parent.postMessage( message, "*" );
-
+      RisePlayerConfiguration.Viewer.send( "template-done" );
     } else {
 
       if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {

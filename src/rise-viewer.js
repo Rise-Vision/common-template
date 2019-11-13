@@ -23,6 +23,15 @@ RisePlayerConfiguration.Viewer = (() => {
     window.addEventListener( "message", _receiveData, false );
   }
 
+  function send( topic ) {
+    const message = {
+      topic,
+      frameElementId: window.frameElement ? window.frameElement.id : ""
+    }
+
+    window.parent.postMessage( message, "*" );
+  }
+
   function _receiveData( event ) {
     //NOTE: checking for "risevision.com" event.origin will not work in offline mode
 
@@ -47,6 +56,7 @@ RisePlayerConfiguration.Viewer = (() => {
 
   const exposedFunctions = {
     isFirstPresentationInSchedule,
+    send,
     startListeningForData
   };
 

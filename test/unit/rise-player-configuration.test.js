@@ -401,10 +401,12 @@ describe( "RisePlayerConfiguration", function() {
       _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
       _sandbox.stub( RisePlayerConfiguration.AttributeDataWatch, "watchAttributeDataFile" );
       _sandbox.stub( RisePlayerConfiguration.Preview, "startListeningForData" );
+      _sandbox.stub( RisePlayerConfiguration.Viewer, "send" );
     });
 
     it( "should start listening for data if it's preview", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
         .then( function() {
@@ -413,14 +415,33 @@ describe( "RisePlayerConfiguration", function() {
 
           RisePlayerConfiguration.Preview.startListeningForData.should.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.not.have.been.called;
+          RisePlayerConfiguration.Viewer.send.should.not.have.been.called;
         });
     });
 
     it( "should watch attribute data file if it's not preview", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
         .then( function() {
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+
+          RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
+          RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
+          RisePlayerConfiguration.Viewer.send.should.not.have.been.called;
+        });
+    });
+
+    it( "should send rise-components-ready to viewer", function() {
+      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
+
+      return RisePlayerConfiguration.sendComponentsReadyEvent()
+        .then( function() {
+          RisePlayerConfiguration.Viewer.send.should.have.been.calledWith( "rise-components-ready" );
+
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
 
