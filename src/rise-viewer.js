@@ -24,7 +24,7 @@ RisePlayerConfiguration.Viewer = (() => {
   }
 
   function send( topic ) {
-    let message = {
+    const message = {
       topic,
       frameElementId: window.frameElement ? window.frameElement.id : ""
     }
