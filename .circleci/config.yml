@@ -416,6 +416,31 @@ workflows:
             branches:
               only:
                 - build/stable
+      - test-e2e-electron:
+          stage: beta
+          displayId: G4V2XEB2J69R
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
+          name: test-common-legacy+html-e2e-electron-beta
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^e2e[/].*/
+      - test-e2e-electron:
+          stage: stable
+          displayId: MCXUAAKYUJP8
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
+          name: test-common-legacy+html-e2e-electron-stable
+          requires:
+            - deploy-stage
+            - deploy-common-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
       - deploy-production:
           stage: beta
           name: deploy-beta
@@ -423,6 +448,7 @@ workflows:
             - test-component-e2e-electron-beta
             - test-common-single-e2e-electron-beta
             - test-common-multiple-e2e-electron-beta
+            - test-common-legacy+html-e2e-electron-beta
             - gcloud-setup
           filters:
             branches:
@@ -435,6 +461,7 @@ workflows:
             - test-component-e2e-electron-stable
             - test-common-single-e2e-electron-stable
             - test-common-multiple-e2e-electron-stable
+            - test-common-legacy+html-e2e-electron-stable
             - gcloud-setup
           filters:
             branches:
