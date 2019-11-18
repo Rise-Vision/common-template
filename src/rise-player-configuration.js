@@ -146,9 +146,7 @@ const RisePlayerConfiguration = (() => {
 
     if ( isInViewer ) {
       RisePlayerConfiguration.Viewer.startListeningForData();
-    }
-
-    if ( !isInViewer || RisePlayerConfiguration.Viewer.isFirstPresentationInSchedule()) {
+    } else {
       _sendRisePresentationPlayOnDocumentLoad();
     }
 
