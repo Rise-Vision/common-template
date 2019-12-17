@@ -128,6 +128,28 @@ describe( "Watch", function() {
         });
     });
 
+    it( "should log error and call error handler if there was an error when reading the file", function() {
+
+      RisePlayerConfiguration.Helpers.getLocalMessagingJsonContent.restore();
+
+      var parsingError = new Error( "Error when parsing" );
+
+      sinon.stub( RisePlayerConfiguration.Helpers, "getLocalMessagingJsonContent", function() {
+        return Promise.reject( parsingError );
+      });
+
+      return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
+        status: "CURRENT",
+        fileUrl: "http://localhost/sample"
+      }, handlerSuccessStub, handlerErrorStub )
+        .then( function() {
+          expect( handlerSuccessStub.called ).to.be.false;
+          expect( handlerErrorStub.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.called ).to.be.true;
+          expect( RisePlayerConfiguration.Logger.error.lastCall.args[ 1 ]).to.equal( "data file read error" );
+        });
+    });
+
     it( "should detect insufficient disk space", function() {
 
       return RisePlayerConfiguration.Watch.handleFileUpdateMessage({
