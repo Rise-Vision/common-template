@@ -7,7 +7,11 @@ RisePlayerConfiguration.Preview = (() => {
       return;
     }
 
-    const data = JSON.parse( event.data );
+    const data = _parseEventData( event );
+
+    if ( !data ) {
+      return;
+    }
 
     switch ( data.type ) {
     case "attributeData":
@@ -18,12 +22,21 @@ RisePlayerConfiguration.Preview = (() => {
       break;
     case "sendStartEvent":
       RisePlayerConfiguration.AttributeData.sendStartEvent();
+      RisePlayerConfiguration.PlayUntilDone.start();
       break;
     //defaults to attributData for backwards compatibility
     default:
       RisePlayerConfiguration.AttributeData.update( data );
       break;
     }
+  }
+
+  function _parseEventData( event ) {
+    try {
+      return JSON.parse( event.data );
+    // eslint-disable-next-line no-empty
+    } catch ( error ) { }
+    return null;
   }
 
   function startListeningForData() {
