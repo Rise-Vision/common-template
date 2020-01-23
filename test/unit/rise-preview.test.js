@@ -69,6 +69,7 @@ describe( "Preview", function() {
 
     var div = document.getElementById( "divHighlight" );
 
+    expect( div.style.display ).to.equal( "none" );
     expect( div.style.position ).to.equal( "absolute" );
     expect( div.style.backgroundColor ).to.not.be.null;
     expect( div.style.zIndex ).to.equal( "100" );
@@ -93,6 +94,7 @@ describe( "Preview", function() {
     // eslint-disable-next-line one-var
     var div = document.getElementById( "divHighlight" );
 
+    expect( div.style.display ).to.equal( "block" );
     expect( div.style.left ).to.equal( "100px" );
     expect( div.style.top ).to.equal( "200px" );
     expect( div.style.width ).to.equal( "300px" );

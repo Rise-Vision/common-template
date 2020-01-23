@@ -52,6 +52,10 @@ RisePlayerConfiguration.Preview = (() => {
   }
 
   function _highlightComponent( id ) {
+    if ( !divHighlight ) {
+      return
+    }
+
     const el = RisePlayerConfiguration.Helpers.getComponent( id );
 
     if ( el ) {
@@ -61,6 +65,9 @@ RisePlayerConfiguration.Preview = (() => {
       divHighlight.style.top = rect.top + "px";
       divHighlight.style.width = ( rect.right - rect.left ) + "px";
       divHighlight.style.height = ( rect.bottom - rect.top ) + "px";
+      divHighlight.style.display = "block";
+    } else {
+      divHighlight.style.display = "none";
     }
   }
 
@@ -72,6 +79,7 @@ RisePlayerConfiguration.Preview = (() => {
       divHighlight.style.position = "absolute";
       divHighlight.style.backgroundColor = "rgba(192,192,192,0.3)";
       divHighlight.style.zIndex = "100";
+      divHighlight.style.display = "none";
       document.body.appendChild( divHighlight );
     }
   }
