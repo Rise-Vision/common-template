@@ -83,6 +83,11 @@ RisePlayerConfiguration.Helpers = (() => {
       .filter( element => !element.hasAttribute( "non-editable" ))
   }
 
+  function getComponent( id ) {
+    return getRiseElements()
+      .find( element => element.id === id );
+  }
+
   function getRisePlayerConfiguration() {
     let configuration = null;
 
@@ -159,7 +164,8 @@ RisePlayerConfiguration.Helpers = (() => {
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
     onceClientsAreAvailable: onceClientsAreAvailable,
-    sendStartEvent: sendStartEvent
+    sendStartEvent: sendStartEvent,
+    getComponent: getComponent
   };
 
   if ( isTestEnvironment()) {
