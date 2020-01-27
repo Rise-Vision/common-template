@@ -72,10 +72,13 @@ describe( "Preview", function() {
     expect( div.style.display ).to.equal( "none" );
     expect( div.style.position ).to.equal( "absolute" );
     expect( div.style.backgroundColor ).to.not.be.null;
-    expect( div.style.zIndex ).to.equal( "100" );
+    expect( div.style.zIndex ).to.equal( "1000" );
   });
 
   it( "should handle highlightComponent message and update position of divHighlight", function() {
+    document.body.style.width = "1920px";
+    document.body.style.height = "1080px";
+
     var el = {};
 
     el.getBoundingClientRect = function() {
@@ -99,6 +102,46 @@ describe( "Preview", function() {
     expect( div.style.top ).to.equal( "200px" );
     expect( div.style.width ).to.equal( "300px" );
     expect( div.style.height ).to.equal( "400px" );
+  });
+
+  it( "should apply document.body dimensions when element dimensions are larger", function() {
+    document.body.style.width = "1000px";
+    document.body.style.height = "1000px";
+
+    var el = {};
+
+    el.getBoundingClientRect = function() {
+      return { left: 0, top: 0, right: 2000, bottom: 2000 };
+    };
+
+    getComponent.returns( el );
+
+    RisePlayerConfiguration.Preview.startListeningForData();
+
+    RisePlayerConfiguration.Preview.receiveData({
+      data: JSON.stringify({ type: "highlightComponent", data: "someId" }),
+      origin: "https://widgets.risevision.com"
+    });
+
+    // eslint-disable-next-line one-var
+    var div = document.getElementById( "divHighlight" );
+
+    expect( div.style.display ).to.equal( "block" );
+    expect( div.style.left ).to.equal( "0px" );
+    expect( div.style.top ).to.equal( "0px" );
+    // document.body has top and left set as 8px in the test environment
+    expect( div.style.width ).to.equal( "1008px" );
+    expect( div.style.height ).to.equal( "1008px" );
+  });
+
+  it( "should remove highlight when highlight div is clicked", function() {
+    RisePlayerConfiguration.Preview.startListeningForData();
+
+    var div = document.getElementById( "divHighlight" );
+
+    div.click();
+
+    expect( div.style.display ).to.equal( "none" );
   });
 
 });

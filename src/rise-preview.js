@@ -60,11 +60,18 @@ RisePlayerConfiguration.Preview = (() => {
 
     if ( el ) {
       const rect = el.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+
+      const minRight = Math.min( rect.right, bodyRect.right );
+      const highlightWidth = minRight - rect.left;
+
+      const minBottom = Math.min( rect.bottom, bodyRect.bottom );
+      const highlightHeight = minBottom - rect.top;
 
       divHighlight.style.left = rect.left + "px";
       divHighlight.style.top = rect.top + "px";
-      divHighlight.style.width = ( rect.right - rect.left ) + "px";
-      divHighlight.style.height = ( rect.bottom - rect.top ) + "px";
+      divHighlight.style.width = highlightWidth + "px";
+      divHighlight.style.height = highlightHeight + "px";
       divHighlight.style.display = "block";
     } else {
       divHighlight.style.display = "none";
@@ -78,8 +85,9 @@ RisePlayerConfiguration.Preview = (() => {
       divHighlight.id = "divHighlight";
       divHighlight.style.position = "absolute";
       divHighlight.style.backgroundColor = "rgba(192,192,192,0.3)";
-      divHighlight.style.zIndex = "100";
+      divHighlight.style.zIndex = "1000";
       divHighlight.style.display = "none";
+      divHighlight.addEventListener( "click", () => divHighlight.style.display = "none" );
       document.body.appendChild( divHighlight );
     }
   }
