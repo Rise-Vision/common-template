@@ -72,7 +72,7 @@ describe( "Preview", function() {
     expect( div.style.display ).to.equal( "none" );
     expect( div.style.position ).to.equal( "absolute" );
     expect( div.style.backgroundColor ).to.not.be.null;
-    expect( div.style.zIndex ).to.equal( "100" );
+    expect( div.style.zIndex ).to.equal( "1000" );
   });
 
   it( "should handle highlightComponent message and update position of divHighlight", function() {

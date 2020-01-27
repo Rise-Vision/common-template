@@ -87,7 +87,7 @@ RisePlayerConfiguration.Preview = (() => {
       divHighlight.id = "divHighlight";
       divHighlight.style.position = "absolute";
       divHighlight.style.backgroundColor = "rgba(192,192,192,0.3)";
-      divHighlight.style.zIndex = "100";
+      divHighlight.style.zIndex = "1000";
       divHighlight.style.display = "none";
       document.body.appendChild( divHighlight );
     }
