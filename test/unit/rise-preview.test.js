@@ -76,6 +76,9 @@ describe( "Preview", function() {
   });
 
   it( "should handle highlightComponent message and update position of divHighlight", function() {
+    document.body.style.width = "400px";
+    document.body.style.height = "500px";
+
     var el = {};
 
     el.getBoundingClientRect = function() {
@@ -98,6 +101,35 @@ describe( "Preview", function() {
     expect( div.style.left ).to.equal( "100px" );
     expect( div.style.top ).to.equal( "200px" );
     expect( div.style.width ).to.equal( "300px" );
+    expect( div.style.height ).to.equal( "400px" );
+  });
+
+  it( "should apply document.body dimensions when element dimensions are larger", function() {
+    document.body.style.width = "400px";
+    document.body.style.height = "400px";
+
+    var el = {};
+
+    el.getBoundingClientRect = function() {
+      return { left: 0, top: 0, right: 500, bottom: 500 };
+    };
+
+    getComponent.returns( el );
+
+    RisePlayerConfiguration.Preview.startListeningForData();
+
+    RisePlayerConfiguration.Preview.receiveData({
+      data: JSON.stringify({ type: "highlightComponent", data: "someId" }),
+      origin: "https://widgets.risevision.com"
+    });
+
+    // eslint-disable-next-line one-var
+    var div = document.getElementById( "divHighlight" );
+
+    expect( div.style.display ).to.equal( "block" );
+    expect( div.style.left ).to.equal( "0px" );
+    expect( div.style.top ).to.equal( "0px" );
+    expect( div.style.width ).to.equal( "400px" );
     expect( div.style.height ).to.equal( "400px" );
   });
 

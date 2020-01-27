@@ -60,11 +60,20 @@ RisePlayerConfiguration.Preview = (() => {
 
     if ( el ) {
       const rect = el.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+
+      const elementWidth = rect.right - rect.left;
+      const bodyWidth = bodyRect.right - bodyRect.left;
+      const highlightWidth = elementWidth > bodyWidth ? bodyWidth : elementWidth;
+
+      const elementHeight = rect.bottom - rect.top;
+      const bodyHeight = bodyRect.bottom - bodyRect.top;
+      const highlightHeight = elementHeight > bodyHeight ? bodyHeight : elementHeight;
 
       divHighlight.style.left = rect.left + "px";
       divHighlight.style.top = rect.top + "px";
-      divHighlight.style.width = ( rect.right - rect.left ) + "px";
-      divHighlight.style.height = ( rect.bottom - rect.top ) + "px";
+      divHighlight.style.width = highlightWidth + "px";
+      divHighlight.style.height = highlightHeight + "px";
       divHighlight.style.display = "block";
     } else {
       divHighlight.style.display = "none";
