@@ -133,4 +133,14 @@ describe( "Preview", function() {
     expect( div.style.height ).to.equal( "400px" );
   });
 
+  it( "should remove highlight when highlight div is clicked", function() {
+    RisePlayerConfiguration.Preview.startListeningForData();
+
+    var div = document.getElementById( "divHighlight" );
+
+    div.click();
+
+    expect( div.style.display ).to.equal( "none" );
+  });
+
 });
