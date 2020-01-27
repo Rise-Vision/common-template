@@ -62,13 +62,11 @@ RisePlayerConfiguration.Preview = (() => {
       const rect = el.getBoundingClientRect();
       const bodyRect = document.body.getBoundingClientRect();
 
-      const elementWidth = rect.right - rect.left;
-      const bodyWidth = bodyRect.right - bodyRect.left;
-      const highlightWidth = elementWidth > bodyWidth ? bodyWidth : elementWidth;
+      const minRight = Math.min( rect.right, bodyRect.right );
+      const highlightWidth = minRight - rect.left;
 
-      const elementHeight = rect.bottom - rect.top;
-      const bodyHeight = bodyRect.bottom - bodyRect.top;
-      const highlightHeight = elementHeight > bodyHeight ? bodyHeight : elementHeight;
+      const minBottom = Math.min( rect.bottom, bodyRect.bottom );
+      const highlightHeight = minBottom - rect.top;
 
       divHighlight.style.left = rect.left + "px";
       divHighlight.style.top = rect.top + "px";

@@ -76,8 +76,8 @@ describe( "Preview", function() {
   });
 
   it( "should handle highlightComponent message and update position of divHighlight", function() {
-    document.body.style.width = "400px";
-    document.body.style.height = "500px";
+    document.body.style.width = "1920px";
+    document.body.style.height = "1080px";
 
     var el = {};
 
@@ -105,13 +105,13 @@ describe( "Preview", function() {
   });
 
   it( "should apply document.body dimensions when element dimensions are larger", function() {
-    document.body.style.width = "400px";
-    document.body.style.height = "400px";
+    document.body.style.width = "1000px";
+    document.body.style.height = "1000px";
 
     var el = {};
 
     el.getBoundingClientRect = function() {
-      return { left: 0, top: 0, right: 500, bottom: 500 };
+      return { left: 0, top: 0, right: 2000, bottom: 2000 };
     };
 
     getComponent.returns( el );
@@ -129,8 +129,9 @@ describe( "Preview", function() {
     expect( div.style.display ).to.equal( "block" );
     expect( div.style.left ).to.equal( "0px" );
     expect( div.style.top ).to.equal( "0px" );
-    expect( div.style.width ).to.equal( "400px" );
-    expect( div.style.height ).to.equal( "400px" );
+    // document.body has top and left set as 8px in the test environment
+    expect( div.style.width ).to.equal( "1008px" );
+    expect( div.style.height ).to.equal( "1008px" );
   });
 
   it( "should remove highlight when highlight div is clicked", function() {
