@@ -18,7 +18,9 @@ describe( "PlayUntilDone", function() {
       "rise-image-1": { id: "rise-image-1", tagName: "rise-image", hasAttribute: function() { return true; }, addEventListener: sandbox.stub() },
       "rise-image-2": { id: "rise-image-2", tagName: "rise-image", hasAttribute: function() { return true; }, addEventListener: sandbox.stub() },
       "rise-text-1": { id: "rise-text-1", tagName: "rise-text", hasAttribute: function() { return false; }, addEventListener: sandbox.stub() },
-      "rise-play-until-done-1": { id: "rise-play-until-done-1", tagName: "rise-play-until-done", hasAttribute: function() { return false; }, addEventListener: sandbox.stub() }
+      "rise-play-until-done-1": { id: "rise-play-until-done-1", tagName: "rise-play-until-done", hasAttribute: function() { return false; }, addEventListener: sandbox.stub() },
+      "rise-playlist-1": { id: "rise-playlist-1", tagName: "rise-playlist", hasAttribute: function() { return true; }, addEventListener: sandbox.stub() },
+      "rise-playlist-item-1": { id: "rise-playlist-item-done-1", tagName: "rise-playlist-item", hasAttribute: function() { return true; }, addEventListener: sandbox.stub() }
     };
 
     sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
@@ -39,6 +41,8 @@ describe( "PlayUntilDone", function() {
       expectedComponents[ "rise-image-2" ].addEventListener.should.have.been.calledWith( "report-done" );
       expectedComponents[ "rise-play-until-done-1" ].addEventListener.should.have.been.calledWith( "report-done" );
       expectedComponents[ "rise-text-1" ].addEventListener.should.not.have.been.calledWith( "report-done" );
+      expectedComponents[ "rise-playlist-1" ].addEventListener.should.have.been.calledWith( "report-done" );
+      expectedComponents[ "rise-playlist-item-1" ].addEventListener.should.not.have.been.calledWith( "report-done" );
     });
 
     it( "should log PUD state every minute", function() {
@@ -63,6 +67,7 @@ describe( "PlayUntilDone", function() {
       expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true } });
       expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: true } });
       expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: true } });
+      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true } });
 
       RisePlayerConfiguration.PlayUntilDone.start();
 
@@ -76,6 +81,7 @@ describe( "PlayUntilDone", function() {
       expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true } });
       expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: false } });
       expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: false } });
+      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true } });
 
       RisePlayerConfiguration.PlayUntilDone.start();
 

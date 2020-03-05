@@ -17,7 +17,9 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
 
   function start() {
     const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
-    const playUntilDoneElements = riseElements.filter( element => element.hasAttribute( "play-until-done" ) || element.tagName.toLowerCase() === "rise-play-until-done" );
+    const playUntilDoneElements = riseElements
+      .filter( element => element.tagName.toLowerCase() !== "rise-playlist-item" )
+      .filter( element => element.hasAttribute( "play-until-done" ) || element.tagName.toLowerCase() === "rise-play-until-done" );
 
     console.log( `Start listening PUD events of ${playUntilDoneElements.length} elements` );
     RisePlayerConfiguration.Logger.info( LOGGER_DATA, "start listening PUD events", { playUntilDoneElements: playUntilDoneElements.length });
