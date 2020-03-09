@@ -2,17 +2,17 @@
 
 describe( "AttributeDataWatch", function() {
 
-  var editableElements;
+  var elements;
 
   beforeEach( function() {
 
-    editableElements = [
+    elements = [
       { id: "rise-data-image-01" },
       { id: "rise-data-financial-01" }
     ];
 
-    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
-      return editableElements;
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
+      return elements;
     });
     sinon.stub( RisePlayerConfiguration, "getCompanyId", function() {
       return "COMPANY_ID";
@@ -29,7 +29,7 @@ describe( "AttributeDataWatch", function() {
   });
 
   afterEach( function() {
-    RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
+    RisePlayerConfiguration.Helpers.getRiseElements.restore();
     RisePlayerConfiguration.getCompanyId.restore();
     RisePlayerConfiguration.getPresentationId.restore();
     RisePlayerConfiguration.AttributeData.sendStartEvent.restore();

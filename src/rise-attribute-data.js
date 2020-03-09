@@ -11,7 +11,7 @@ RisePlayerConfiguration.AttributeData = (() => {
   let _startEventSent = false;
 
   function _elementForId( id ) {
-    const elements = RisePlayerConfiguration.Helpers.getRiseEditableElements(),
+    const elements = RisePlayerConfiguration.Helpers.getRiseElements(),
       filtered = elements.filter( element => element.id === id );
 
     return filtered.length === 0 ? null : filtered[ 0 ];

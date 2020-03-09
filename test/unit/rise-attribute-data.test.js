@@ -5,14 +5,24 @@
 
 describe( "AttributeData", function() {
 
-  var editableElements;
+  var elements,
+    editableElements;
 
   beforeEach( function() {
 
     editableElements = [
       { id: "rise-data-image-01" },
       { id: "rise-data-financial-01" }
+    ],
+    elements = [
+      { id: "rise-data-image-01" },
+      { id: "rise-data-financial-01" },
+      { id: "rise-data-financial-non-editable-02" }
     ];
+
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
+      return elements;
+    });
 
     sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
       return editableElements;
@@ -22,6 +32,7 @@ describe( "AttributeData", function() {
   });
 
   afterEach( function() {
+    RisePlayerConfiguration.Helpers.getRiseElements.restore();
     RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
     RisePlayerConfiguration.Helpers.sendStartEvent.restore();
   });
@@ -32,27 +43,35 @@ describe( "AttributeData", function() {
       RisePlayerConfiguration.AttributeData.reset();
     });
 
-    it( "should update attribute data on all editable elements", function() {
+    it( "should update attribute data on all elements", function() {
 
       return RisePlayerConfiguration.AttributeData.update({
         components: [
           {
             id: "rise-data-financial-01",
             symbols: "AAPL.O|AMZN.O|FB.O|GOOGL.O"
+          },
+          {
+            id: "rise-data-financial-non-editable-02",
+            symbols: "AAPL.O"
           }
         ]
       })
         .then( function() {
-          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
+          expect( RisePlayerConfiguration.Helpers.getRiseElements.called ).to.be.true;
           expect( RisePlayerConfiguration.Helpers.sendStartEvent.called ).to.be.true;
 
-          expect( editableElements ).to.deep.equal([
+          expect( elements ).to.deep.equal([
             {
               id: "rise-data-image-01"
             },
             {
               id: "rise-data-financial-01",
               symbols: "AAPL.O|AMZN.O|FB.O|GOOGL.O"
+            },
+            {
+              id: "rise-data-financial-non-editable-02",
+              symbols: "AAPL.O"
             }
           ]);
         });
@@ -63,10 +82,12 @@ describe( "AttributeData", function() {
 
   describe( "sendStartEvent", function() {
 
-    it( "should send start event to components when never been sent before", function() {
+    it( "should send start event to editable components when never been sent before", function() {
       return RisePlayerConfiguration.AttributeData.sendStartEvent()
         .then( function() {
-          expect( RisePlayerConfiguration.Helpers.sendStartEvent.called ).to.be.true;
+          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
+
+          expect( RisePlayerConfiguration.Helpers.sendStartEvent.calledTwice ).to.be.true;
         });
 
     });

@@ -24,8 +24,8 @@ RisePlayerConfiguration.AttributeDataWatch = (() => {
       return RisePlayerConfiguration.AttributeData.sendStartEvent();
     }
 
-    // No need to get attribute data or sending start if there are no editable elements.
-    if ( RisePlayerConfiguration.Helpers.getRiseEditableElements().length === 0 ) {
+    // No need to get attribute data or sending start if there are no elements.
+    if ( RisePlayerConfiguration.Helpers.getRiseElements().length === 0 ) {
       return;
     }
 
