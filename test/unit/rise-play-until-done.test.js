@@ -64,24 +64,23 @@ describe( "PlayUntilDone", function() {
     it( "should send 'template-done' when all PUD components are done", function() {
       sandbox.stub( RisePlayerConfiguration.PlayUntilDone, "reportTemplateDone" );
 
-      expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true } });
-      expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: true } });
-      expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: true } });
-      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true } });
+      expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-image-1" ] });
+      expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-image-2" ] });
+      expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-play-until-done-1" ] });
+      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-playlist-1" ] });
 
       RisePlayerConfiguration.PlayUntilDone.start();
 
       RisePlayerConfiguration.PlayUntilDone.reportTemplateDone.should.have.been.called;
     });
 
-
     it( "should not send 'template-done' when not every PUD components is done", function() {
       sandbox.stub( RisePlayerConfiguration.PlayUntilDone, "reportTemplateDone" );
 
-      expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true } });
-      expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: false } });
-      expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: false } });
-      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true } });
+      expectedComponents[ "rise-image-1" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-image-1" ] });
+      expectedComponents[ "rise-image-2" ].addEventListener.yields({ detail: { done: false }, target: expectedComponents[ "rise-image-2" ] });
+      expectedComponents[ "rise-play-until-done-1" ].addEventListener.yields({ detail: { done: false }, target: expectedComponents[ "rise-play-until-done-1" ] });
+      expectedComponents[ "rise-playlist-1" ].addEventListener.yields({ detail: { done: true }, target: expectedComponents[ "rise-playlist-1" ] });
 
       RisePlayerConfiguration.PlayUntilDone.start();
 

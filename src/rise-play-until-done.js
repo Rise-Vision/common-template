@@ -26,7 +26,7 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
 
     playUntilDoneElements.forEach( element => {
       element.addEventListener( "report-done", event => {
-        if ( event.detail && event.detail.done && doneElements.indexOf( element ) < 0 ) {
+        if ( event.detail && event.detail.done && doneElements.indexOf( element ) < 0 && event.target === element ) {
           doneElements.push( element );
         }
 
