@@ -4,6 +4,7 @@
   "description": "Common scripts for Rise Templates",
   "main": "gulpfile.js",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions || true",
     "pretest": "eslint .",
     "test": "gulp test",
     "pretty": "eslint . --fix",
@@ -43,6 +44,15 @@
     "regenerator-runtime": "^0.12.1",
     "run-sequence": "^2.2.1",
     "whatwg-fetch": "^3.0.0",
-    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.9.0"
+    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.11.2"
+  },
+  "resolutions": {
+    "coveralls": "3.0.9",
+    "cryptiles": "^4.1.2",
+    "growl": "^1.10.2",
+    "karma": "^2.0.0",
+    "lodash": "^4.17.12",
+    "minimatch": "^3.0.2",
+    "set-value": "^2.0.1"
   }
 }
