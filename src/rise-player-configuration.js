@@ -217,9 +217,9 @@ const RisePlayerConfiguration = (() => {
         .then(() => {
           RisePlayerConfiguration.dispatchWindowEvent( "rise-components-ready" );
 
-          if ( RisePlayerConfiguration.Helpers.isInViewer()) {
-            RisePlayerConfiguration.Viewer.send( "rise-components-ready" );
-          }
+          // if ( RisePlayerConfiguration.Helpers.isInViewer()) {
+          // RisePlayerConfiguration.Viewer.send( "rise-components-ready" );
+          // }
 
           if ( !RisePlayerConfiguration.isPreview()) {
             RisePlayerConfiguration.Logger.info(

@@ -12,6 +12,7 @@ RisePlayerConfiguration.Viewer = (() => {
       frameElementId: window.frameElement ? window.frameElement.id : ""
     }
 
+    console.log( "SENDING TO VIEWER", message );
     window.parent.postMessage( message, "*" );
   }
 

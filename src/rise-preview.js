@@ -95,7 +95,7 @@ RisePlayerConfiguration.Preview = (() => {
   }
 
   function startListeningForData() {
-    const companyIdParam = RisePlayerConfiguration.Helpers.getHttpParameter( "cid" );
+    const companyIdParam = RisePlayerConfiguration.Helpers.getHttpParameter( "cid" ) || "b428b4e8-c8b9-41d5-8a10-b4193c789443";
     const presentationIdParam = RisePlayerConfiguration.Helpers.getHttpParameter( "presentationId" );
     const isTemplateEditorParam = RisePlayerConfiguration.Helpers.getHttpParameter( "isTemplateEditor" );
 
@@ -118,6 +118,10 @@ RisePlayerConfiguration.Preview = (() => {
 
           e.data = data;
           e.origin = "risevision.com";
+
+          console.log( "SENDING READY!!!" );
+          RisePlayerConfiguration.Viewer.send( "rise-components-ready" );
+
           _receiveData( e );
         });
     }
