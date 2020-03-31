@@ -434,7 +434,7 @@ describe( "RisePlayerConfiguration", function() {
         });
     });
 
-    it( "should send rise-components-ready to viewer", function() {
+    xit( "should send rise-components-ready to viewer", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
       _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
 
