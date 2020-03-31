@@ -1,3 +1,4 @@
+/* global TEMPLATE_COMMON_CONFIG */
 /* eslint-disable one-var */
 /* eslint-disable no-console */
 
@@ -6,6 +7,7 @@ RisePlayerConfiguration.Preview = (() => {
   let divHighlight = null;
 
   function _receiveData( event ) {
+    console.log( "receiveData", event );
     if ( event.origin.indexOf( "risevision.com" ) === -1 ) {
       return;
     }
@@ -93,6 +95,32 @@ RisePlayerConfiguration.Preview = (() => {
   }
 
   function startListeningForData() {
+    const companyIdParam = RisePlayerConfiguration.Helpers.getHttpParameter( "cid" );
+    const presentationIdParam = RisePlayerConfiguration.Helpers.getHttpParameter( "presentationId" );
+    const isTemplateEditorParam = RisePlayerConfiguration.Helpers.getHttpParameter( "isTemplateEditor" );
+
+    if ( companyIdParam && presentationIdParam && !isTemplateEditorParam ) {
+      const filePath = `https://storage.googleapis.com/${
+        TEMPLATE_COMMON_CONFIG.GCS_COMPANY_BUCKET
+      }/${
+        companyIdParam
+      }/template-data/${
+        presentationIdParam
+      }/published/${
+        TEMPLATE_COMMON_CONFIG.GCS_ATTRIBUTE_DATA_FILE
+      }`;
+
+      window.fetch( filePath )
+        .then( function( response ) {
+          return response.text();
+        }).then( function( data ) {
+          var e = new Event( "message" );
+
+          e.data = data;
+          e.origin = "risevision.com";
+          _receiveData( e );
+        });
+    }
     window.addEventListener( "message", _receiveData );
     window.document.documentElement.style.cursor = "pointer";
     _initHighlight();
