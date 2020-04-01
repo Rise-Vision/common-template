@@ -7,9 +7,10 @@ RisePlayerConfiguration.Viewer = (() => {
   }
 
   function send( topic ) {
+    const defaultFrameElementId = RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) || "";
     const message = {
       topic,
-      frameElementId: window.frameElement ? window.frameElement.id : ""
+      frameElementId: window.frameElement ? window.frameElement.id : defaultFrameElementId
     }
 
     console.log( "SENDING TO VIEWER", message );
