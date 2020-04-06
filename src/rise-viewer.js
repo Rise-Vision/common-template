@@ -7,10 +7,13 @@ RisePlayerConfiguration.Viewer = (() => {
   }
 
   function send( topic ) {
+    const frameElementId = RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) ?
+      RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) :
+      window.frameElement ? window.frameElement.id : "";
     const message = {
       topic,
-      frameElementId: window.frameElement ? window.frameElement.id : ""
-    }
+      frameElementId: frameElementId
+    };
 
     window.parent.postMessage( message, "*" );
   }

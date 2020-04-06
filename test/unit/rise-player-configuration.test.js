@@ -23,7 +23,8 @@ describe( "RisePlayerConfiguration", function() {
       isInViewer: _helpers.isInViewer,
       isTestEnvironment: _helpers.isTestEnvironment,
       getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration,
-      getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam
+      getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam,
+      getHttpParameter: _sandbox.stub()
     };
 
     RisePlayerConfiguration.Logger = {

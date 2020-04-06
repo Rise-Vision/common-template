@@ -24,6 +24,8 @@ describe( "Viewer", function() {
 
     sandbox.stub( window, "addEventListener" );
     sandbox.stub( window, "dispatchEvent" );
+
+    sandbox.spy( window.parent, "postMessage" );
   });
 
   afterEach( function() {
@@ -85,6 +87,26 @@ describe( "Viewer", function() {
     expect( riseImage.dispatchEvent ).to.have.been.called;
     expect( riseText.dispatchEvent ).to.have.been.called;
     expect( window.dispatchEvent ).to.have.been.called;
+  });
+
+  it( "should send messages to Viewer", function() {
+    RisePlayerConfiguration.Viewer.send( "topic" );
+
+    expect( window.parent.postMessage ).to.have.been.calledWith({
+      topic: "topic",
+      frameElementId: "context"
+    }, "*" );
+  });
+
+  it( "should set provided frameElementId", function() {
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).returns( "providedFrameElementId" );
+
+    RisePlayerConfiguration.Viewer.send( "topic" );
+
+    expect( window.parent.postMessage ).to.have.been.calledWith({
+      topic: "topic",
+      frameElementId: "providedFrameElementId"
+    }, "*" );
   });
 
 });

@@ -45,6 +45,12 @@ describe( "Helpers", function() {
   });
 
   describe( "isInViewer", function() {
+    it( "should be in viewer if 'frameElementId' is provided", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).returns( true );
+
+      expect( RisePlayerConfiguration.Helpers.isInViewer()).to.be.true;
+    });
+
     it( "should not be in viewer if it's preview", function() {
       _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
 

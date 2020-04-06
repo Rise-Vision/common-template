@@ -63,6 +63,12 @@ describe( "Preview", function() {
     expect( sendStartStub ).to.have.been.called;
   });
 
+  it( "should gracefully handle invalid message data", function() {
+    RisePlayerConfiguration.Preview.receiveData({ origin: "https://test.com", data: "INVALID:data" });
+
+    expect( updateStub ).to.not.have.been.called;
+  });
+
   it( "should initialize divHighlight", function() {
 
     RisePlayerConfiguration.Preview.startListeningForData();

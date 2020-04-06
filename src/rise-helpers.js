@@ -14,7 +14,8 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   function isInViewer() {
-    return !RisePlayerConfiguration.isPreview() && window.self !== window.top;
+    return !!RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) ||
+      ( !RisePlayerConfiguration.isPreview() && window.self !== window.top );
   }
 
   function onceClientsAreAvailable( requiredClientNames, action ) {

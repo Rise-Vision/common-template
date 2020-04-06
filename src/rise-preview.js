@@ -10,7 +10,11 @@ RisePlayerConfiguration.Preview = (() => {
       return;
     }
 
-    const data = JSON.parse( event.data );
+    const data = _parseEventData( event );
+
+    if ( !data ) {
+      return;
+    }
 
     switch ( data.type ) {
     case "attributeData":
@@ -21,6 +25,7 @@ RisePlayerConfiguration.Preview = (() => {
       break;
     case "sendStartEvent":
       RisePlayerConfiguration.AttributeData.sendStartEvent();
+      RisePlayerConfiguration.PlayUntilDone.start();
       break;
     case "highlightComponent":
       _highlightComponent( data.value );
@@ -30,6 +35,14 @@ RisePlayerConfiguration.Preview = (() => {
       RisePlayerConfiguration.AttributeData.update( data );
       break;
     }
+  }
+
+  function _parseEventData( event ) {
+    try {
+      return JSON.parse( event.data );
+    // eslint-disable-next-line no-empty
+    } catch ( error ) { }
+    return null;
   }
 
   function _postMessageToEditor( type, value ) {
