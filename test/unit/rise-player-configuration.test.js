@@ -24,7 +24,9 @@ describe( "RisePlayerConfiguration", function() {
       isTestEnvironment: _helpers.isTestEnvironment,
       getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration,
       getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam,
-      getHttpParameter: _sandbox.stub()
+      getHttpParameter: _sandbox.stub(),
+      isSharedSchedule: _sandbox.stub().returns( false ),
+      getSharedScheduleUnsupportedElements: _sandbox.stub().returns([ { id: "rise-video" } ])
     };
 
     RisePlayerConfiguration.Logger = {
@@ -493,6 +495,39 @@ describe( "RisePlayerConfiguration", function() {
 
       // document is already loaded because we're running tests on a browser-like environment
       RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+    });
+
+  });
+
+  describe( "Shared Schedules", function() {
+
+    beforeEach( function() {
+      _sandbox.stub( RisePlayerConfiguration.Viewer, "send" );
+    });
+
+    it( "should send 'template-error' if it is a Shared Schedule and there are unsupported components", function() {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( true );
+
+      RisePlayerConfiguration.configure();
+
+      RisePlayerConfiguration.Viewer.send.should.have.been.calledWith( "template-error" );
+    });
+
+    it( "should not send 'template-error' if it is a Shared Schedule with only supported components", function() {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( true );
+      RisePlayerConfiguration.Helpers.getSharedScheduleUnsupportedElements.returns([]);
+
+      RisePlayerConfiguration.configure();
+
+      RisePlayerConfiguration.Viewer.send.should.not.have.been.called;
+    });
+
+    it( "should not send 'template-error' if it is not a Shared Schedule", function() {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( false );
+
+      RisePlayerConfiguration.configure();
+
+      RisePlayerConfiguration.Viewer.send.should.not.have.been.called;
     });
 
   });

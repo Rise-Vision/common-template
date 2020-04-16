@@ -126,6 +126,12 @@ const RisePlayerConfiguration = (() => {
   function configure( playerInfo, localMessagingInfo ) {
     _validateAllRequiredObjectsAreAvailable();
 
+    if ( RisePlayerConfiguration.Helpers.isSharedSchedule()
+        && RisePlayerConfiguration.Helpers.getSharedScheduleUnsupportedElements().length > 0 ) {
+      RisePlayerConfiguration.Viewer.send( "template-error" );
+      return;
+    }
+
     const configuration = _getPlayerConfiguration();
     const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();
 

@@ -2,6 +2,10 @@
 
 RisePlayerConfiguration.Helpers = (() => {
 
+  const SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS = [
+    "rise-video",
+    "rise-data-financial"
+  ];
   let _clients = [];
   let _riseElements = null;
 
@@ -16,6 +20,10 @@ RisePlayerConfiguration.Helpers = (() => {
   function isInViewer() {
     return !!RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) ||
       ( !RisePlayerConfiguration.isPreview() && window.self !== window.top );
+  }
+
+  function isSharedSchedule() {
+    return RisePlayerConfiguration.Helpers.getHttpParameter( "type" ) === "sharedschedule";
   }
 
   function onceClientsAreAvailable( requiredClientNames, action ) {
@@ -82,6 +90,11 @@ RisePlayerConfiguration.Helpers = (() => {
   function getRiseEditableElements() {
     return getRiseElements()
       .filter( element => !element.hasAttribute( "non-editable" ))
+  }
+
+  function getSharedScheduleUnsupportedElements() {
+    return getRiseElements()
+      .filter( element => SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS.indexOf( element.tagName.toLowerCase()) >= 0 )
   }
 
   function getComponent( id ) {
@@ -164,6 +177,8 @@ RisePlayerConfiguration.Helpers = (() => {
     getWaitForPlayerURLParam: getWaitForPlayerURLParam,
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
+    isSharedSchedule: isSharedSchedule,
+    getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent,
     getComponent: getComponent

@@ -58,6 +58,26 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "isSharedSchedule", function() {
+    it( "should return true if 'type=sharedschedule' is provided", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( "sharedschedule" );
+
+      expect( RisePlayerConfiguration.Helpers.isSharedSchedule()).to.be.true;
+    });
+
+    it( "should return false for other types", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( "schedule" );
+
+      expect( RisePlayerConfiguration.Helpers.isSharedSchedule()).to.be.false;
+    });
+
+    it( "should return false if type is not present", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( undefined );
+
+      expect( RisePlayerConfiguration.Helpers.isSharedSchedule()).to.be.false;
+    });
+  });
+
   describe( "getRiseElements", function() {
 
     it( "should get list of rise elements", function() {
@@ -80,6 +100,17 @@ describe( "Helpers", function() {
       expect( elements.length ).to.equal( 2 );
       expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
       expect( elements[ 1 ].tagName ).to.equal( "RISE-IMAGE" );
+    });
+  });
+
+  describe( "getSharedScheduleUnsupportedElements", function() {
+
+    it( "should return elements not supported by Shared Schedules", function() {
+      var elements = RisePlayerConfiguration.Helpers.getSharedScheduleUnsupportedElements();
+
+      expect( elements ).to.be.ok;
+      expect( elements.length ).to.equal( 1 );
+      expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
     });
   });
 
