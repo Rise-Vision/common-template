@@ -26,6 +26,14 @@ RisePlayerConfiguration.Helpers = (() => {
     return RisePlayerConfiguration.Helpers.getHttpParameter( "type" ) === "sharedschedule";
   }
 
+  function isEditorPreview() {
+    return RisePlayerConfiguration.Helpers.getHttpParameter( "type" ) === "preview";
+  }
+
+  function isDisplay() {
+    return RisePlayerConfiguration.getDisplayId() !== "preview";
+  }
+
   function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
     const names = typeof requiredClientNames === "string" ?
@@ -178,6 +186,8 @@ RisePlayerConfiguration.Helpers = (() => {
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
     isSharedSchedule: isSharedSchedule,
+    isEditorPreview: isEditorPreview,
+    isDisplay: isDisplay,
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent,

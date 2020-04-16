@@ -78,6 +78,40 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "isEditorPreview", function() {
+    it( "should return true if 'type=preview' is provided", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( "preview" );
+
+      expect( RisePlayerConfiguration.Helpers.isEditorPreview()).to.be.true;
+    });
+
+    it( "should return false for other types", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( "schedule" );
+
+      expect( RisePlayerConfiguration.Helpers.isEditorPreview()).to.be.false;
+    });
+
+    it( "should return false if type is not present", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( undefined );
+
+      expect( RisePlayerConfiguration.Helpers.isEditorPreview()).to.be.false;
+    });
+  });
+
+  describe( "isDisplay", function() {
+    it( "should return true if a valid display id is provided", function() {
+      _sandbox.stub( RisePlayerConfiguration, "getDisplayId" ).returns( "DISPLAYID" );
+
+      expect( RisePlayerConfiguration.Helpers.isDisplay()).to.be.true;
+    });
+
+    it( "should return false if displayId is 'preview'", function() {
+      _sandbox.stub( RisePlayerConfiguration, "getDisplayId" ).returns( "preview" );
+
+      expect( RisePlayerConfiguration.Helpers.isDisplay()).to.be.false;
+    });
+  });
+
   describe( "getRiseElements", function() {
 
     it( "should get list of rise elements", function() {

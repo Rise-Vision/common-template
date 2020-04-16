@@ -107,9 +107,14 @@ RisePlayerConfiguration.Preview = (() => {
 
   function startListeningForData() {
     window.addEventListener( "message", _receiveData );
-    window.document.documentElement.style.cursor = "pointer";
-    _initHighlight();
-    _makeComponentsSelectable();
+    if ( !RisePlayerConfiguration.Helpers.isDisplay()) {
+      window.document.documentElement.style.cursor = "auto";
+    }
+    if ( RisePlayerConfiguration.Helpers.isEditorPreview()) {
+      window.document.documentElement.style.cursor = "pointer";
+      _initHighlight();
+      _makeComponentsSelectable();
+    }
   }
 
   const exposedFunctions = {
