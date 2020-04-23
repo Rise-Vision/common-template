@@ -89,6 +89,21 @@ describe( "Viewer", function() {
     expect( window.dispatchEvent ).to.have.been.called;
   });
 
+  it( "should forward 'get-template-data' event to viewer", function() {
+    RisePlayerConfiguration.Viewer.receiveData({
+      data: { topic: "get-template-data" },
+      origin: "https://viewer.risevision.com"
+    });
+
+    expect( window.dispatchEvent ).to.not.have.been.called;
+    expect( window.parent.postMessage ).to.have.been.called;
+    expect( window.parent.postMessage ).to.have.been.calledWith({
+      topic: "get-template-data",
+      frameElementId: "context"
+    }, "*" );
+
+  });
+
   it( "should send messages to Viewer", function() {
     RisePlayerConfiguration.Viewer.send( "topic" );
 
@@ -104,6 +119,22 @@ describe( "Viewer", function() {
     RisePlayerConfiguration.Viewer.send( "topic" );
 
     expect( window.parent.postMessage ).to.have.been.calledWith({
+      topic: "topic",
+      frameElementId: "providedFrameElementId"
+    }, "*" );
+  });
+
+  it( "should override message properties", function() {
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).returns( "providedFrameElementId" );
+
+    RisePlayerConfiguration.Viewer.send( "topic", {
+      message: "message",
+      topic: "randomTopic",
+      frameElementId: "randomFrame"
+    });
+
+    expect( window.parent.postMessage ).to.have.been.calledWith({
+      message: "message",
       topic: "topic",
       frameElementId: "providedFrameElementId"
     }, "*" );

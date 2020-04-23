@@ -18,6 +18,7 @@ describe( "Preview", function() {
     displayUpdateStub = _sandbox.stub( RisePlayerConfiguration.DisplayData, "update" );
     sendStartStub = _sandbox.stub( RisePlayerConfiguration.AttributeData, "sendStartEvent" );
     getComponent = _sandbox.stub( RisePlayerConfiguration.Helpers, "getComponent" );
+    _sandbox.stub( RisePlayerConfiguration, "getPresentationId" ).returns( "presentationId" );
   });
 
   afterEach( function() {
@@ -30,8 +31,32 @@ describe( "Preview", function() {
     expect( updateStub ).to.have.been.calledWith({ testData: "test" });
   });
 
+  it( "should handle non string data", function() {
+    RisePlayerConfiguration.Preview.receiveData({ origin: "https://widgets.risevision.com", data: { testData: "test" } });
+
+    expect( updateStub ).to.have.been.calledWith({ testData: "test" });
+  });
+
   it( "should not execute on message if origin not from risevision.com", function() {
     RisePlayerConfiguration.Preview.receiveData({ origin: "https://test.com", data: JSON.stringify({ testData: "test" }) });
+
+    expect( updateStub ).to.not.have.been.called;
+  });
+
+  it( "should check presentation id", function() {
+    RisePlayerConfiguration.Preview.receiveData({
+      data: JSON.stringify({ id: "presentationId", value: { testData: "test" } }),
+      origin: "https://widgets.risevision.com"
+    });
+
+    expect( updateStub ).to.have.been.called;
+  });
+
+  it( "should not handle messages destined for other presentations", function() {
+    RisePlayerConfiguration.Preview.receiveData({
+      data: JSON.stringify({ id: "otherId", value: { testData: "test" } }),
+      origin: "https://widgets.risevision.com"
+    });
 
     expect( updateStub ).to.not.have.been.called;
   });
@@ -69,6 +94,29 @@ describe( "Preview", function() {
     expect( updateStub ).to.not.have.been.called;
   });
 
+  describe( "_initDataRetrieval:", function() {
+    beforeEach( function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+      _sandbox.stub( RisePlayerConfiguration.Viewer, "send" );
+    });
+
+    it( "should not send get-template-data outside viewer", function() {
+      RisePlayerConfiguration.Preview.startListeningForData();
+
+      expect( RisePlayerConfiguration.Viewer.send ).to.not.have.been.called;
+    });
+
+    it( "should send get-template-data message in viewer", function() {
+      RisePlayerConfiguration.Helpers.isInViewer.returns( true );
+
+      RisePlayerConfiguration.Preview.startListeningForData();
+
+      expect( RisePlayerConfiguration.Viewer.send ).to.have.been.calledWith( "get-template-data", {
+        topic: "get-template-data",
+        id: "presentationId"
+      });
+    });
+  });
 
   describe( "components highlight", function() {
     beforeEach( function() {

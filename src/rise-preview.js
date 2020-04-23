@@ -5,6 +5,19 @@ RisePlayerConfiguration.Preview = (() => {
 
   let divHighlight = null;
 
+  function _initDataRetrieval() {
+    if ( !RisePlayerConfiguration.Helpers.isInViewer()) {
+      return;
+    }
+
+    const message = {
+      topic: "get-template-data",
+      id: RisePlayerConfiguration.getPresentationId()
+    };
+
+    RisePlayerConfiguration.Viewer.send( "get-template-data", message );
+  }
+
   function _receiveData( event ) {
     if ( event.origin.indexOf( "risevision.com" ) === -1 ) {
       return;
@@ -13,6 +26,10 @@ RisePlayerConfiguration.Preview = (() => {
     const data = _parseEventData( event );
 
     if ( !data ) {
+      return;
+    }
+
+    if ( data.id && data.id !== RisePlayerConfiguration.getPresentationId()) {
       return;
     }
 
@@ -38,6 +55,10 @@ RisePlayerConfiguration.Preview = (() => {
   }
 
   function _parseEventData( event ) {
+    if ( typeof event.data !== "string" ) {
+      return event.data;
+    }
+
     try {
       return JSON.parse( event.data );
     // eslint-disable-next-line no-empty
@@ -106,6 +127,8 @@ RisePlayerConfiguration.Preview = (() => {
   }
 
   function startListeningForData() {
+    _initDataRetrieval();
+
     window.addEventListener( "message", _receiveData );
     if ( !RisePlayerConfiguration.Helpers.isDisplay()) {
       window.document.documentElement.style.cursor = "auto";

@@ -6,14 +6,14 @@ RisePlayerConfiguration.Viewer = (() => {
     window.addEventListener( "message", _receiveData, false );
   }
 
-  function send( topic ) {
+  function send( topic, message ) {
     const frameElementId = RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) ?
       RisePlayerConfiguration.Helpers.getHttpParameter( "frameElementId" ) :
       window.frameElement ? window.frameElement.id : "";
-    const message = {
-      topic,
-      frameElementId: frameElementId
-    };
+
+    message = message || {};
+    message.topic = topic;
+    message.frameElementId = frameElementId;
 
     window.parent.postMessage( message, "*" );
   }
@@ -37,6 +37,8 @@ RisePlayerConfiguration.Viewer = (() => {
 
       riseElements.forEach( element => element.dispatchEvent( new Event( topic )));
       window.dispatchEvent( new Event( topic ));
+    } else if ( topic === "get-template-data" ) {
+      send( topic, message );
     }
   }
 
