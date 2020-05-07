@@ -98,6 +98,20 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "isStaging", function() {
+    it( "should return true if 'staging' is in window location pathname", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getLocationPathname" ).returns( "/staging/templates/abc123/src/template.html" );
+
+      expect( RisePlayerConfiguration.Helpers.isStaging()).to.be.true;
+    });
+
+    it( "should return false if 'staging' is not in window location pathname", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getLocationPathname" ).returns( "/stable/templates/abc123/src/template.html" );
+
+      expect( RisePlayerConfiguration.Helpers.isStaging()).to.be.false;
+    });
+  });
+
   describe( "isDisplay", function() {
     it( "should return true if a valid display id is provided", function() {
       _sandbox.stub( RisePlayerConfiguration, "getDisplayId" ).returns( "DISPLAYID" );
