@@ -45,7 +45,8 @@ describe( "PlayUntilDone", function() {
       expectedComponents[ "rise-playlist-item-1" ].addEventListener.should.not.have.been.calledWith( "report-done" );
     });
 
-    it( "should log PUD state every minute", function() {
+    it( "should log PUD state every minute if running on a display", function() {
+      sandbox.stub( RisePlayerConfiguration.Helpers, "isDisplay" ).returns( true );
       sandbox.stub( RisePlayerConfiguration.Logger, "info" );
 
       RisePlayerConfiguration.PlayUntilDone.start();
@@ -59,6 +60,15 @@ describe( "PlayUntilDone", function() {
       clock.tick( 30001 );
 
       RisePlayerConfiguration.Logger.info.should.have.been.calledTwice;
+    });
+
+    it( "should not log PUD if not running on a display", function() {
+      sandbox.stub( RisePlayerConfiguration.Helpers, "isDisplay" ).returns( false );
+      sandbox.stub( RisePlayerConfiguration.Logger, "info" );
+
+      RisePlayerConfiguration.PlayUntilDone.start();
+
+      RisePlayerConfiguration.Logger.info.should.not.have.been.called;
     });
 
     it( "should send 'template-done' when all PUD components are done", function() {

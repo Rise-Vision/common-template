@@ -22,7 +22,9 @@ RisePlayerConfiguration.PlayUntilDone = (() => {
       .filter( element => element.hasAttribute( "play-until-done" ) || element.tagName.toLowerCase() === "rise-play-until-done" );
 
     console.log( `Start listening PUD events of ${playUntilDoneElements.length} elements` );
-    RisePlayerConfiguration.Logger.info( LOGGER_DATA, "start listening PUD events", { playUntilDoneElements: playUntilDoneElements.length });
+    if ( RisePlayerConfiguration.Helpers.isDisplay()) {
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "start listening PUD events", { playUntilDoneElements: playUntilDoneElements.length });
+    }
 
     playUntilDoneElements.forEach( element => {
       element.addEventListener( "report-done", event => {

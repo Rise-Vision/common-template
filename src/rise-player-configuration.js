@@ -106,9 +106,6 @@ const RisePlayerConfiguration = (() => {
 
   function _sendRisePresentationPlayOnDocumentLoad() {
     const sendRisePresentationPlay = () => {
-      if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-        RisePlayerConfiguration.Logger.info( RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA, "rise-presentation-play" );
-      }
       RisePlayerConfiguration.dispatchWindowEvent( "rise-presentation-play" );
     };
 

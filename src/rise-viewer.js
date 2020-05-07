@@ -33,7 +33,6 @@ RisePlayerConfiguration.Viewer = (() => {
       const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
 
       console.log( `Dispatching ${topic} event` );
-      RisePlayerConfiguration.Logger.info( RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA, topic );
 
       riseElements.forEach( element => element.dispatchEvent( new Event( topic )));
       window.dispatchEvent( new Event( topic ));
