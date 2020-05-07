@@ -34,6 +34,30 @@ RisePlayerConfiguration.Helpers = (() => {
     return RisePlayerConfiguration.getDisplayId() !== "preview";
   }
 
+  function isEditorStaging() {
+    if ( RisePlayerConfiguration.Helpers.isEditorPreview()) {
+      try {
+        const pathname = RisePlayerConfiguration.Helpers.getLocationPathname();
+        const parts = pathname.split( "/" );
+
+        // example window location:  https://widgets.risevision.com/staging/templates/abc123/src/template.html?type=preview&presentationId=abc123
+        // pathname for above would be:  /staging/templates/abc123/src/template.html
+
+        if ( parts[ 1 ] === "staging" ) {
+          return true
+        }
+      } catch ( err ) {
+        console.log( "can't retrieve window location pathname", err );
+      }
+    }
+
+    return false;
+  }
+
+  function getLocationPathname() {
+    return window.location.pathname;
+  }
+
   function onceClientsAreAvailable( requiredClientNames, action ) {
     let invoked = false;
     const names = typeof requiredClientNames === "string" ?
@@ -183,11 +207,13 @@ RisePlayerConfiguration.Helpers = (() => {
     getRiseEditableElements: getRiseEditableElements,
     getRisePlayerConfiguration: getRisePlayerConfiguration,
     getWaitForPlayerURLParam: getWaitForPlayerURLParam,
+    getLocationPathname: getLocationPathname,
     isTestEnvironment: isTestEnvironment,
     isInViewer: isInViewer,
     isSharedSchedule: isSharedSchedule,
     isEditorPreview: isEditorPreview,
     isDisplay: isDisplay,
+    isEditorStaging: isEditorStaging,
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent,
