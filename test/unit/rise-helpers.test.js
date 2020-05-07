@@ -98,25 +98,17 @@ describe( "Helpers", function() {
     });
   });
 
-  describe( "isEditorStaging", function() {
+  describe( "isStaging", function() {
     it( "should return true if 'staging' is in window location pathname", function() {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isEditorPreview" ).returns( true );
       _sandbox.stub( RisePlayerConfiguration.Helpers, "getLocationPathname" ).returns( "/staging/templates/abc123/src/template.html" );
 
-      expect( RisePlayerConfiguration.Helpers.isEditorStaging()).to.be.true;
+      expect( RisePlayerConfiguration.Helpers.isStaging()).to.be.true;
     });
 
     it( "should return false if 'staging' is not in window location pathname", function() {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isEditorPreview" ).returns( true );
       _sandbox.stub( RisePlayerConfiguration.Helpers, "getLocationPathname" ).returns( "/stable/templates/abc123/src/template.html" );
 
-      expect( RisePlayerConfiguration.Helpers.isEditorStaging()).to.be.false;
-    });
-
-    it( "should return false if not running in Editor Preview", function() {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isEditorPreview" ).returns( false );
-
-      expect( RisePlayerConfiguration.Helpers.isEditorStaging()).to.be.false;
+      expect( RisePlayerConfiguration.Helpers.isStaging()).to.be.false;
     });
   });
 
