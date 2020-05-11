@@ -68,7 +68,7 @@ jobs:
           TARGET=$WIDGETS_BASE/staging/common/$VERSION/
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
-          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=600" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
   build-component-e2e-page:
@@ -216,7 +216,7 @@ jobs:
       - run: |
           TARGET=$WIDGETS_BASE/<< parameters.stage >>/common
           gsutil cp dist/*.js $TARGET
-          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=600" $TARGET
           gsutil -m acl -r ch -u AllUsers:R $TARGET
 
 workflows:
