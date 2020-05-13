@@ -8,6 +8,7 @@ RisePlayerConfiguration.Helpers = (() => {
   ];
   let _clients = [];
   let _riseElements = null;
+  let _risePresentationPlayReceived = false;
 
   function _clientsAreAvailable( names ) {
     return names.every( name => _clients.indexOf( name ) >= 0 );
@@ -186,15 +187,24 @@ RisePlayerConfiguration.Helpers = (() => {
     // Start the component once it's configured;
     // but if it's already configured the listener won't work,
     // so we directly send the request also.
-    component.addEventListener( "configured", () =>
-      component.dispatchEvent( new CustomEvent( "start" ))
-    );
+    component.addEventListener( "configured", () => {
+      component.dispatchEvent( new CustomEvent( "start" ));
+
+      if ( _risePresentationPlayReceived ) {
+        component.dispatchEvent( new Event( "rise-presentation-play" ));
+      }
+    });
+
     component.dispatchEvent( new CustomEvent( "start" ));
   }
 
   function reset() {
     _clients = [];
     _riseElements = null;
+  }
+
+  function setRisePresentationPlayReceived( value ) {
+    _risePresentationPlayReceived = value;
   }
 
   const exposedFunctions = {
@@ -215,7 +225,8 @@ RisePlayerConfiguration.Helpers = (() => {
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
     sendStartEvent: sendStartEvent,
-    getComponent: getComponent
+    getComponent: getComponent,
+    setRisePresentationPlayReceived: setRisePresentationPlayReceived
   };
 
   if ( isTestEnvironment()) {
