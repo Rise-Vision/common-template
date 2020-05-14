@@ -120,6 +120,16 @@ const RisePlayerConfiguration = (() => {
     Object.freeze( RisePlayerConfiguration );
   }
 
+  function _configureGlobalErrorHandler() {
+    window.onerror = function( message, source, lineno, colno, error ) {
+      RisePlayerConfiguration.Logger.error(
+        RisePlayerConfiguration.RISE_PLAYER_CONFIGURATION_DATA,
+        "template global error",
+        { message, source, lineno, colno, error }
+      );
+    };
+  }
+
   function configure( playerInfo, localMessagingInfo ) {
     _validateAllRequiredObjectsAreAvailable();
 
@@ -140,6 +150,7 @@ const RisePlayerConfiguration = (() => {
     localMessagingInfo = _init( playerInfo, localMessagingInfo );
 
     RisePlayerConfiguration.Logger.configure();
+    _configureGlobalErrorHandler();
 
     if ( RisePlayerConfiguration.isPreview()) {
       RisePlayerConfiguration.sendComponentsReadyEvent();
