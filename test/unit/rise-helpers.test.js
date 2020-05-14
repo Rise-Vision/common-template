@@ -162,6 +162,41 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "rise-component loaded after common-template", function() {
+
+    var element;
+    var handleStart;
+    var handlePlay;
+
+    beforeEach( function() {
+      element = document.createElement( "rise-image" );
+
+      RisePlayerConfiguration.Helpers.sendStartEvent( element );
+
+      handleStart = sinon.stub();
+      handlePlay = sinon.stub();
+
+      element.addEventListener( "start", handleStart );
+      element.addEventListener( "rise-presentation-play", handlePlay );
+    });
+
+    it( "should re-send 'start' event", function() {
+      element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+
+      expect( handleStart.calledOnce ).to.be.true;
+      expect( handlePlay.called ).to.be.false;
+    });
+
+    it( "should re-send 'rise-presentation-play' event", function() {
+      RisePlayerConfiguration.Helpers.setRisePresentationPlayReceived( true );
+
+      element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+
+      expect( handleStart.calledOnce ).to.be.true;
+      expect( handlePlay.calledOnce ).to.be.true;
+    });
+  });
+
   describe( "getLocalMessagingJsonContent", function() {
 
     var xhr,

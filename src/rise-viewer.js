@@ -30,6 +30,9 @@ RisePlayerConfiguration.Viewer = (() => {
     const topic = message.topic.toLowerCase();
 
     if ( topic === "rise-presentation-play" || topic === "rise-presentation-stop" ) {
+
+      RisePlayerConfiguration.Helpers.setRisePresentationPlayReceived( topic === "rise-presentation-play" );
+
       const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
 
       console.log( `Dispatching ${topic} event` );
