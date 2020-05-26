@@ -162,39 +162,116 @@ describe( "Helpers", function() {
     });
   });
 
-  describe( "rise-component loaded after common-template", function() {
-
+  describe( "bindOnConfigured", function() {
     var element;
-    var handleStart;
-    var handlePlay;
+    var handleEvent;
 
     beforeEach( function() {
       element = document.createElement( "rise-image" );
 
-      RisePlayerConfiguration.Helpers.sendStartEvent( element );
-
-      handleStart = sinon.stub();
-      handlePlay = sinon.stub();
-
-      element.addEventListener( "start", handleStart );
-      element.addEventListener( "rise-presentation-play", handlePlay );
+      handleEvent = sinon.stub();
     });
 
-    it( "should re-send 'start' event", function() {
+    describe( "sendStartEvent", function() {
+      it( "should send 'start' event", function() {
+        element.setAttribute( "id", "element-1" );
+
+        element.addEventListener( "start", handleEvent );
+
+        RisePlayerConfiguration.Helpers.sendStartEvent( element );
+
+        expect( handleEvent.calledWith()).to.be.true;
+      });
+
+      it( "should re-send 'start' event on 'configured', asynchronously", function( done ) {
+        element.setAttribute( "id", "element-2" );
+
+        RisePlayerConfiguration.Helpers.sendStartEvent( element );
+
+        element.addEventListener( "start", handleEvent );
+
+        element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+
+        expect( handleEvent.calledOnce ).to.be.false;
+
+        setTimeout( function() {
+          expect( handleEvent.calledOnce ).to.be.true;
+
+          done();
+        }, 10 );
+      });
+
+      it( "should remove handler after first 'configured' event", function( done ) {
+        element.setAttribute( "id", "element-3" );
+
+        RisePlayerConfiguration.Helpers.sendStartEvent( element );
+
+        element.addEventListener( "start", handleEvent );
+
+        element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+        element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+
+        expect( handleEvent.calledOnce ).to.be.false;
+
+        setTimeout( function() {
+          expect( handleEvent.calledOnce ).to.be.true;
+
+          done();
+        }, 10 );
+      });
+
+    });
+
+    it( "should handle multiple events", function( done ) {
+      element.setAttribute( "id", "element-4" );
+
+      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event1" );
+      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event2" );
+
+      element.addEventListener( "event1", handleEvent );
+      element.addEventListener( "event2", handleEvent );
+
       element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
 
-      expect( handleStart.calledOnce ).to.be.true;
-      expect( handlePlay.called ).to.be.false;
+      expect( handleEvent.called ).to.be.false;
+
+      setTimeout( function() {
+        expect( handleEvent.calledTwice ).to.be.true;
+
+        done();
+      }, 10 );
     });
 
-    it( "should re-send 'rise-presentation-play' event", function() {
-      RisePlayerConfiguration.Helpers.setRisePresentationPlayReceived( true );
+    it( "should not handle child element 'configured' event", function( done ) {
+      var parentElement = document.createElement( "rise-playlist-item" );
+
+      parentElement.setAttribute( "id", "playlist-item-1" );
+
+      parentElement.appendChild( element );
+      element.setAttribute( "id", "element-5" );
+
+      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event1" );
+      RisePlayerConfiguration.Helpers.bindEventOnConfigured( parentElement, "event2" );
+
+      parentElement.addEventListener( "event2", handleEvent );
 
       element.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
 
-      expect( handleStart.calledOnce ).to.be.true;
-      expect( handlePlay.calledOnce ).to.be.true;
+      expect( handleEvent.called ).to.be.false;
+
+      setTimeout( function() {
+        expect( handleEvent.called ).to.be.false;
+
+        parentElement.dispatchEvent( new CustomEvent( "configured", { bubbles: true, composed: true }));
+
+        setTimeout( function() {
+          expect( handleEvent.called ).to.be.true;
+
+          done();
+        }, 10 );
+      }, 10 );
     });
+
   });
 
   describe( "getLocalMessagingJsonContent", function() {

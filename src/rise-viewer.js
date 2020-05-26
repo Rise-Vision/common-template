@@ -31,13 +31,11 @@ RisePlayerConfiguration.Viewer = (() => {
 
     if ( topic === "rise-presentation-play" || topic === "rise-presentation-stop" ) {
 
-      RisePlayerConfiguration.Helpers.setRisePresentationPlayReceived( topic === "rise-presentation-play" );
-
       const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
 
       console.log( `Dispatching ${topic} event` );
 
-      riseElements.forEach( element => element.dispatchEvent( new Event( topic )));
+      riseElements.forEach( element => RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, topic ));
       window.dispatchEvent( new Event( topic ));
     } else if ( topic === "get-template-data" ) {
       send( topic, message );

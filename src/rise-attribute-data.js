@@ -21,6 +21,10 @@ RisePlayerConfiguration.AttributeData = (() => {
     _startEventSent = false;
   }
 
+  function _setPropertyNative( element, property, value ) {
+    element[ property ] = value;
+  }
+
   function _setProperty( element, property, value ) {
     const componentId = element.id;
 
@@ -33,7 +37,7 @@ RisePlayerConfiguration.AttributeData = (() => {
     }'` );
 
     try {
-      element[ property ] = value;
+      RisePlayerConfiguration.Helpers.bindOnConfigured( element, _setPropertyNative.bind( null, element, property, value ));
     } catch ( error ) {
       RisePlayerConfiguration.Logger.error(
         LOGGER_DATA,

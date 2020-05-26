@@ -12,8 +12,8 @@ describe( "Viewer", function() {
   beforeEach( function() {
     sandbox = sinon.sandbox.create();
 
-    riseImage = { id: "rise-image-1", tagName: "rise-image", dispatchEvent: sandbox.spy() };
-    riseText = { id: "rise-text-1", tagName: "rise-text", dispatchEvent: sandbox.spy() };
+    riseImage = {};
+    riseText = {};
 
     sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
       return Object.values({
@@ -21,6 +21,7 @@ describe( "Viewer", function() {
         "rise-text": riseText
       });
     });
+    sandbox.stub( RisePlayerConfiguration.Helpers, "bindEventOnConfigured" );
 
     sandbox.stub( window, "addEventListener" );
     sandbox.stub( window, "dispatchEvent" );
@@ -41,8 +42,7 @@ describe( "Viewer", function() {
   it( "should not execute on message if origin not from risevision.com", function() {
     RisePlayerConfiguration.Viewer.receiveData({ origin: "https://test.com", data: JSON.stringify({ testData: "test" }) });
 
-    expect( riseImage.dispatchEvent ).to.not.have.been.called;
-    expect( riseText.dispatchEvent ).to.not.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.not.have.been.called;
   });
 
   it( "should not execute on other events", function() {
@@ -51,8 +51,7 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( riseImage.dispatchEvent ).to.not.have.been.called;
-    expect( riseText.dispatchEvent ).to.not.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.not.have.been.called;
     expect( window.dispatchEvent ).to.not.have.been.called;
   });
 
@@ -62,8 +61,10 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( riseImage.dispatchEvent ).to.have.been.called;
-    expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-play" );
+
     expect( window.dispatchEvent ).to.have.been.called;
   });
 
@@ -73,8 +74,10 @@ describe( "Viewer", function() {
       origin: "file://"
     });
 
-    expect( riseImage.dispatchEvent ).to.have.been.called;
-    expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-play" );
+
     expect( window.dispatchEvent ).to.have.been.called;
   });
 
@@ -84,8 +87,10 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( riseImage.dispatchEvent ).to.have.been.called;
-    expect( riseText.dispatchEvent ).to.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-stop" );
+    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-stop" );
+
     expect( window.dispatchEvent ).to.have.been.called;
   });
 

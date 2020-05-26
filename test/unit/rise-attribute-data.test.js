@@ -28,12 +28,17 @@ describe( "AttributeData", function() {
       return editableElements;
     });
 
+    sinon.stub( RisePlayerConfiguration.Helpers, "bindOnConfigured", function( element, func ) {
+      func();
+    });
+
     sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
   });
 
   afterEach( function() {
     RisePlayerConfiguration.Helpers.getRiseElements.restore();
     RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
+    RisePlayerConfiguration.Helpers.bindOnConfigured.restore();
     RisePlayerConfiguration.Helpers.sendStartEvent.restore();
   });
 

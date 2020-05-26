@@ -2,13 +2,19 @@
 
 RisePlayerConfiguration.Helpers = (() => {
 
+  const LOGGER_DATA = {
+    name: "RisePlayerConfiguration",
+    id: "Helpers",
+    version: "N/A"
+  };
+
   const SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS = [
     "rise-video",
     "rise-data-financial"
   ];
   let _clients = [];
   let _riseElements = null;
-  let _risePresentationPlayReceived = false;
+  let _componentBindings = {};
 
   function _clientsAreAvailable( names ) {
     return names.every( name => _clients.indexOf( name ) >= 0 );
@@ -183,28 +189,86 @@ RisePlayerConfiguration.Helpers = (() => {
     );
   }
 
-  function sendStartEvent( component ) {
-    // Start the component once it's configured;
-    // but if it's already configured the listener won't work,
-    // so we directly send the request also.
-    component.addEventListener( "configured", () => {
-      component.dispatchEvent( new CustomEvent( "start" ));
-
-      if ( _risePresentationPlayReceived ) {
-        component.dispatchEvent( new Event( "rise-presentation-play" ));
+  function _createConfiguredListener( component ) {
+    return function( event ) {
+      if ( event.target !== component ) {
+        return;
       }
-    });
 
-    component.dispatchEvent( new CustomEvent( "start" ));
+      // Call functions asynchronously to allow components to register handlers
+      Promise.resolve()
+        .then(() => {
+          const componentId = component.id;
+          let binding = _componentBindings[ componentId ];
+          let i;
+
+          for ( i = 0; i < binding.funcs.length; i++ ) {
+            binding.funcs[ i ]();
+          }
+
+          // clear funcs to prevent further binding
+          binding.funcs = null;
+
+          component.removeEventListener( "configured", binding.listener );
+        });
+    };
+  }
+
+  // Make calls to the component once it's configured;
+  // but if it's already configured the listener won't work,
+  // so we directly send the request also.
+  function bindOnConfigured( component, func ) {
+    const componentId = component.id;
+    let binding = _componentBindings[ componentId ];
+
+    if ( !binding ) {
+      binding = {
+        listener: _createConfiguredListener( component ),
+        funcs: []
+      };
+      _componentBindings[ componentId ] = binding;
+
+      component.addEventListener( "configured", binding.listener );
+    }
+
+    // if we're still binding to funcs, push
+    if ( func && binding && binding.funcs ) {
+      binding.funcs.push( func );
+
+      // Note: funcs overflow; should never bind so many functions unless
+      // configured event was missed.
+      if ( binding.funcs.length > 10 ) {
+        // clear funcs to prevent further binding
+        binding.funcs = null;
+
+        return RisePlayerConfiguration.Logger.warning(
+          LOGGER_DATA,
+          "component bindOnConfigured overflow triggered",
+          { componentId: componentId }
+        );
+      }
+
+    }
+
+    // call func directly if it exists
+    func && func();
+  }
+
+  function _sendEvent( component, topic ) {
+    component.dispatchEvent( new CustomEvent( topic ));
+  }
+
+  function bindEventOnConfigured( component, topic ) {
+    bindOnConfigured( component, _sendEvent.bind( null, component, topic ));
+  }
+
+  function sendStartEvent( component ) {
+    bindEventOnConfigured( component, "start" );
   }
 
   function reset() {
     _clients = [];
     _riseElements = null;
-  }
-
-  function setRisePresentationPlayReceived( value ) {
-    _risePresentationPlayReceived = value;
   }
 
   const exposedFunctions = {
@@ -224,9 +288,10 @@ RisePlayerConfiguration.Helpers = (() => {
     isStaging: isStaging,
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
+    bindOnConfigured: bindOnConfigured,
+    bindEventOnConfigured: bindEventOnConfigured,
     sendStartEvent: sendStartEvent,
-    getComponent: getComponent,
-    setRisePresentationPlayReceived: setRisePresentationPlayReceived
+    getComponent: getComponent
   };
 
   if ( isTestEnvironment()) {

@@ -229,6 +229,9 @@ const RisePlayerConfiguration = (() => {
     sendComponentsReadyEvent() {
       return Promise.resolve()
         .then(() => {
+          // Bind configured handlers for all RiseElements before ready event
+          RisePlayerConfiguration.Helpers.getRiseElements().forEach( element => RisePlayerConfiguration.Helpers.bindOnConfigured( element ));
+
           RisePlayerConfiguration.dispatchWindowEvent( "rise-components-ready" );
 
           if ( RisePlayerConfiguration.Helpers.isInViewer()) {

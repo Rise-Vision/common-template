@@ -26,7 +26,9 @@ describe( "RisePlayerConfiguration", function() {
       getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam,
       getHttpParameter: _sandbox.stub(),
       isSharedSchedule: _sandbox.stub().returns( false ),
-      getSharedScheduleUnsupportedElements: _sandbox.stub().returns([ { id: "rise-video" } ])
+      getSharedScheduleUnsupportedElements: _sandbox.stub().returns([ { id: "rise-video" } ]),
+      getRiseElements: _sandbox.stub().returns([]),
+      bindOnConfigured: _sandbox.stub()
     };
 
     RisePlayerConfiguration.Logger = {
@@ -450,6 +452,17 @@ describe( "RisePlayerConfiguration", function() {
 
           RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
+        });
+    });
+
+    it( "should bind configured event for all elements", function() {
+      RisePlayerConfiguration.Helpers.getRiseElements.returns([ "el1", "el2" ])
+
+      return RisePlayerConfiguration.sendComponentsReadyEvent()
+        .then( function() {
+          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledTwice;
+          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith( "el1" );
+          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith( "el2" );
         });
     });
 
