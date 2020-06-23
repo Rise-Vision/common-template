@@ -86,6 +86,9 @@ const RisePlayerConfiguration = (() => {
     if ( !RisePlayerConfiguration.ContentUptime ) {
       throw new Error( "ContentUptime script was not loaded" );
     }
+    if ( !RisePlayerConfiguration.PurgeCacheFiles ) {
+      throw new Error( "PurgeCacheFiles script was not loaded" );
+    }
   }
 
   function _configureLocalMessaging( localMessagingInfo ) {
@@ -153,7 +156,9 @@ const RisePlayerConfiguration = (() => {
     _configureGlobalErrorHandler();
 
     if ( RisePlayerConfiguration.isPreview()) {
-      RisePlayerConfiguration.sendComponentsReadyEvent();
+      RisePlayerConfiguration.PurgeCacheFiles.RisePurgeCachedFiles().then(() => {
+        RisePlayerConfiguration.sendComponentsReadyEvent();
+      })
     } else {
       _configureLocalMessaging( localMessagingInfo );
     }
