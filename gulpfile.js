@@ -31,7 +31,8 @@
       "src/rise-display-data.js",
       "src/rise-branding.js",
       "src/rise-content-uptime.js",
-      "src/rise-play-until-done.js"
+      "src/rise-play-until-done.js",
+      "src/rise-purge-cached-files.js"
     ];
 
   gulp.task( "clean", function( cb ) {
