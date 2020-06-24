@@ -2,7 +2,7 @@
 /* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
-  function RisePurgeCachedFiles() {
+  function purge() {
     return new Promise(( resolve ) => {
       console.log( "PURGING FILES" );
       resolve( "done" );
@@ -10,7 +10,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
   }
 
   const exposedFunctions = {
-    RisePurgeCachedFiles: RisePurgeCachedFiles
+    purge: purge
   }
 
   return exposedFunctions;
