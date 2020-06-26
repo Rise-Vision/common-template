@@ -33,5 +33,12 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
     purge: purge
   }
 
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    Object.assign( exposedFunctions, {
+      getCachesNames: _getCachesNames,
+      getCachesToDelete: _getCachesToDelete
+    });
+  }
+
   return exposedFunctions;
 })();
