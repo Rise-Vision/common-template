@@ -2,7 +2,7 @@
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
   const componentCacheKeys = [ "rise-image", "rise-video" ];
-  const expiryTime = 1000 * 60 * 6 * 24 * 7;
+  const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
 
   function purge() {
     return new Promise(( resolve ) => {
@@ -55,9 +55,9 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
   }
 
   function _compareDates( currentTimestamp, lastRequested ) {
-    const difference = currentTimestamp.valueOf() - new Date( lastRequested ).valueOf();
+    const difference = currentTimestamp.getTime() - new Date( lastRequested ).getTime();
 
-    if ( difference >= expiryTime ) {
+    if ( difference >= EXPIRY_TIME ) {
       return true;
     }
     return false;
