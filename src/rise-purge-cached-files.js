@@ -2,7 +2,7 @@
 /* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
-  const componentCacheKeys = [ "rise-image", "rise-video" ];
+  const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
 
   function purge() {
     return new Promise(( resolve ) => {
@@ -10,8 +10,8 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
         .then( cachesNames => {
           return _getComponentCaches( cachesNames );
         })
-        .then( cachesToDelete => {
-          console.log( "cachesToDelete", cachesToDelete );
+        .then( componentCacheKeys => {
+          console.log( "componentCacheKeys", componentCacheKeys );
           resolve( "done" );
         })
     })
@@ -23,7 +23,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
 
   function _getComponentCaches( cacheNames ) {
     return cacheNames.reduce(( acc, value ) => {
-      if ( componentCacheKeys.find( key => value.indexOf( key ) > -1 )) {
+      if ( BASE_COMPONENT_CACHE_KEYS.find( key => value.indexOf( key ) > -1 )) {
         acc.push( value );
       }
 
