@@ -26,12 +26,6 @@ describe( "PurgeCacheFiles", function() {
     expect( response ).to.deep.equal([ "rise-image/Value 1", "rise-video/Value 2", "custom/Value 2" ]);
   });
 
-  it( "getComponentCaches should return caches keys to delete", function() {
-    var response = RisePlayerConfiguration.PurgeCacheFiles.getComponentCaches([ "rise-image/Value 1", "rise-video/Value 2", "custom/Value 2" ]);
-
-    expect( response ).to.deep.equal([ "rise-image/Value 1", "rise-video/Value 2" ]);
-  });
-
   it( "should resolve with 'done' message", function() {
     RisePlayerConfiguration.PurgeCacheFiles.purge().then( function( res ) {
       expect( res ).to.be( "done" );
