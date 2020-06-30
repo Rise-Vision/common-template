@@ -98,8 +98,8 @@ describe( "PurgeCacheFiles", function() {
 
     it( "should delete all expired values", function() {
       RisePlayerConfiguration.PurgeCacheFiles.cleanUpCache( cache ).then( function() {
-        expect( cacheValue.delete.calledWith( expValue.url )).to.be.true;
-        expect( cacheValue.delete.calledWith( okValue.url )).to.be.false;
+        expect( cache.delete.calledWith( expValue.url )).to.be.true;
+        expect( cache.delete.calledWith( okValue.url )).to.be.false;
       });
     });
   });
