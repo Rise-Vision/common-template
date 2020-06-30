@@ -1,7 +1,7 @@
 /* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
-  const componentCacheKeys = [ "rise-image", "rise-video" ];
+  const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
   const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
 
   function purge() {
@@ -28,7 +28,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
 
   function _getComponentCacheNames( cacheNames ) {
     return cacheNames.reduce(( acc, value ) => {
-      if ( componentCacheKeys.find( key => value.indexOf( key ) > -1 )) {
+      if ( BASE_COMPONENT_CACHE_KEYS.find( key => value.indexOf( key ) > -1 )) {
         acc.push( value );
       }
 
