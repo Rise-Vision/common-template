@@ -104,13 +104,13 @@ describe( "PurgeCacheFiles", function() {
     });
   });
 
-  describe( "compareDates", function() {
+  describe( "hasCacheExpired", function() {
     it( "should return 'true' if the current time is not expired", function() {
-      expect( RisePlayerConfiguration.PurgeCacheFiles.compareDates( new Date(), new Date()))
+      expect( RisePlayerConfiguration.PurgeCacheFiles.hasCacheExpired( new Date(), new Date()))
     });
 
     it( "should return 'false' if the current time is expired", function() {
-      expect( RisePlayerConfiguration.PurgeCacheFiles.compareDates( new Date(), new Date( "2011/11/10" )))
+      expect( RisePlayerConfiguration.PurgeCacheFiles.hasCacheExpired( new Date(), new Date( "2011/11/10" )))
     });
   });
 });

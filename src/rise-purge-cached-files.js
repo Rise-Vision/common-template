@@ -47,14 +47,14 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
       cachedEntries.forEach( entry => {
         const lastRequested = entry.headers.get( "date" );
 
-        if ( _compareDates( currentTimestamp, lastRequested )) {
+        if ( _hasCacheExpired( currentTimestamp, lastRequested )) {
           cache.delete( entry.url );
         }
       })
     })
   }
 
-  function _compareDates( currentTimestamp, lastRequested ) {
+  function _hasCacheExpired( currentTimestamp, lastRequested ) {
     const difference = currentTimestamp.getTime() - new Date( lastRequested ).getTime();
 
     if ( difference >= EXPIRY_TIME ) {
@@ -73,7 +73,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
       getComponentCacheNames: _getComponentCacheNames,
       getCache: _getCache,
       cleanUpCache: _cleanUpCache,
-      compareDates: _compareDates
+      hasCacheExpired: _hasCacheExpired
     });
   }
 
