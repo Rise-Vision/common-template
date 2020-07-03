@@ -2,7 +2,7 @@
 
 "use strict";
 
-describe( "RisePlayerConfiguration", function() {
+describe("RisePlayerConfiguration", function () {
 
   var _helpers,
     _localMessaging,
@@ -10,7 +10,7 @@ describe( "RisePlayerConfiguration", function() {
     _sandbox,
     _clock;
 
-  beforeEach( function() {
+  beforeEach(function () {
     _sandbox = sinon.sandbox.create();
     _clock = sinon.useFakeTimers();
 
@@ -25,25 +25,25 @@ describe( "RisePlayerConfiguration", function() {
       getRisePlayerConfiguration: _helpers.getRisePlayerConfiguration,
       getWaitForPlayerURLParam: _helpers.getWaitForPlayerURLParam,
       getHttpParameter: _sandbox.stub(),
-      isSharedSchedule: _sandbox.stub().returns( false ),
-      getSharedScheduleUnsupportedElements: _sandbox.stub().returns([ { id: "rise-video" } ]),
+      isSharedSchedule: _sandbox.stub().returns(false),
+      getSharedScheduleUnsupportedElements: _sandbox.stub().returns([{ id: "rise-video" }]),
       getRiseElements: _sandbox.stub().returns([]),
       bindOnConfigured: _sandbox.stub()
     };
 
     RisePlayerConfiguration.Logger = {
-      configure: function() {},
-      info: function() {}
+      configure: function () { },
+      info: function () { }
     };
 
     RisePlayerConfiguration.LocalMessaging = {
-      configure: function() {}
+      configure: function () { }
     };
 
-    _sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
+    _sandbox.stub(RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam").returns(false);
   });
 
-  afterEach( function() {
+  afterEach(function () {
     _sandbox.restore();
     _clock.restore();
 
@@ -53,44 +53,44 @@ describe( "RisePlayerConfiguration", function() {
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
   });
 
-  describe( "isConfigured", function() {
+  describe("isConfigured", function () {
 
-    it( "should not be configured if configure() function has not been called", function() {
-      expect( RisePlayerConfiguration.isConfigured()).to.be.false;
+    it("should not be configured if configure() function has not been called", function () {
+      expect(RisePlayerConfiguration.isConfigured()).to.be.false;
     });
 
-    it( "should be configured if configure() function has been called", function() {
+    it("should be configured if configure() function has been called", function () {
       RisePlayerConfiguration.configure({ displayId: "id" });
 
-      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+      expect(RisePlayerConfiguration.isConfigured()).to.be.true;
     });
 
   });
 
-  describe( "getPlayerInfo", function() {
+  describe("getPlayerInfo", function () {
 
-    it( "should return the player info", function() {
+    it("should return the player info", function () {
       RisePlayerConfiguration.configure({ displayId: "id" });
 
-      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+      expect(RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
         displayId: "id"
       });
     });
 
   });
 
-  describe( "getDisplayId", function() {
+  describe("getDisplayId", function () {
 
-    afterEach( function() {
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should be able to call getDisplayId even if it's not configured", function() {
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
+    it("should be able to call getDisplayId even if it's not configured", function () {
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("preview");
     });
 
-    it( "should get the display id even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should get the display id even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "ABC",
@@ -100,46 +100,46 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("ABC");
     });
 
-    it( "should detect is preview when it's not configured and player info has no display id", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should detect is preview when it's not configured and player info has no display id", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {},
           localMessagingInfo: {}
         }
       }
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("preview");
     });
 
-    it( "should return the display id", function() {
+    it("should return the display id", function () {
       RisePlayerConfiguration.configure({ displayId: "id" });
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("id");
     });
 
-    it( "should return 'preview' as the value of display id if display id was not provided", function() {
+    it("should return 'preview' as the value of display id if display id was not provided", function () {
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "preview" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("preview");
     });
 
   });
 
-  describe( "getCompanyId", function() {
+  describe("getCompanyId", function () {
 
-    afterEach( function() {
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should be able to call getCompanyId even if it's not configured", function() {
-      expect( RisePlayerConfiguration.getCompanyId()).to.be.null;
+    it("should be able to call getCompanyId even if it's not configured", function () {
+      expect(RisePlayerConfiguration.getCompanyId()).to.be.null;
     });
 
-    it( "should get the display id even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should get the display id even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "ABC",
@@ -149,58 +149,58 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+      expect(RisePlayerConfiguration.getCompanyId()).to.equal("123");
     });
 
-    it( "should not return company id when it's not configured and player info has no company id", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should not return company id when it's not configured and player info has no company id", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {},
           localMessagingInfo: {}
         }
       }
 
-      expect( RisePlayerConfiguration.getCompanyId()).to.be.falsey;
+      expect(RisePlayerConfiguration.getCompanyId()).to.be.falsey;
     });
 
-    it( "should return the company id", function() {
+    it("should return the company id", function () {
       RisePlayerConfiguration.configure({ companyId: "id" });
 
-      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getCompanyId()).to.equal("id");
     });
 
-    it( "should not return the company id if it was not provided", function() {
+    it("should not return the company id if it was not provided", function () {
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getCompanyId()).to.be.undefined;
+      expect(RisePlayerConfiguration.getCompanyId()).to.be.undefined;
     });
 
   });
 
-  describe( "getPresentationId", function() {
+  describe("getPresentationId", function () {
 
-    afterEach( function() {
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should be able to call getPresentationId even if it's not configured", function() {
-      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+    it("should be able to call getPresentationId even if it's not configured", function () {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function () {
         return null;
       }
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.be.null;
+      expect(RisePlayerConfiguration.getPresentationId()).to.be.null;
     });
 
-    it( "should get the presentation id form an HTTP param even if it's not configured", function() {
-      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+    it("should get the presentation id form an HTTP param even if it's not configured", function () {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function () {
         return "id";
       }
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getPresentationId()).to.equal("id");
     });
 
-    it( "should get the presentation id even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should get the presentation id even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             presentationId: "id"
@@ -209,49 +209,53 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getPresentationId()).to.equal("id");
     });
 
-    it( "should return the presentation id", function() {
+    it("should return the presentation id", function () {
       RisePlayerConfiguration.configure({ presentationId: "id" });
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getPresentationId()).to.equal("id");
     });
 
-    it( "should not return the presentation id if it was not provided", function() {
-      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+    it("should not return the presentation id if it was not provided", function () {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function () {
         return null;
       }
 
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.be.null;
+      expect(RisePlayerConfiguration.getPresentationId()).to.be.null;
     });
 
-    it( "should return the presentation id if it's available as HTTP parameter", function() {
-      RisePlayerConfiguration.Helpers.getHttpParameter = function() {
+    it("should return the presentation id if it's available as HTTP parameter", function () {
+      RisePlayerConfiguration.Helpers.getHttpParameter = function () {
         return "id";
       }
 
       RisePlayerConfiguration.configure({});
 
-      expect( RisePlayerConfiguration.getPresentationId()).to.equal( "id" );
+      expect(RisePlayerConfiguration.getPresentationId()).to.equal("id");
     });
 
   });
 
-  describe( "isPreview", function() {
+  describe("isPreview", function () {
 
-    afterEach( function() {
+    beforeEach(function () {
+      RisePlayerConfiguration.PurgeCacheFiles.purge = sinon.stub().resolves();
+    });
+
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should be able to call preview even if it's not configured", function() {
-      expect( RisePlayerConfiguration.isPreview()).to.be.true;
+    it("should be able to call preview even if it's not configured", function () {
+      expect(RisePlayerConfiguration.isPreview()).to.be.true;
     });
 
-    it( "should detect it's preview even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should detect it's preview even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "preview",
@@ -261,11 +265,11 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.isPreview()).to.be.true;
+      expect(RisePlayerConfiguration.isPreview()).to.be.true;
     });
 
-    it( "should detect it's not preview even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should detect it's not preview even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "ABC",
@@ -275,47 +279,47 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.isPreview()).to.be.false;
+      expect(RisePlayerConfiguration.isPreview()).to.be.false;
     });
 
-    it( "should be preview if display id is 'preview'", function() {
+    it("should be preview if display id is 'preview'", function () {
       RisePlayerConfiguration.configure({ displayId: "preview" });
 
-      expect( RisePlayerConfiguration.isPreview()).to.be.true;
+      expect(RisePlayerConfiguration.isPreview()).to.be.true;
     });
 
-    it( "should not be preview if display id is not 'preview'", function() {
+    it("should not be preview if display id is not 'preview'", function () {
       RisePlayerConfiguration.configure({ displayId: "test" });
 
-      expect( RisePlayerConfiguration.isPreview()).to.be.false;
+      expect(RisePlayerConfiguration.isPreview()).to.be.false;
     });
 
-    it( "should call rise-components-ready on preview", function( done ) {
-      var connectionHandler = function() {
-        window.removeEventListener( "rise-components-ready", connectionHandler );
+    it("should call rise-components-ready on preview", function (done) {
+      var connectionHandler = function () {
+        window.removeEventListener("rise-components-ready", connectionHandler);
 
         done();
       };
 
-      window.addEventListener( "rise-components-ready", connectionHandler );
+      window.addEventListener("rise-components-ready", connectionHandler);
 
       RisePlayerConfiguration.configure({ displayId: "preview" });
     });
 
   });
 
-  describe( "getChromeVersion", function() {
+  describe("getChromeVersion", function () {
 
-    afterEach( function() {
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should be able to call getChromeVersion even if it's not configured", function() {
-      expect( RisePlayerConfiguration.getChromeVersion()).to.be.null;
+    it("should be able to call getChromeVersion even if it's not configured", function () {
+      expect(RisePlayerConfiguration.getChromeVersion()).to.be.null;
     });
 
-    it( "should get the chrome version even if it's not configured", function() {
-      window.getRisePlayerConfiguration = function() {
+    it("should get the chrome version even if it's not configured", function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             chromeVersion: "1233"
@@ -324,21 +328,21 @@ describe( "RisePlayerConfiguration", function() {
         }
       }
 
-      expect( RisePlayerConfiguration.getChromeVersion()).to.equal( "1233" );
+      expect(RisePlayerConfiguration.getChromeVersion()).to.equal("1233");
     });
 
-    it( "should return the chrome version", function() {
+    it("should return the chrome version", function () {
       RisePlayerConfiguration.configure({ chromeVersion: "1234" });
 
-      expect( RisePlayerConfiguration.getChromeVersion()).to.equal( "1234" );
+      expect(RisePlayerConfiguration.getChromeVersion()).to.equal("1234");
     });
 
   });
 
-  describe( "player injected getRisePlayerConfiguration", function() {
+  describe("player injected getRisePlayerConfiguration", function () {
 
-    beforeEach( function() {
-      window.getRisePlayerConfiguration = function() {
+    beforeEach(function () {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "ABC",
@@ -349,32 +353,32 @@ describe( "RisePlayerConfiguration", function() {
       };
     });
 
-    afterEach( function() {
+    afterEach(function () {
       window.getRisePlayerConfiguration = undefined;
     });
 
-    it( "should use player injected configuration if no arguments were provided to configure() function", function() {
+    it("should use player injected configuration if no arguments were provided to configure() function", function () {
       RisePlayerConfiguration.configure();
 
-      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+      expect(RisePlayerConfiguration.isConfigured()).to.be.true;
 
-      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+      expect(RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
         displayId: "ABC", companyId: "123"
       });
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
-      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("ABC");
+      expect(RisePlayerConfiguration.getCompanyId()).to.equal("123");
     });
 
-    it( "should wait for player injected configuration when waitForPlayer URL param is set", function( done ) {
+    it("should wait for player injected configuration when waitForPlayer URL param is set", function (done) {
       delete window.getRisePlayerConfiguration;
-      RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam.returns( true );
+      RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam.returns(true);
 
       RisePlayerConfiguration.configure();
 
-      _clock.tick( 50 );
+      _clock.tick(50);
 
-      window.getRisePlayerConfiguration = function() {
+      window.getRisePlayerConfiguration = function () {
         return {
           playerInfo: {
             displayId: "ABC",
@@ -384,39 +388,39 @@ describe( "RisePlayerConfiguration", function() {
         }
       };
 
-      _clock.tick( 150 );
+      _clock.tick(150);
 
-      expect( RisePlayerConfiguration.isConfigured()).to.be.true;
+      expect(RisePlayerConfiguration.isConfigured()).to.be.true;
 
-      expect( RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
+      expect(RisePlayerConfiguration.getPlayerInfo()).to.deep.equal({
         displayId: "ABC", companyId: "123"
       });
 
-      expect( RisePlayerConfiguration.getDisplayId()).to.equal( "ABC" );
-      expect( RisePlayerConfiguration.getCompanyId()).to.equal( "123" );
+      expect(RisePlayerConfiguration.getDisplayId()).to.equal("ABC");
+      expect(RisePlayerConfiguration.getCompanyId()).to.equal("123");
 
       done();
     });
 
   });
 
-  describe( "sendComponentsReadyEvent", function() {
+  describe("sendComponentsReadyEvent", function () {
 
-    beforeEach( function() {
-      _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
-      _sandbox.stub( RisePlayerConfiguration.AttributeDataWatch, "watchAttributeDataFile" );
-      _sandbox.stub( RisePlayerConfiguration.Preview, "startListeningForData" );
-      _sandbox.stub( RisePlayerConfiguration.Viewer, "send" );
+    beforeEach(function () {
+      _sandbox.stub(RisePlayerConfiguration, "dispatchWindowEvent");
+      _sandbox.stub(RisePlayerConfiguration.AttributeDataWatch, "watchAttributeDataFile");
+      _sandbox.stub(RisePlayerConfiguration.Preview, "startListeningForData");
+      _sandbox.stub(RisePlayerConfiguration.Viewer, "send");
     });
 
-    it( "should start listening for data if it's preview", function() {
-      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( true );
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+    it("should start listening for data if it's preview", function () {
+      _sandbox.stub(RisePlayerConfiguration, "isPreview").returns(true);
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(false);
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
-        .then( function() {
+        .then(function () {
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
-          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith("rise-components-ready");
 
           RisePlayerConfiguration.Preview.startListeningForData.should.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.not.have.been.called;
@@ -424,14 +428,14 @@ describe( "RisePlayerConfiguration", function() {
         });
     });
 
-    it( "should watch attribute data file if it's not preview", function() {
-      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+    it("should watch attribute data file if it's not preview", function () {
+      _sandbox.stub(RisePlayerConfiguration, "isPreview").returns(false);
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(false);
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
-        .then( function() {
+        .then(function () {
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
-          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith("rise-components-ready");
 
           RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
@@ -439,95 +443,95 @@ describe( "RisePlayerConfiguration", function() {
         });
     });
 
-    it( "should send rise-components-ready to viewer", function() {
-      _sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
+    it("should send rise-components-ready to viewer", function () {
+      _sandbox.stub(RisePlayerConfiguration, "isPreview").returns(false);
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(true);
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
-        .then( function() {
-          RisePlayerConfiguration.Viewer.send.should.have.been.calledWith( "rise-components-ready" );
+        .then(function () {
+          RisePlayerConfiguration.Viewer.send.should.have.been.calledWith("rise-components-ready");
 
           RisePlayerConfiguration.dispatchWindowEvent.should.have.been.called.once;
-          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-components-ready" );
+          RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith("rise-components-ready");
 
           RisePlayerConfiguration.Preview.startListeningForData.should.not.have.been.called;
           RisePlayerConfiguration.AttributeDataWatch.watchAttributeDataFile.should.have.been.called;
         });
     });
 
-    it( "should bind configured event for all elements", function() {
-      RisePlayerConfiguration.Helpers.getRiseElements.returns([ "el1", "el2" ])
+    it("should bind configured event for all elements", function () {
+      RisePlayerConfiguration.Helpers.getRiseElements.returns(["el1", "el2"])
 
       return RisePlayerConfiguration.sendComponentsReadyEvent()
-        .then( function() {
+        .then(function () {
           RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledTwice;
-          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith( "el1" );
-          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith( "el2" );
+          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith("el1");
+          RisePlayerConfiguration.Helpers.bindOnConfigured.should.have.been.calledWith("el2");
         });
     });
 
   });
 
-  describe( "Viewer configuration", function() {
+  describe("Viewer configuration", function () {
 
-    beforeEach( function() {
-      _sandbox.stub( RisePlayerConfiguration.Viewer, "startListeningForData" );
+    beforeEach(function () {
+      _sandbox.stub(RisePlayerConfiguration.Viewer, "startListeningForData");
     });
 
-    it( "should configure viewer", function() {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
+    it("should configure viewer", function () {
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(true);
 
       RisePlayerConfiguration.configure();
 
       RisePlayerConfiguration.Viewer.startListeningForData.should.have.been.called;
     });
 
-    it( "should configure DOMContentLoaded to send rise-presentation-play when not on viewer", function( done ) {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
+    it("should configure DOMContentLoaded to send rise-presentation-play when not on viewer", function (done) {
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(false);
 
-      var connectionHandler = function() {
-        window.removeEventListener( "rise-components-ready", connectionHandler );
+      var connectionHandler = function () {
+        window.removeEventListener("rise-components-ready", connectionHandler);
 
         done();
       };
 
-      window.addEventListener( "rise-components-ready", connectionHandler );
+      window.addEventListener("rise-components-ready", connectionHandler);
 
       RisePlayerConfiguration.configure();
 
       RisePlayerConfiguration.Viewer.startListeningForData.should.not.have.been.called;
 
-      RisePlayerConfiguration.dispatchWindowEvent( "DOMContentLoaded" );
+      RisePlayerConfiguration.dispatchWindowEvent("DOMContentLoaded");
     });
 
-    it( "should send rise-presentation-play when not on viewer and document has already finished loading", function() {
-      _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
-      _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
+    it("should send rise-presentation-play when not on viewer and document has already finished loading", function () {
+      _sandbox.stub(RisePlayerConfiguration.Helpers, "isInViewer").returns(false);
+      _sandbox.stub(RisePlayerConfiguration, "dispatchWindowEvent");
 
       RisePlayerConfiguration.configure();
 
       // document is already loaded because we're running tests on a browser-like environment
-      RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+      RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith("rise-presentation-play");
     });
 
   });
 
-  describe( "Shared Schedules", function() {
+  describe("Shared Schedules", function () {
 
-    beforeEach( function() {
-      _sandbox.stub( RisePlayerConfiguration.Viewer, "send" );
+    beforeEach(function () {
+      _sandbox.stub(RisePlayerConfiguration.Viewer, "send");
     });
 
-    it( "should send 'template-error' if it is a Shared Schedule and there are unsupported components", function() {
-      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( true );
+    it("should send 'template-error' if it is a Shared Schedule and there are unsupported components", function () {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns(true);
 
       RisePlayerConfiguration.configure();
 
-      RisePlayerConfiguration.Viewer.send.should.have.been.calledWith( "template-error" );
+      RisePlayerConfiguration.Viewer.send.should.have.been.calledWith("template-error");
     });
 
-    it( "should not send 'template-error' if it is a Shared Schedule with only supported components", function() {
-      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( true );
+    it("should not send 'template-error' if it is a Shared Schedule with only supported components", function () {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns(true);
       RisePlayerConfiguration.Helpers.getSharedScheduleUnsupportedElements.returns([]);
 
       RisePlayerConfiguration.configure();
@@ -535,8 +539,8 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.Viewer.send.should.not.have.been.called;
     });
 
-    it( "should not send 'template-error' if it is not a Shared Schedule", function() {
-      RisePlayerConfiguration.Helpers.isSharedSchedule.returns( false );
+    it("should not send 'template-error' if it is not a Shared Schedule", function () {
+      RisePlayerConfiguration.Helpers.isSharedSchedule.returns(false);
 
       RisePlayerConfiguration.configure();
 
