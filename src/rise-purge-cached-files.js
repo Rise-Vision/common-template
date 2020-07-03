@@ -1,11 +1,10 @@
 /* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
-  const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
+  const BASE_COMPONENT_CACHE_KEYS = [ "rise-imageaw", "rise-videasdo" ];
   const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
 
   function purge() {
-    console.log( "Purge" );
     return new Promise(( resolve ) => {
       return _getCacheNames()
         .then( cachesNames => {
@@ -21,7 +20,8 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
           resolve( "done" );
         })
         .catch( err => {
-          console.log( err );
+          console.log( "Error", err );
+          resolve( "error" );
         })
     })
   }
