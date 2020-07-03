@@ -5,6 +5,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
   const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
 
   function purge() {
+    console.log( "Purge" );
     return new Promise(( resolve ) => {
       return _getCacheNames()
         .then( cachesNames => {
@@ -18,7 +19,10 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
         })
         .then(() => {
           resolve( "done" );
-        });
+        })
+        .catch( err => {
+          console.log( err );
+        })
     })
   }
 
