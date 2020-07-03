@@ -32,12 +32,12 @@ describe( "RisePlayerConfiguration", function() {
     };
 
     RisePlayerConfiguration.Logger = {
-      configure: function() { },
-      info: function() { }
+      configure: function() {},
+      info: function() {}
     };
 
     RisePlayerConfiguration.LocalMessaging = {
-      configure: function() { }
+      configure: function() {}
     };
 
     _sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
