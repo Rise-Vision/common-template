@@ -5,6 +5,11 @@
 
 describe( "PurgeCacheFiles", function() {
   var sandbox;
+  var LOGGER_DATA = {
+    name: "RisePlayerConfiguration",
+    id: "PurgeCacheFiles",
+    version: "N/A"
+  };
 
   beforeEach( function() {
     sandbox = sinon.sandbox.create();
@@ -58,6 +63,35 @@ describe( "PurgeCacheFiles", function() {
       RisePlayerConfiguration.PurgeCacheFiles.purge().then( function( res ) {
         expect( res ).to.be( "done" );
       });
+    });
+
+    describe( "purge error handling", function() {
+      beforeEach( function() {
+        sandbox = sinon.sandbox.create();
+        sandbox.stub( RisePlayerConfiguration.PurgeCacheFiles, "getCacheNames" ).rejects();
+      })
+
+      afterEach( function() {
+        sandbox.restore();
+      })
+
+      it( "should resolve with 'error' message on error", function() {
+        RisePlayerConfiguration.PurgeCacheFiles.purge().then( function( res ) {
+          expect( res ).to.be( "error" );
+        });
+      });
+
+      it( "should log to BQ on error", function() {
+        sinon.spy( RisePlayerConfiguration.Logger, "warning" );
+
+        RisePlayerConfiguration.PurgeCacheFiles.purge().then( function( err ) {
+          expect( RisePlayerConfiguration.Logger.warning ).to.have.been.calledWith({
+            componentData: LOGGER_DATA,
+            event: "Error trying to purge cache files",
+            eventDetails: { error: err }
+          });
+        });
+      })
     });
   });
 

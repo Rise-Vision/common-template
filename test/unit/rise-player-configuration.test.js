@@ -242,6 +242,10 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "isPreview", function() {
 
+    beforeEach( function() {
+      RisePlayerConfiguration.PurgeCacheFiles.purge = sinon.stub().resolves();
+    });
+
     afterEach( function() {
       window.getRisePlayerConfiguration = undefined;
     });
