@@ -2,7 +2,7 @@
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
   const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
-  const EXPIRY_TIME = 1000 * 60 * 1;
+  const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
   const LOGGER_DATA = {
     name: "RisePlayerConfiguration",
     id: "PurgeCacheFiles",
