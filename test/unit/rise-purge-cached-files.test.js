@@ -59,6 +59,14 @@ describe( "PurgeCacheFiles", function() {
         expect( res ).to.be( "done" );
       });
     });
+
+    it( "should resolve with 'error' message on error", function() {
+      sinon.stub( RisePlayerConfiguration.PurgeCacheFiles, "getCacheNames" ).rejects();
+
+      RisePlayerConfiguration.PurgeCacheFiles.purge().then( function( res ) {
+        expect( res ).to.be( "error" );
+      });
+    });
   });
 
   it( "getCache should return Caches object", function() {

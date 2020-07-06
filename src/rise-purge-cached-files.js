@@ -1,7 +1,7 @@
 /* eslint-disable no-console, one-var, vars-on-top */
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
-  const BASE_COMPONENT_CACHE_KEYS = [ "rise-imageaw", "rise-videasdo" ];
+  const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
   const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
 
   function purge() {
@@ -20,7 +20,7 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
           resolve( "done" );
         })
         .catch( err => {
-          console.log( "Error", err );
+          console.log( "Error trying to purge cache files", err );
           resolve( "error" );
         })
     })
