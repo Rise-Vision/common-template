@@ -2,7 +2,12 @@
 
 RisePlayerConfiguration.PurgeCacheFiles = (() => {
   const BASE_COMPONENT_CACHE_KEYS = [ "rise-image", "rise-video" ];
-  const EXPIRY_TIME = 1000 * 60 * 60 * 24 * 7;
+  const EXPIRY_TIME = 1000 * 60 * 1;
+  const LOGGER_DATA = {
+    name: "RisePlayerConfiguration",
+    id: "PurgeCacheFiles",
+    version: "N/A"
+  };
 
   function purge() {
     return new Promise(( resolve ) => {
@@ -20,7 +25,11 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
           resolve( "done" );
         })
         .catch( err => {
-          console.log( "Error trying to purge cache files", err );
+          RisePlayerConfiguration.Logger.warning(
+            LOGGER_DATA,
+            "Error trying to purge cache files",
+            { error: err }
+          );
           resolve( "error" );
         })
     })
