@@ -162,6 +162,24 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "getSharedScheduleId", function() {
+    it( "should get id from parent window href", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "id", window.parent.location.href ).returns( "abc123" );
+
+      var scheduleId = RisePlayerConfiguration.Helpers.getSharedScheduleId();
+
+      expect( scheduleId ).to.equal( "abc123" );
+    });
+
+    it( "should fallback on top window href to get id", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "id", window.parent.location.href ).returns( null ).withArgs( "id", top.location.href ).returns( "abc123" );
+
+      var scheduleId = RisePlayerConfiguration.Helpers.getSharedScheduleId();
+
+      expect( scheduleId ).to.equal( "abc123" );
+    });
+  });
+
   describe( "bindOnConfigured", function() {
     var element;
     var handleEvent;

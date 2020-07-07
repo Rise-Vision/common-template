@@ -105,6 +105,26 @@ RisePlayerConfiguration.Helpers = (() => {
     }
   }
 
+  function getSharedScheduleId() {
+    let scheduleId;
+
+    try {
+      scheduleId = RisePlayerConfiguration.Helpers.getHttpParameter( "id", window.parent.location.href );
+    } catch ( err ) {
+      console.log( "Can't access parent window location", err );
+    }
+
+    if ( !scheduleId ) {
+      try {
+        scheduleId = RisePlayerConfiguration.Helpers.getHttpParameter( "id", top.location.href );
+      } catch ( err ) {
+        console.log( "Can't access top window location", err );
+      }
+    }
+
+    return scheduleId || null;
+  }
+
   function getRiseElements() {
     if ( _riseElements === null ) {
       _riseElements = [];
@@ -272,6 +292,7 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   const exposedFunctions = {
+    getSharedScheduleId: getSharedScheduleId,
     getHttpParameter: getHttpParameter,
     getLocalMessagingJsonContent: getLocalMessagingJsonContent,
     getLocalMessagingTextContent: getLocalMessagingTextContent,

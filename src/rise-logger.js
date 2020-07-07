@@ -38,15 +38,7 @@ RisePlayerConfiguration.Logger = (() => {
     _throttle = false,
     _token = "";
 
-  function configureForSharedSchedule() {
-    let scheduleId;
-
-    try {
-      scheduleId = RisePlayerConfiguration.Helpers.getHttpParameter( "id", top.location.href );
-    } catch ( err ) {
-      console.log( "Can't access top window location", err );
-    }
-
+  function _configureForSharedSchedule() {
     _commonEntryValues = {
       "platform": "content",
       "display_id": "DISPLAY_ID",
@@ -66,7 +58,7 @@ RisePlayerConfiguration.Logger = (() => {
         "name": RisePlayerConfiguration.getTemplateName(),
         "presentation_id": RisePlayerConfiguration.getPresentationId()
       },
-      "schedule_id": scheduleId || null,
+      "schedule_id": RisePlayerConfiguration.Helpers.getSharedScheduleId(),
       "unique_id": _getUniqueId()
     };
 
@@ -79,7 +71,7 @@ RisePlayerConfiguration.Logger = (() => {
     const rolloutStage = playerInfo && playerInfo.playerType;
 
     if ( RisePlayerConfiguration.Helpers.isSharedSchedule()) {
-      return configureForSharedSchedule();
+      return _configureForSharedSchedule();
     }
 
     if ( RisePlayerConfiguration.isPreview() ||

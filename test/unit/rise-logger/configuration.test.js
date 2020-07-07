@@ -123,7 +123,8 @@ describe( "configure", function() {
 
   it( "should configure logging for shared schedule", function() {
     sandbox.stub( RisePlayerConfiguration.Helpers, "isSharedSchedule" ).returns( true );
-    sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "id" ).returns( "abc123" ).withArgs( "presentationId" ).returns( "def456" );
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getSharedScheduleId" ).returns( "abc123" );
+    sandbox.stub( RisePlayerConfiguration, "getPresentationId" ).returns( "def456" );
 
     RisePlayerConfiguration.configure();
 
