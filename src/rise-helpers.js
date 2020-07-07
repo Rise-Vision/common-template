@@ -91,9 +91,10 @@ RisePlayerConfiguration.Helpers = (() => {
     });
   }
 
-  function getHttpParameter( name ) {
+  function getHttpParameter( name, url ) {
+    console.log( "getHttpParameter", name, url );
     try {
-      const href = window.location.href;
+      const href = url ? url : window.location.href;
       const regex = new RegExp( `[?&]${ name }=([^&#]*)`, "i" );
       const match = regex.exec( href );
 

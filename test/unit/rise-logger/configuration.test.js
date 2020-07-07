@@ -12,6 +12,8 @@ describe( "configure", function() {
 
     sandbox = sinon.sandbox.create();
     sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
+
+    window.localStorage.setItem( "uniqueId", "unique_id_test" );
   });
 
   afterEach( function() {
@@ -19,6 +21,8 @@ describe( "configure", function() {
     RisePlayerConfiguration.Logger.reset();
 
     sandbox.restore();
+
+    window.localStorage.removeItem( "uniqueId" );
   });
 
   it( "should not enable BQ logging if no player type is defined", function() {
@@ -43,6 +47,14 @@ describe( "configure", function() {
     }, {});
 
     expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.false;
+  });
+
+  it( "should enable BQ logging if shared schedule", function() {
+    sandbox.stub( RisePlayerConfiguration.Helpers, "isSharedSchedule" ).returns( true );
+
+    RisePlayerConfiguration.configure();
+
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
   });
 
   it( "should configure logging during beta stage", function() {
@@ -106,6 +118,39 @@ describe( "configure", function() {
         "name": "TEMPLATE_NAME",
         "presentation_id": "PRESENTATION_ID"
       }
+    });
+  });
+
+  it( "should configure logging for shared schedule", function() {
+    sandbox.stub( RisePlayerConfiguration.Helpers, "isSharedSchedule" ).returns( true );
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "id" ).returns( "abc123" ).withArgs( "presentationId" ).returns( "def456" );
+
+    RisePlayerConfiguration.configure();
+
+    expect( RisePlayerConfiguration.Logger.isBigQueryLoggingEnabled()).to.be.true;
+    expect( RisePlayerConfiguration.Logger.isDebugEnabled()).to.be.false;
+
+    expect( RisePlayerConfiguration.Logger.getCommonEntryValues()).to.deep.equal({
+      "platform": "content",
+      "display_id": "DISPLAY_ID",
+      "company_id": "COMPANY_ID",
+      "rollout_stage": "ROLLOUT_STAGE",
+      "player": {
+        "ip": null,
+        "version": "PLAYER.VERSION",
+        "os": "PLAYER.OS",
+        "chrome_version": null,
+        // use type to indicate shared schedule for convenience in querying for shared schedules
+        "type": "sharedschedule"
+      },
+      "template": {
+        "product_code": "TEMPLATE_PRODUCT_CODE",
+        "version": "TEMPLATE_VERSION",
+        "name": "TEMPLATE_NAME",
+        "presentation_id": "def456"
+      },
+      "schedule_id": "abc123",
+      "unique_id": "unique_id_test"
     });
   });
 

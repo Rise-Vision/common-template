@@ -38,9 +38,49 @@ RisePlayerConfiguration.Logger = (() => {
     _throttle = false,
     _token = "";
 
+  function configureForSharedSchedule() {
+    let scheduleId;
+
+    try {
+      scheduleId = RisePlayerConfiguration.Helpers.getHttpParameter( "id", top.location.href );
+    } catch ( err ) {
+      console.log( "Can't access top window location", err );
+    }
+
+    _commonEntryValues = {
+      "platform": "content",
+      "display_id": "DISPLAY_ID",
+      "company_id": "COMPANY_ID",
+      "rollout_stage": "ROLLOUT_STAGE",
+      "player": {
+        "ip": null,
+        "version": "PLAYER.VERSION",
+        "os": "PLAYER.OS",
+        "chrome_version": RisePlayerConfiguration.getChromeVersion(),
+        // use type to indicate shared schedule for convenience in querying for shared schedules
+        "type": "sharedschedule"
+      },
+      "template": {
+        "product_code": RisePlayerConfiguration.getTemplateProductCode(),
+        "version": RisePlayerConfiguration.getTemplateVersion(),
+        "name": RisePlayerConfiguration.getTemplateName(),
+        "presentation_id": RisePlayerConfiguration.getPresentationId()
+      },
+      "schedule_id": scheduleId || null,
+      "unique_id": _getUniqueId()
+    };
+
+    // *** Turn off logging to BQ from Shared Schedules by uncommenting this line ***
+    // _bigQueryLoggingEnabled = false;
+  }
+
   function configure() {
     const playerInfo = RisePlayerConfiguration.getPlayerInfo();
     const rolloutStage = playerInfo && playerInfo.playerType;
+
+    if ( RisePlayerConfiguration.Helpers.isSharedSchedule()) {
+      return configureForSharedSchedule();
+    }
 
     if ( RisePlayerConfiguration.isPreview() ||
       ( rolloutStage !== "beta" && rolloutStage !== "stable" )) {
@@ -94,6 +134,39 @@ RisePlayerConfiguration.Logger = (() => {
     _refreshDate = 0;
     _throttle = false;
     _token = "";
+  }
+
+  function _getUniqueId() {
+    var uniqueId = window.localStorage.uniqueId || "";
+
+    if ( uniqueId === "" ) {
+      uniqueId = _generateUUID();
+      window.localStorage.setItem( "uniqueId", uniqueId );
+    }
+    return uniqueId;
+  }
+
+  function _generateUUID() {
+    // timestamp
+    let d = new Date().getTime(),
+      // time in microseconds since page-load or 0 if unsupported
+      d2 = ( performance && performance.now && ( performance.now() * 1000 )) || 0;
+
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace( /[xy]/g, function( c ) {
+      //random number between 0 and 16
+      var r = Math.random() * 16;
+
+      // Use timestamp until depleted
+      if ( d > 0 ) {
+        r = ( d + r ) % 16 | 0;
+        d = Math.floor( d / 16 );
+      } else {
+        // Use microseconds since page-load if supported
+        r = ( d2 + r ) % 16 | 0;
+        d2 = Math.floor( d2 / 16 );
+      }
+      return ( c === "x" ? r : ( r & 0x3 | 0x8 )).toString( 16 );
+    });
   }
 
   function _copyOf( data ) {
@@ -244,6 +317,13 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _shouldNotLog( componentData, event, additionalFields ) {
+    if ( RisePlayerConfiguration.Helpers.isSharedSchedule()) {
+      // we are only going to monitor image and video components, filter out the rest of components
+      if ( componentData.name !== "rise-image" || componentData.name !== "rise-video" ) {
+        return true;
+      }
+    }
+
     if ( !additionalFields || !additionalFields._logAtMostOncePerDay ) {
       return false;
     }
