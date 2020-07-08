@@ -299,7 +299,7 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
-    if ( _shouldNotLog( componentData, event, additionalFields )) {
+    if ( _shouldNotLog( level, componentData, event, additionalFields )) {
       return;
     }
 
@@ -308,10 +308,15 @@ RisePlayerConfiguration.Logger = (() => {
     _log( componentData, params );
   }
 
-  function _shouldNotLog( componentData, event, additionalFields ) {
+  function _shouldNotLog( level, componentData, event, additionalFields ) {
     if ( RisePlayerConfiguration.Helpers.isSharedSchedule()) {
       // we are only going to monitor image and video components, filter out the rest of components
-      if ( componentData.name !== "rise-image" || componentData.name !== "rise-video" ) {
+      if ( componentData.name !== "rise-image" && componentData.name !== "rise-video" && componentData.name !== "RisePlayerConfiguration" ) {
+        return true;
+      }
+
+      // only log an info event if it signifies a "start" (i.e. component start event), otherwise ignore to avoid excessive streaming inserts
+      if ( level === "info" && event.indexOf( "start" ) === -1 ) {
         return true;
       }
     }
