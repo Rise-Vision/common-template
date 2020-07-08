@@ -133,6 +133,20 @@ const RisePlayerConfiguration = (() => {
     };
   }
 
+  function _finalizeConfigure() {
+    const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();
+
+    if ( isInViewer ) {
+      RisePlayerConfiguration.Viewer.startListeningForData();
+    } else {
+      _sendRisePresentationPlayOnDocumentLoad();
+    }
+
+    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+      _lockDownRisePlayerConfiguration();
+    }
+  }
+
   function configure( playerInfo, localMessagingInfo ) {
     _validateAllRequiredObjectsAreAvailable();
 
@@ -143,7 +157,6 @@ const RisePlayerConfiguration = (() => {
     }
 
     const configuration = _getPlayerConfiguration();
-    const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();
 
     if ( !configuration && RisePlayerConfiguration.Helpers.getWaitForPlayerURLParam()) {
       setTimeout(() => configure( playerInfo, localMessagingInfo ), 100 );
@@ -156,19 +169,13 @@ const RisePlayerConfiguration = (() => {
     _configureGlobalErrorHandler();
 
     if ( RisePlayerConfiguration.isPreview()) {
-      RisePlayerConfiguration.sendComponentsReadyEvent();
+      RisePlayerConfiguration.PurgeCacheFiles.purge().then(() => {
+        RisePlayerConfiguration.sendComponentsReadyEvent();
+        _finalizeConfigure();
+      })
     } else {
       _configureLocalMessaging( localMessagingInfo );
-    }
-
-    if ( isInViewer ) {
-      RisePlayerConfiguration.Viewer.startListeningForData();
-    } else {
-      _sendRisePresentationPlayOnDocumentLoad();
-    }
-
-    if ( !RisePlayerConfiguration.Helpers.isTestEnvironment()) {
-      _lockDownRisePlayerConfiguration();
+      _finalizeConfigure();
     }
   }
 

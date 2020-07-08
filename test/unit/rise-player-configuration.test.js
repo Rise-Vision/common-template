@@ -243,7 +243,7 @@ describe( "RisePlayerConfiguration", function() {
   describe( "isPreview", function() {
 
     beforeEach( function() {
-      RisePlayerConfiguration.PurgeCacheFiles.purge = sinon.stub().resolves();
+      _sandbox.stub( RisePlayerConfiguration.PurgeCacheFiles, "purge" ).resolves();
     });
 
     afterEach( function() {
@@ -476,14 +476,22 @@ describe( "RisePlayerConfiguration", function() {
 
     beforeEach( function() {
       _sandbox.stub( RisePlayerConfiguration.Viewer, "startListeningForData" );
+      _sandbox.stub( RisePlayerConfiguration.PurgeCacheFiles, "purge" ).resolves();
     });
 
-    it( "should configure viewer", function() {
+    it( "should configure viewer", function( done ) {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( true );
+
+      _clock.restore();
 
       RisePlayerConfiguration.configure();
 
-      RisePlayerConfiguration.Viewer.startListeningForData.should.have.been.called;
+      setTimeout( function() {
+        RisePlayerConfiguration.Viewer.startListeningForData.should.have.been.called;
+        _clock = sinon.useFakeTimers();
+        done();
+      }, 200 );
+
     });
 
     it( "should configure DOMContentLoaded to send rise-presentation-play when not on viewer", function( done ) {
@@ -504,14 +512,21 @@ describe( "RisePlayerConfiguration", function() {
       RisePlayerConfiguration.dispatchWindowEvent( "DOMContentLoaded" );
     });
 
-    it( "should send rise-presentation-play when not on viewer and document has already finished loading", function() {
+    it( "should send rise-presentation-play when not on viewer and document has already finished loading", function( done ) {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );
       _sandbox.stub( RisePlayerConfiguration, "dispatchWindowEvent" );
 
+      _clock.restore();
+
       RisePlayerConfiguration.configure();
 
-      // document is already loaded because we're running tests on a browser-like environment
-      RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+      setTimeout( function() {
+        // document is already loaded because we're running tests on a browser-like environment
+        RisePlayerConfiguration.dispatchWindowEvent.should.have.been.calledWith( "rise-presentation-play" );
+
+        _clock = sinon.useFakeTimers();
+        done();
+      }, 200 );
     });
 
   });
