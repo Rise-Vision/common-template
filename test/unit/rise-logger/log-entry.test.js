@@ -1,5 +1,5 @@
 /* eslint-disable one-var, quotes, vars-on-top */
-/* global describe, it, expect, afterEach, before, beforeEach, sinon */
+/* global describe, it, expect, afterEach, beforeEach, sinon */
 
 "use strict";
 
@@ -28,9 +28,7 @@ describe( "log-entry", function() {
 
   describe( "_createLogEntryFor", function() {
 
-    before( sinon.useFakeTimers );
-
-    beforeEach( function() {
+    beforeEach( function( done ) {
       RisePlayerConfiguration.configure({
         displayId: "DISPLAY_ID",
         companyId: "COMPANY_ID",
@@ -44,6 +42,11 @@ describe( "log-entry", function() {
         player: "chromeos",
         connectionType: "window"
       });
+
+      // need to account for delay of Promise resolve from RisePurgeCacheFiles.purge() call
+      setTimeout( function() {
+        done();
+      }, 200 );
     });
 
     it( "should complete the log entry with the predefined values", function() {
@@ -53,8 +56,11 @@ describe( "log-entry", function() {
         "event_details": "test data"
       });
 
+      expect( entry ).to.have.property( "ts" );
+
+      delete entry.ts;
+
       expect( entry ).to.deep.equal({
-        "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
         "source": "rise-data-image",
         "version": "2018.01.01.10.00",
@@ -90,8 +96,11 @@ describe( "log-entry", function() {
         "event_details": { "content": "test data" }
       });
 
+      expect( entry ).to.have.property( "ts" );
+
+      delete entry.ts;
+
       expect( entry ).to.deep.equal({
-        "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
         "source": "rise-data-image",
         "version": "2018.01.01.10.00",
@@ -126,8 +135,11 @@ describe( "log-entry", function() {
         "event": "test event"
       });
 
+      expect( entry ).to.have.property( "ts" );
+
+      delete entry.ts;
+
       expect( entry ).to.deep.equal({
-        "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
         "source": "rise-data-image",
         "version": "2018.01.01.10.00",
@@ -162,8 +174,11 @@ describe( "log-entry", function() {
         "event_details": null
       });
 
+      expect( entry ).to.have.property( "ts" );
+
+      delete entry.ts;
+
       expect( entry ).to.deep.equal({
-        "ts": "1970-01-01T00:00:00.000Z",
         "platform": "content",
         "source": "rise-data-image",
         "version": "2018.01.01.10.00",

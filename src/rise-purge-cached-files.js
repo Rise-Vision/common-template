@@ -10,6 +10,10 @@ RisePlayerConfiguration.PurgeCacheFiles = (() => {
   };
 
   function purge() {
+    if ( !RisePlayerConfiguration.isPreview()) {
+      return Promise.resolve();
+    }
+
     return new Promise(( resolve ) => {
       return _getCacheNames()
         .then( cachesNames => {

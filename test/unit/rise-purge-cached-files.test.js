@@ -35,6 +35,14 @@ describe( "PurgeCacheFiles", function() {
   });
 
   describe( "purge", function() {
+    it( "should not execute if not running in Preview", function() {
+      sandbox.stub( RisePlayerConfiguration, "isPreview" ).returns( false );
+
+      RisePlayerConfiguration.PurgeCacheFiles.purge().then( function() {
+        expect( RisePlayerConfiguration.PurgeCacheFiles.getCacheNames.called ).to.be.false;
+      });
+    });
+
     it( "should call _getCacheNames", function() {
       RisePlayerConfiguration.PurgeCacheFiles.purge().then( function() {
         expect( RisePlayerConfiguration.PurgeCacheFiles.getCacheNames.called ).to.be.true;

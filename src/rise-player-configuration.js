@@ -133,8 +133,14 @@ const RisePlayerConfiguration = (() => {
     };
   }
 
-  function _finalizeConfigure() {
+  function _finalizeConfigure( localMessagingInfo ) {
     const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();
+
+    if ( RisePlayerConfiguration.isPreview()) {
+      RisePlayerConfiguration.sendComponentsReadyEvent();
+    } else {
+      _configureLocalMessaging( localMessagingInfo );
+    }
 
     if ( isInViewer ) {
       RisePlayerConfiguration.Viewer.startListeningForData();
@@ -168,15 +174,9 @@ const RisePlayerConfiguration = (() => {
     RisePlayerConfiguration.Logger.configure();
     _configureGlobalErrorHandler();
 
-    if ( RisePlayerConfiguration.isPreview()) {
-      RisePlayerConfiguration.PurgeCacheFiles.purge().then(() => {
-        RisePlayerConfiguration.sendComponentsReadyEvent();
-        _finalizeConfigure();
-      })
-    } else {
-      _configureLocalMessaging( localMessagingInfo );
-      _finalizeConfigure();
-    }
+    RisePlayerConfiguration.PurgeCacheFiles.purge().then(() => {
+      _finalizeConfigure( localMessagingInfo );
+    });
   }
 
   return {
