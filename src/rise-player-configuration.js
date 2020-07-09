@@ -156,9 +156,7 @@ const RisePlayerConfiguration = (() => {
     _configureGlobalErrorHandler();
 
     if ( RisePlayerConfiguration.isPreview()) {
-      RisePlayerConfiguration.PurgeCacheFiles.purge().then(() => {
-        RisePlayerConfiguration.sendComponentsReadyEvent();
-      })
+      RisePlayerConfiguration.sendComponentsReadyEvent();
     } else {
       _configureLocalMessaging( localMessagingInfo );
     }
