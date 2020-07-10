@@ -9,7 +9,6 @@ RisePlayerConfiguration.Helpers = (() => {
   };
 
   const SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS = [
-    "rise-video",
     "rise-data-financial"
   ];
   let _clients = [];
