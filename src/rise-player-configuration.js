@@ -86,9 +86,6 @@ const RisePlayerConfiguration = (() => {
     if ( !RisePlayerConfiguration.ContentUptime ) {
       throw new Error( "ContentUptime script was not loaded" );
     }
-    if ( !RisePlayerConfiguration.PurgeCacheFiles ) {
-      throw new Error( "PurgeCacheFiles script was not loaded" );
-    }
   }
 
   function _configureLocalMessaging( localMessagingInfo ) {
