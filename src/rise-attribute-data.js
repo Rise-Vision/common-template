@@ -8,7 +8,9 @@ RisePlayerConfiguration.AttributeData = (() => {
     version: "N/A"
   };
 
-  let _startEventSent = false;
+  let _startEventSent = false,
+    _data = null,
+    _handlers = [];
 
   function _elementForId( id ) {
     const elements = RisePlayerConfiguration.Helpers.getRiseElements(),
@@ -19,6 +21,8 @@ RisePlayerConfiguration.AttributeData = (() => {
 
   function _reset() {
     _startEventSent = false;
+    _data = null;
+    _handlers = [];
   }
 
   function _setPropertyNative( element, property, value ) {
@@ -91,12 +95,24 @@ RisePlayerConfiguration.AttributeData = (() => {
   }
 
   function update( data ) {
-    _updateComponentsProperties( data );
+    _data = data;
+
+    _updateComponentsProperties( _data );
+
+    _handlers.forEach( handler => {
+      handler( _data );
+    });
 
     return sendStartEvent();
   }
 
+  function onAttributeData( handler ) {
+    _handlers.push( handler );
+    _data !== null && handler( _data );
+  }
+
   const exposedFunctions = {
+    onAttributeData: onAttributeData,
     sendStartEvent: sendStartEvent,
     update: update
   };

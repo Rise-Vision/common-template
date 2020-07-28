@@ -1,9 +1,17 @@
-/* eslint-disable no-console, vars-on-top */
+/* eslint-disable no-console, vars-on-top, one-var */
 
 RisePlayerConfiguration.Branding = (() => {
+
+  const LOGGER_DATA = {
+    name: "RisePlayerConfiguration",
+    id: "Branding",
+    version: "N/A"
+  };
+
   var companyBranding = null,
     brandingStyleElement = null,
-    logoFileHandlers = [];
+    logoFileHandlers = [],
+    usingCompanyBranding = true;
 
   function update( message ) {
     companyBranding = message && message.companyBranding;
@@ -13,11 +21,50 @@ RisePlayerConfiguration.Branding = (() => {
       handler( logoFile );
     });
 
-    updateBrandingColors( companyBranding );
+    usingCompanyBranding && updateBrandingColors( companyBranding );
+  }
+
+  function _updateBrandingOverride( brandingOverride ) {
+    if ( !brandingOverride ) {
+      if ( usingCompanyBranding ) {
+        // nothing to apply, already using company branding
+        return;
+      }
+
+      usingCompanyBranding = true;
+      RisePlayerConfiguration.Logger.info( LOGGER_DATA, "brand colors", { override: false });
+
+      return updateBrandingColors( companyBranding );
+    }
+
+    usingCompanyBranding = false;
+    RisePlayerConfiguration.Logger.info( LOGGER_DATA, "brand colors", { override: true });
+
+    updateBrandingColors( brandingOverride );
+  }
+
+  function _hasBrandingOverride( data ) {
+    return data && data.hasOwnProperty( "brandingOverride" ) && typeof data.brandingOverride === "object" && data.brandingOverride !== null && Object.keys( data.brandingOverride ).length !== 0;
+  }
+
+  function _watchBrandingOverride( handler ) {
+    RisePlayerConfiguration.AttributeData.onAttributeData(( attributeData ) => {
+      const brandingOverride = _hasBrandingOverride( attributeData ) ? attributeData.brandingOverride : null;
+
+      handler( brandingOverride );
+    });
+  }
+
+  function _reset() {
+    companyBranding = null;
+    brandingStyleElement = null;
+    logoFileHandlers = [];
+    usingCompanyBranding = true;
   }
 
   function registerWatcher() {
     RisePlayerConfiguration.DisplayData.onDisplayData( update );
+    _watchBrandingOverride( _updateBrandingOverride );
   }
 
   function watchLogoFile( handler ) {
@@ -91,6 +138,14 @@ RisePlayerConfiguration.Branding = (() => {
   const exposedFunctions = {
     watchLogoFile
   };
+
+  if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {
+    Object.assign( exposedFunctions, {
+      watchBrandingOverride: _watchBrandingOverride,
+      updateBrandingOverride: _updateBrandingOverride,
+      reset: _reset
+    });
+  }
 
   start();
 

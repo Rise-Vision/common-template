@@ -106,4 +106,74 @@ describe( "AttributeData", function() {
 
   });
 
+  describe( "onAttributeData", function() {
+
+    afterEach( function() {
+      RisePlayerConfiguration.AttributeData.reset();
+    });
+
+    it( "should wait for attribute data to be available", function() {
+      var result = null;
+
+      RisePlayerConfiguration.AttributeData.onAttributeData( function( attributeData ) {
+        result = attributeData;
+      });
+
+      expect( result ).to.be.null;
+
+      RisePlayerConfiguration.AttributeData.update({ "test": "test" });
+
+      expect( result ).to.deep.equal({ "test": "test" });
+
+    });
+
+    it( "should return attribute data right away if already available", function() {
+      var result = null;
+
+      RisePlayerConfiguration.AttributeData.update({ "test": "test" });
+
+      RisePlayerConfiguration.AttributeData.onAttributeData( function( attributeData ) {
+        result = attributeData;
+      });
+
+      expect( result ).to.deep.equal({ "test": "test" });
+
+    });
+
+    it( "should return attribute data to multiple handlers", function() {
+      var result1,
+        result2;
+
+      RisePlayerConfiguration.AttributeData.update({ "test": "test" });
+
+      RisePlayerConfiguration.AttributeData.onAttributeData( function( attributeData ) {
+        result1 = attributeData;
+      });
+      RisePlayerConfiguration.AttributeData.onAttributeData( function( attributeData ) {
+        result2 = attributeData;
+      });
+
+      expect( result1 ).to.deep.equal({ "test": "test" });
+      expect( result2 ).to.deep.equal({ "test": "test" });
+
+    });
+
+    it( "should handle display data updates", function() {
+      var result;
+
+      RisePlayerConfiguration.AttributeData.update({ "test": "test" });
+
+      RisePlayerConfiguration.AttributeData.onAttributeData( function( attributeData ) {
+        result = attributeData;
+      });
+
+      expect( result ).to.deep.equal({ "test": "test" });
+
+      RisePlayerConfiguration.AttributeData.update({ "test": "test updated" });
+
+      expect( result ).to.deep.equal({ "test": "test updated" });
+    });
+
+  });
+
 });

@@ -20,6 +20,8 @@ describe( "Branding", function() {
       return "displayId"
     });
 
+    sandbox.stub( RisePlayerConfiguration.Logger, "info" );
+
     sandbox.stub( document, "createElement" ).returns({
       sheet: styleSheet = {
         cssRules: [],
@@ -35,6 +37,7 @@ describe( "Branding", function() {
 
   afterEach( function() {
     sandbox.restore();
+    RisePlayerConfiguration.Branding.reset();
   });
 
   describe( "start:", function() {
@@ -243,5 +246,172 @@ describe( "Branding", function() {
       expect( result2 ).to.equal( "somefile.jpg" );
     });
 
+  });
+
+  describe( "watch branding override", function() {
+    afterEach( function() {
+      RisePlayerConfiguration.AttributeData.reset();
+    });
+
+    it( "should return branding override", function( done ) {
+      RisePlayerConfiguration.AttributeData.update({
+        "brandingOverride": {
+          "baseColor": "blue",
+          "accentColor": "red"
+        }
+      });
+
+      RisePlayerConfiguration.Branding.watchBrandingOverride( function( brandingOverride ) {
+        expect( brandingOverride ).to.deep.equal({
+          "baseColor": "blue",
+          "accentColor": "red"
+        });
+
+        done();
+      });
+    });
+
+    it( "should return null if branding override does not exist", function( done ) {
+      RisePlayerConfiguration.AttributeData.update({ "test": "test" });
+
+      RisePlayerConfiguration.Branding.watchBrandingOverride( function( brandingOverride ) {
+        expect( brandingOverride ).to.be.null;
+
+        done();
+      });
+    });
+
+    it( "should return null if branding override is set to null", function( done ) {
+      RisePlayerConfiguration.AttributeData.update({ "brandingOverride": null });
+
+      RisePlayerConfiguration.Branding.watchBrandingOverride( function( brandingOverride ) {
+        expect( brandingOverride ).to.be.null;
+
+        done();
+      });
+    });
+
+  });
+
+  describe( "update branding override", function() {
+    it( "should correctly toggle updating branding colors with override or company settings", function() {
+      displayData = {
+        companyBranding: {
+          baseColor: "blue",
+          accentColor: "red"
+        }
+      };
+
+      RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
+
+      RisePlayerConfiguration.Branding.updateBrandingOverride( null );
+
+      // should do nothing if branding override is null and already using company override
+      // expect the styling to be company branding
+      expect( styleSheet.cssRules ).to.deep.equal([
+        ".branding-color-base { color: blue !important; }",
+        ".branding-color-base-bg { background-color: blue !important; }",
+        ":root { --branding-color-base: blue; }",
+        ".branding-color-accent { color: red !important; }",
+        ".branding-color-accent-bg { background-color: red !important; }",
+        ":root { --branding-color-accent: red; }"
+      ]);
+
+      // reset styleSheet.cssRules array
+      styleSheet.cssRules = [];
+
+      RisePlayerConfiguration.Branding.updateBrandingOverride({
+        baseColor: "orange",
+        accentColor: "green"
+      });
+
+      // should update with override colors
+      expect( styleSheet.cssRules ).to.deep.equal([
+        ".branding-color-base { color: orange !important; }",
+        ".branding-color-base-bg { background-color: orange !important; }",
+        ":root { --branding-color-base: orange; }",
+        ".branding-color-accent { color: green !important; }",
+        ".branding-color-accent-bg { background-color: green !important; }",
+        ":root { --branding-color-accent: green; }"
+      ]);
+
+      RisePlayerConfiguration.Logger.info.should.have.been.calledWith({
+        name: "RisePlayerConfiguration",
+        id: "Branding",
+        version: "N/A"
+      }, "brand colors", { override: true });
+
+      // reset styleSheet.cssRules array
+      styleSheet.cssRules = [];
+
+      RisePlayerConfiguration.Branding.updateBrandingOverride( null );
+
+      // should update with company colors
+      expect( styleSheet.cssRules ).to.deep.equal([
+        ".branding-color-base { color: blue !important; }",
+        ".branding-color-base-bg { background-color: blue !important; }",
+        ":root { --branding-color-base: blue; }",
+        ".branding-color-accent { color: red !important; }",
+        ".branding-color-accent-bg { background-color: red !important; }",
+        ":root { --branding-color-accent: red; }"
+      ]);
+
+      RisePlayerConfiguration.Logger.info.should.have.been.calledWith({
+        name: "RisePlayerConfiguration",
+        id: "Branding",
+        version: "N/A"
+      }, "brand colors", { override: false });
+    });
+
+    it( "should not update with new company colors if override colors being used", function() {
+      // reset styleSheet.cssRules array
+      styleSheet.cssRules = [];
+
+      displayData = {
+        companyBranding: {
+          baseColor: "blue",
+          accentColor: "red"
+        }
+      };
+
+      RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
+
+      // reset styleSheet.cssRules array
+      styleSheet.cssRules = [];
+
+      RisePlayerConfiguration.Branding.updateBrandingOverride({
+        baseColor: "orange",
+        accentColor: "green"
+      });
+
+      // should update with override colors
+      expect( styleSheet.cssRules ).to.deep.equal([
+        ".branding-color-base { color: orange !important; }",
+        ".branding-color-base-bg { background-color: orange !important; }",
+        ":root { --branding-color-base: orange; }",
+        ".branding-color-accent { color: green !important; }",
+        ".branding-color-accent-bg { background-color: green !important; }",
+        ":root { --branding-color-accent: green; }"
+      ]);
+
+      displayData = {
+        companyBranding: {
+          baseColor: "black",
+          accentColor: "purple"
+        }
+      };
+
+      RisePlayerConfiguration.DisplayData.connectionHandler({ detail: { isConnected: true } });
+
+      // should still maintain override colors
+      expect( styleSheet.cssRules ).to.deep.equal([
+        ".branding-color-base { color: orange !important; }",
+        ".branding-color-base-bg { background-color: orange !important; }",
+        ":root { --branding-color-base: orange; }",
+        ".branding-color-accent { color: green !important; }",
+        ".branding-color-accent-bg { background-color: green !important; }",
+        ":root { --branding-color-accent: green; }"
+      ]);
+    });
   });
 });
