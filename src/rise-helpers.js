@@ -241,7 +241,7 @@ RisePlayerConfiguration.Helpers = (() => {
         // clear funcs to prevent further binding
         binding.funcs = null;
 
-        return RisePlayerConfiguration.Logger.warning(
+        return RisePlayerConfiguration.Logger.error(
           LOGGER_DATA,
           "component bindOnConfigured overflow triggered",
           { componentId: componentId }
