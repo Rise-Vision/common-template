@@ -202,8 +202,10 @@ RisePlayerConfiguration.Helpers = (() => {
           let binding = _componentBindings[ componentId ];
           let i;
 
-          for ( i = 0; i < binding.funcs.length; i++ ) {
-            binding.funcs[ i ]();
+          if ( binding.funcs && binding.funcs.length ) {
+            for ( i = 0; i < binding.funcs.length; i++ ) {
+              binding.funcs[ i ]();
+            }
           }
 
           // clear funcs to prevent further binding
@@ -240,8 +242,9 @@ RisePlayerConfiguration.Helpers = (() => {
       if ( binding.funcs.length > 10 ) {
         // clear funcs to prevent further binding
         binding.funcs = null;
+        component.removeEventListener( "configured", binding.listener );
 
-        return RisePlayerConfiguration.Logger.error(
+        RisePlayerConfiguration.Logger.error(
           LOGGER_DATA,
           "component bindOnConfigured overflow triggered",
           { componentId: componentId }
