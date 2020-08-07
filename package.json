@@ -52,7 +52,7 @@
     "cryptiles": "^4.1.2",
     "debug": "^2.6.9",
     "growl": "^1.10.2",
-    "lodash": "^4.17.12",
+    "lodash": "^4.17.19",
     "lodash.template": ">=4.5.0",
     "minimatch": "^3.0.2",
     "minimist": "^1.2.3",
