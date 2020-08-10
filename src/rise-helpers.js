@@ -244,7 +244,7 @@ RisePlayerConfiguration.Helpers = (() => {
         binding.funcs = null;
         component.removeEventListener( "configured", binding.listener );
 
-        RisePlayerConfiguration.Logger.error(
+        RisePlayerConfiguration.Logger.warning(
           LOGGER_DATA,
           "component bindOnConfigured overflow triggered",
           { componentId: componentId }
