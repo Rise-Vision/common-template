@@ -51,6 +51,7 @@
     "coveralls": "3.0.9",
     "cryptiles": "^4.1.2",
     "debug": "^2.6.9",
+    "elliptic": ">=6.5.3",
     "growl": "^1.10.2",
     "lodash": "^4.17.12",
     "lodash.template": ">=4.5.0",
