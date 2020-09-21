@@ -126,6 +126,22 @@ describe( "Helpers", function() {
     });
   });
 
+  describe( "getEnv", function() {
+    it( "should return 'env' URL parameter", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "env" ).returns( "test_env" );
+
+      expect( RisePlayerConfiguration.Helpers.getEnv()).to.equal( "test_env" );
+    });
+  });
+
+  describe( "getViewerId", function() {
+    it( "should return 'viewerid' URL parameter", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "viewerid" ).returns( "test_viewer_id" );
+
+      expect( RisePlayerConfiguration.Helpers.getViewerId()).to.equal( "test_viewer_id" );
+    });
+  });
+
   describe( "getRiseElements", function() {
 
     it( "should get list of rise elements", function() {
