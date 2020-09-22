@@ -59,12 +59,16 @@ RisePlayerConfiguration.Helpers = (() => {
     return false;
   }
 
-  function getEnv() {
+  function getViewerEnv() {
     return RisePlayerConfiguration.Helpers.getHttpParameter( "env" );
   }
 
   function getViewerId() {
     return RisePlayerConfiguration.Helpers.getHttpParameter( "viewerid" );
+  }
+
+  function getViewerType() {
+    return RisePlayerConfiguration.Helpers.getHttpParameter( "type" );
   }
 
   function getLocationPathname() {
@@ -297,8 +301,9 @@ RisePlayerConfiguration.Helpers = (() => {
     isEditorPreview: isEditorPreview,
     isDisplay: isDisplay,
     isStaging: isStaging,
-    getEnv: getEnv,
+    getViewerEnv: getViewerEnv,
     getViewerId: getViewerId,
+    getViewerType: getViewerType,
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
     bindOnConfigured: bindOnConfigured,

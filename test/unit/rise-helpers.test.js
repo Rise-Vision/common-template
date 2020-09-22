@@ -126,11 +126,11 @@ describe( "Helpers", function() {
     });
   });
 
-  describe( "getEnv", function() {
+  describe( "getViewerEnv", function() {
     it( "should return 'env' URL parameter", function() {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "env" ).returns( "test_env" );
 
-      expect( RisePlayerConfiguration.Helpers.getEnv()).to.equal( "test_env" );
+      expect( RisePlayerConfiguration.Helpers.getViewerEnv()).to.equal( "test_env" );
     });
   });
 
@@ -139,6 +139,14 @@ describe( "Helpers", function() {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "viewerid" ).returns( "test_viewer_id" );
 
       expect( RisePlayerConfiguration.Helpers.getViewerId()).to.equal( "test_viewer_id" );
+    });
+  });
+
+  describe( "getViewerType", function() {
+    it( "should return 'type' URL parameter", function() {
+      _sandbox.stub( RisePlayerConfiguration.Helpers, "getHttpParameter" ).withArgs( "type" ).returns( "test_type" );
+
+      expect( RisePlayerConfiguration.Helpers.getViewerType()).to.equal( "test_type" );
     });
   });
 
