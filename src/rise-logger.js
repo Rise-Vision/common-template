@@ -319,6 +319,14 @@ RisePlayerConfiguration.Logger = (() => {
         [ field ]: additionalFields[ field ]
       }), {}) : {};
 
+
+    if ( RisePlayerConfiguration.Helpers.isSharedSchedule()) {
+      eventDetails = eventDetails || {};
+      eventDetails.presentation_type = "sharedschedule";
+      eventDetails.env = RisePlayerConfiguration.Helpers.getEnv();
+      eventDetails.viewer_id = RisePlayerConfiguration.Helpers.getViewerId();
+    }
+
     Object.assign( params, {
       "level": level,
       "event": event,
