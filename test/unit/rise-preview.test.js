@@ -94,6 +94,17 @@ describe( "Preview", function() {
     expect( updateStub ).to.not.have.been.called;
   });
 
+  it( "should not handle 'rise-components-ready' messages because it's coming from embedded presentation", function() {
+    RisePlayerConfiguration.Preview.receiveData({
+      data: { topic: "rise-components-ready" },
+      origin: "https://widgets.risevision.com"
+    });
+
+    //confirm AttributeData.update() is not called
+    expect( updateStub ).to.not.have.been.called;
+  });
+
+
   describe( "_initDataRetrieval:", function() {
     beforeEach( function() {
       _sandbox.stub( RisePlayerConfiguration.Helpers, "isInViewer" ).returns( false );

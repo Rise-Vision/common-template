@@ -33,6 +33,11 @@ RisePlayerConfiguration.Preview = (() => {
       return;
     }
 
+    if ( data.topic === "rise-components-ready" ) {
+      // fix for https://github.com/Rise-Vision/common-template/issues/146
+      return;
+    }
+
     switch ( data.type ) {
     case "attributeData":
       RisePlayerConfiguration.AttributeData.update( data.value );
