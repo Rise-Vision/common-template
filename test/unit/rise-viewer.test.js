@@ -145,4 +145,21 @@ describe( "Viewer", function() {
     }, "*" );
   });
 
+  it( "should send endpoint logs via existing send method", function() {
+    RisePlayerConfiguration.Viewer.sendEndpointLog({
+      severity: "INFO",
+      eventDetails: "test-event-details",
+      eventAppVersion: "test-event-app-version"
+    });
+
+    expect( window.parent.postMessage ).to.have.been.calledWith({
+      topic: "log-endpoint-event",
+      eventApp: "HTML Template",
+      eventAppVersion: "test-event-app-version",
+      eventDetails: "test-event-details",
+      frameElementId: "context",
+      severity: "INFO"
+    }, "*" );
+  });
+
 });

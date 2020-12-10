@@ -236,6 +236,11 @@ const RisePlayerConfiguration = (() => {
 
           if ( RisePlayerConfiguration.Helpers.isInViewer()) {
             RisePlayerConfiguration.Viewer.send( "rise-components-ready" );
+
+            RisePlayerConfiguration.Viewer.sendEndpointLog({
+              severity: "DEBUG",
+              eventDetails: "components ready"
+            });
           }
 
           if ( !RisePlayerConfiguration.isPreview()) {

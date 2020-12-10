@@ -234,6 +234,16 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
+    RisePlayerConfiguration.Viewer.sendEndpointLog({
+      severity: level,
+      eventErrorCode: ( eventDetails && eventDetails.errorCode ) || ( level === "error" ? "X" : null ),
+      eventApp: componentData.name || "HTML Template",
+      componentId: componentData.id || null,
+      eventAppVersion: componentData.name ? componentData.version : RisePlayerConfiguration.getTemplateVersion(),
+      eventDetails: JSON.stringify({ event, eventDetails }),
+      debugInfo: JSON.stringify( additionalFields )
+    });
+
     if ( _shouldNotLog( componentData, event, additionalFields )) {
       return;
     }
