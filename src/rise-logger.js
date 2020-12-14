@@ -237,11 +237,11 @@ RisePlayerConfiguration.Logger = (() => {
     RisePlayerConfiguration.Viewer.sendEndpointLog({
       severity: level,
       eventErrorCode: ( eventDetails && eventDetails.errorCode ) || ( level === "error" ? "X" : null ),
-      eventApp: componentData.name || "HTML Template",
+      eventApp: componentData.name || `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
       componentId: componentData.id || null,
       eventAppVersion: componentData.name ? componentData.version : RisePlayerConfiguration.getTemplateVersion(),
       eventDetails: JSON.stringify({ event, eventDetails }),
-      debugInfo: JSON.stringify( additionalFields )
+      debugInfo: JSON.stringify( Object.assign({}, additionalFields, { template: _commonEntryValues ? _commonEntryValues.template : null }))
     });
 
     if ( _shouldNotLog( componentData, event, additionalFields )) {

@@ -26,7 +26,7 @@ RisePlayerConfiguration.Viewer = (() => {
     if ( !fields.severity || !fields.eventDetails ) {
       send( "log-endpoint-event", {
         severity: "ERROR",
-        eventApp: "HTML Template",
+        eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
         eventAppVersion: RisePlayerConfiguration.getTemplateVersion(),
         eventErrorCode: "E000000010",
         eventDetails: `invalid log call attempt - missing fields - ${JSON.stringify( fields )}`,
