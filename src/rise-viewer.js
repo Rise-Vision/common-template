@@ -57,6 +57,12 @@ RisePlayerConfiguration.Viewer = (() => {
 
       console.log( `Dispatching ${topic} event` );
 
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `Dispatching ${topic} event`
+      });
+
+
       riseElements.forEach( element => RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, topic ));
       window.dispatchEvent( new Event( topic ));
     } else if ( topic === "get-template-data" ) {

@@ -36,9 +36,21 @@ const RisePlayerConfiguration = (() => {
         }
       } else {
         console.log( "no injected configuration found, configuring as preview" );
+
+        RisePlayerConfiguration.Viewer.sendEndpointLog({
+          severity: "DEBUG",
+          eventDetails: "no injected configuration found, configuring as preview"
+        });
+
       }
     } else {
       console.log( "explicit configuration provided, this is likely a test environment" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "explicit configuration provided, this is likely a test environment"
+      });
+
     }
 
     RisePlayerConfiguration.getPlayerInfo = () => playerInfo;
@@ -223,6 +235,11 @@ const RisePlayerConfiguration = (() => {
     },
     dispatchWindowEvent( name ) {
       console.log( `Dispatching ${name} event` );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `Dispatching ${name} event`
+      });
 
       window.dispatchEvent( new CustomEvent( name ));
     },

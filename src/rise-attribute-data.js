@@ -31,14 +31,14 @@ RisePlayerConfiguration.AttributeData = (() => {
 
   function _setProperty( element, property, value ) {
     const componentId = element.id;
+    const logMessage = `Setting property '${ property }' of component ${ componentId } to value: '${ JSON.stringify( value ) }'`;
 
-    console.log( `Setting property '${
-      property
-    }' of component ${
-      componentId
-    } to value: '${
-      JSON.stringify( value )
-    }'` );
+    console.log( logMessage );
+
+    RisePlayerConfiguration.Viewer.sendEndpointLog({
+      severity: "DEBUG",
+      eventDetails: logMessage
+    });
 
     try {
       RisePlayerConfiguration.Helpers.bindOnConfigured( element, _setPropertyNative.bind( null, element, property, value ));
