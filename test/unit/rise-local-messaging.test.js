@@ -3,6 +3,13 @@
 "use strict";
 
 describe( "configure()", function() {
+  beforeEach( function() {
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
+  });
+
+  afterEach( function() {
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
+  });
 
   it( "should not attempt to configure if player type is unsupported", function() {
     RisePlayerConfiguration.LocalMessaging.configure({ player: "test" });
@@ -175,6 +182,7 @@ describe( "websocket connection", function() {
   }
 
   beforeEach( function() {
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
     socketInstance = createSocketInstance();
     top.PrimusLMS = { connect: function() {} };
     clock = sinon.useFakeTimers();
@@ -185,6 +193,7 @@ describe( "websocket connection", function() {
   });
 
   afterEach( function() {
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
     top.PrimusLMS.connect.restore();
     delete top.PrimusLMS;
     clock.restore();
@@ -376,6 +385,7 @@ describe( "websocket connection", function() {
 
 describe( "websocket connection via Viewer", function() {
   beforeEach( function() {
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
     top.RiseVision = {
       Viewer: {
         LocalMessaging: {
@@ -391,6 +401,7 @@ describe( "websocket connection via Viewer", function() {
   });
 
   afterEach( function() {
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
     delete top.RiseVision;
     delete top.PrimusLMS;
   });

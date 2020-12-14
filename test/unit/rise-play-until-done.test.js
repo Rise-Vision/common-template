@@ -120,6 +120,7 @@ describe( "PlayUntilDone", function() {
       RisePlayerConfiguration.PlayUntilDone.reportTemplateDone();
 
       window.parent.postMessage.should.have.been.calledWith({ topic: "template-done", frameElementId: "context" }, "*" );
+      window.parent.postMessage.restore();
     });
 
   });

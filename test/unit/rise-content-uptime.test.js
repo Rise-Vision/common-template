@@ -35,6 +35,7 @@ describe( "ContentUptime", function() {
     sandbox.stub( RisePlayerConfiguration.LocalMessaging, "receiveMessages" );
     sandbox.stub( RisePlayerConfiguration.LocalMessaging, "broadcastMessage" );
 
+    sandbox.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
     sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
       return Object.values( expectedComponents );
     });

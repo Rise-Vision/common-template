@@ -21,6 +21,7 @@ describe( "Branding", function() {
     });
 
     sandbox.stub( RisePlayerConfiguration.Logger, "info" );
+    sandbox.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
 
     sandbox.stub( document, "createElement" ).returns({
       sheet: styleSheet = {

@@ -43,6 +43,8 @@ describe( "watchSingleFile", function() {
     _helpers = RisePlayerConfiguration.Helpers;
     _localMessaging = RisePlayerConfiguration.LocalMessaging;
 
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
+
     RisePlayerConfiguration.Helpers = {
       onceClientsAreAvailable: function( modules, action ) {
         action();
@@ -63,6 +65,7 @@ describe( "watchSingleFile", function() {
   afterEach( function() {
     RisePlayerConfiguration.Helpers = _helpers;
     RisePlayerConfiguration.LocalMessaging = _localMessaging;
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
   });
 
   it( "should not broadcast a watch message if connection was lost", function() {

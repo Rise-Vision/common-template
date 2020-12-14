@@ -33,6 +33,8 @@ describe( "AttributeData", function() {
     });
 
     sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
+
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
   });
 
   afterEach( function() {
@@ -40,6 +42,7 @@ describe( "AttributeData", function() {
     RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
     RisePlayerConfiguration.Helpers.bindOnConfigured.restore();
     RisePlayerConfiguration.Helpers.sendStartEvent.restore();
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
   });
 
   describe( "update", function() {
