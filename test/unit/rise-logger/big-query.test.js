@@ -35,6 +35,7 @@ describe( "Big Query logging", function() {
 
     sandbox = sinon.sandbox.create();
     sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
+    sandbox.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" ).returns( false );
   });
 
   afterEach( function() {
@@ -578,6 +579,12 @@ describe( "Big Query logging", function() {
           RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "low level trace" );
 
           expect( requests.length ).to.equal( 0 );
+        });
+
+        it( "should use the endpoint logger during log calls", function() {
+          RisePlayerConfiguration.Logger.debug( COMPONENT_DATA, "low level trace" );
+
+          expect( RisePlayerConfiguration.Viewer.sendEndpointLog ).to.have.been.called;
         });
 
         describe( "alreadyLogged", function() {

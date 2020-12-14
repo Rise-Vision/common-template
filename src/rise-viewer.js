@@ -15,7 +15,29 @@ RisePlayerConfiguration.Viewer = (() => {
     message.topic = topic;
     message.frameElementId = frameElementId;
 
+    if ( window.parent === window ) {
+      return;
+    }
+
     window.parent.postMessage( message, "*" );
+  }
+
+  function sendEndpointLog( fields = {}) {
+    if ( !fields.severity || !fields.eventDetails ) {
+      send( "log-endpoint-event", {
+        severity: "ERROR",
+        eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
+        eventAppVersion: RisePlayerConfiguration.getTemplateVersion(),
+        eventErrorCode: "E000000010",
+        eventDetails: `invalid log call attempt - missing fields - ${JSON.stringify( fields )}`,
+        debugInfo: new Error().stack
+      });
+    }
+
+    send( "log-endpoint-event", Object.assign({}, {
+      eventApp: "HTML Template",
+      eventAppVersion: RisePlayerConfiguration.getTemplateVersion()
+    }, fields ));
   }
 
   function _receiveData( event ) {
@@ -44,6 +66,7 @@ RisePlayerConfiguration.Viewer = (() => {
 
   const exposedFunctions = {
     send,
+    sendEndpointLog,
     startListeningForData
   };
 
