@@ -20,6 +20,12 @@ RisePlayerConfiguration.ContentUptime = (() => {
     if ( message.topic === "content-uptime" && message.forPresentationId === RisePlayerConfiguration.getPresentationId()) {
       console.log( "content-uptime event received", JSON.stringify( message ));
 
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "content-uptime event received",
+        debugInfo: JSON.stringify( message )
+      });
+
       _setExpectedComponents();
       resultsTimeout = setTimeout( _handleNoResponse, COMPONENTS_RESULT_TIMEOUT );
 

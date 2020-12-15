@@ -45,6 +45,11 @@ RisePlayerConfiguration.LocalStorage = (() => {
     if ( !RisePlayerConfiguration.LocalMessaging.isConnected()) {
       console.log( `Connection lost, no sending WATCH for ${ filePath }` );
 
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `Connection lost, no sending WATCH for ${ filePath }`
+      });
+
       return;
     }
 

@@ -147,7 +147,14 @@ RisePlayerConfiguration.Logger = (() => {
     const insertText = JSON.stringify( insertData );
 
     if ( !_token ) {
-      return console.log( `No token, not sending: ${ insertText }` );
+      console.log( `No token, not sending: ${ insertText }` );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `No token, not sending: ${ insertText }`
+      });
+
+      return;
     }
 
     // Insert the data.
@@ -217,7 +224,14 @@ RisePlayerConfiguration.Logger = (() => {
     const entry = _createLogEntryFor( componentData, params );
 
     if ( !_bigQueryLoggingEnabled && params.level !== "info" ) {
-      return console.log( JSON.stringify( entry ));
+      console.log( JSON.stringify( entry ));
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: JSON.stringify( entry )
+      });
+
+      return;
     }
 
     _logToBigQuery( entry );

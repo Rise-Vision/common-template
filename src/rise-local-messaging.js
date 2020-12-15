@@ -21,16 +21,31 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
       console.log( "local messaging connected" );
 
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "local messaging connected"
+      });
+
       _connected = true;
       _sendConnectionEvent();
     });
 
     _connection.on( "close", () => {
       console.log( "local messaging connection closed" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "local messaging connection closed"
+      });
     });
 
     _connection.on( "end", () => {
       console.log( "local messaging disconnected" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "local messaging disconnected"
+      });
 
       _connected = false;
       _sendConnectionEvent();
@@ -38,6 +53,11 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
     _connection.on( "error", ( error ) => {
       console.log( "local messaging error", error.message );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `local messaging error ${error.message}`
+      });
     });
 
     _connection.on( "data", ( data ) => {
@@ -68,6 +88,12 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       }
     } catch ( err ) {
       console.log( "window.top reference error", err );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "window.top reference error",
+        debugInfo: err && err.message
+      });
     }
 
     return false;
@@ -81,6 +107,12 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       }
     } catch ( err ) {
       console.log( "window.top reference error", err );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "window.top reference error",
+        debugInfo: err && err.message
+      });
     }
 
     return false;
@@ -93,6 +125,12 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       }
     } catch ( err ) {
       console.log( "window.top reference error", err );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "window.top reference error",
+        debugInfo: err && err.message
+      });
     }
 
     return false;
@@ -124,11 +162,23 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
     if ( !_isWebsocketConnectionAvailable()) {
       console.log( "primus client side library was not loaded" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "primus client side library was not loaded"
+      });
+
       return;
     }
 
     if ( !detail || !detail.serverUrl ) {
       console.log( "websocket server url not provided" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "websocket server url not provided"
+      });
+
       return;
     }
 
@@ -136,6 +186,12 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       _useViewerWebsocketConnection = true;
 
       console.log( "local messaging connected via Viewer" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "local messaging connected via Viewer"
+      });
+
       _sendConnectionEvent();
       return;
     }
@@ -236,16 +292,34 @@ RisePlayerConfiguration.LocalMessaging = (() => {
 
     if ( _connectionType ) {
       console.log( "connection already configured" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "connection already configured"
+      });
+
       return;
     }
 
     if ( !_validatePlayer( player )) {
       console.log( "player not supported", player );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "player not supported"
+      });
+
       return;
     }
 
     if ( !connectionType || typeof connectionType !== "string" ) {
       console.log( "connection type not provided" );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "connection type not provided"
+      });
+
       return;
     }
 
@@ -265,6 +339,12 @@ RisePlayerConfiguration.LocalMessaging = (() => {
       break;
     default:
       console.log( "connection type not supported", connectionType );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: `connection type ${connectionType} not supported`
+      });
+
       break;
     }
 

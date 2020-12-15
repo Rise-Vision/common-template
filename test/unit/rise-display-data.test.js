@@ -3,6 +3,7 @@
 describe( "DisplayData", function() {
 
   beforeEach( function() {
+    sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
     sinon.stub( RisePlayerConfiguration, "getDisplayId", function() {
       return "displayId"
     });
@@ -10,6 +11,7 @@ describe( "DisplayData", function() {
 
   afterEach( function() {
     RisePlayerConfiguration.getDisplayId.restore();
+    RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
   });
 
   describe( "rise-local-messaging-connection:", function() {

@@ -54,6 +54,11 @@ RisePlayerConfiguration.Helpers = (() => {
       }
     } catch ( err ) {
       console.log( "can't retrieve window location pathname", err );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "can't retrieve window location pathname"
+      });
     }
 
     return false;
@@ -113,6 +118,11 @@ RisePlayerConfiguration.Helpers = (() => {
     } catch ( err ) {
       console.log( "can't retrieve HTTP parameter", err );
 
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: "can't retrieve HTTP parameter"
+      });
+
       return null;
     }
   }
@@ -158,6 +168,12 @@ RisePlayerConfiguration.Helpers = (() => {
       configuration = window.getRisePlayerConfiguration || window.top.getRisePlayerConfiguration;
     } catch ( err ) {
       console.log( err );
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog({
+        severity: "DEBUG",
+        eventDetails: err && err.message
+      });
+
     }
 
     return configuration;

@@ -7,6 +7,11 @@ RisePlayerConfiguration.DisplayData = (() => {
   function update( message ) {
     console.log( "handle display data message", message );
 
+    RisePlayerConfiguration.Viewer.sendEndpointLog({
+      severity: "DEBUG",
+      eventDetails: "handle display data message"
+    });
+
     displayData = message;
 
     handlers.forEach( handler => {
