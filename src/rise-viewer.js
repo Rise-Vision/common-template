@@ -2,8 +2,16 @@
 
 RisePlayerConfiguration.Viewer = (() => {
 
+  const heartbeatInterval = {};
+
+  heartbeatInterval.promise = new Promise( res => {
+    heartbeatInterval.resolver = res;
+  });
+
   function startListeningForData() {
     window.addEventListener( "message", _receiveData, false );
+    send( "get-heartbeat-interval" );
+    startEndpointApplicationHeartbeats();
   }
 
   function send( topic, message ) {
@@ -35,9 +43,24 @@ RisePlayerConfiguration.Viewer = (() => {
     }
 
     send( "log-endpoint-event", Object.assign({}, {
-      eventApp: "HTML Template",
+      eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
       eventAppVersion: RisePlayerConfiguration.getTemplateVersion()
     }, fields ));
+  }
+
+  function sendEndpointHeartbeat( fields = {}) {
+    send( "log-endpoint-heartbeat", Object.assign({}, {
+      componentId: null,
+      eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
+      eventAppVersion: RisePlayerConfiguration.getTemplateVersion()
+    }, fields ));
+  }
+
+  function startEndpointApplicationHeartbeats( fields = {}, intervalSetter = setInterval ) {
+    return heartbeatInterval.promise.then( intervalMS => {
+      sendEndpointHeartbeat( fields );
+      intervalSetter(() => sendEndpointHeartbeat( fields ), intervalMS );
+    });
   }
 
   function _receiveData( event ) {
@@ -67,13 +90,17 @@ RisePlayerConfiguration.Viewer = (() => {
       window.dispatchEvent( new Event( topic ));
     } else if ( topic === "get-template-data" ) {
       send( topic, message );
+    } else if ( topic === "heartbeat-interval" ) {
+      heartbeatInterval.resolver( message.intervalMS );
     }
   }
 
   const exposedFunctions = {
     send,
     sendEndpointLog,
-    startListeningForData
+    sendEndpointHeartbeat,
+    startListeningForData,
+    startEndpointApplicationHeartbeats
   };
 
   if ( RisePlayerConfiguration.Helpers.isTestEnvironment()) {

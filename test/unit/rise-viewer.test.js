@@ -154,7 +154,7 @@ describe( "Viewer", function() {
 
     expect( window.parent.postMessage ).to.have.been.calledWith({
       topic: "log-endpoint-event",
-      eventApp: "HTML Template",
+      eventApp: "HTML Template: TEMPLATE_NAME",
       eventAppVersion: "test-event-app-version",
       eventDetails: "test-event-details",
       frameElementId: "context",
@@ -162,4 +162,32 @@ describe( "Viewer", function() {
     }, "*" );
   });
 
+  it( "resolves heartbeat interval promise after receiving interval from Viewer", function() {
+    var expectedInterval = 1234,
+      intervalSetTo = 0;
+
+    function fakeSetInterval( fn, interval ) {
+      intervalSetTo = interval;
+    }
+
+    RisePlayerConfiguration.Viewer.receiveData({
+      data: {
+        topic: "heartbeat-interval",
+        intervalMS: 1234
+      }
+    });
+
+    return RisePlayerConfiguration.Viewer.startEndpointApplicationHeartbeats({}, fakeSetInterval )
+      .then( function() {
+        expect( window.parent.postMessage ).to.have.been.calledWith({
+          topic: "log-endpoint-heartbeat",
+          componentId: null,
+          eventApp: "HTML Template: TEMPLATE_NAME",
+          eventAppVersion: "TEMPLATE_VERSION",
+          frameElementId: "context"
+        }, "*" );
+
+        expect( intervalSetTo ).to.equal( expectedInterval )
+      });
+  });
 });
