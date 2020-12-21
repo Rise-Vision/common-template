@@ -33,8 +33,11 @@ RisePlayerConfiguration.Preview = (() => {
       return;
     }
 
-    if ( data.topic === "rise-components-ready" ) {
-      // fix for https://github.com/Rise-Vision/common-template/issues/146
+    if ( data.hasOwnProperty( "topic" )) {
+      // filter out commands ("rise-components-ready", "rise-presentation-play", etc.)
+      // fix for:
+      // - https://github.com/Rise-Vision/common-template/issues/146
+      // - https://github.com/Rise-Vision/rise-vision-apps/issues/2230
       return;
     }
 
