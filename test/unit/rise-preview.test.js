@@ -104,6 +104,15 @@ describe( "Preview", function() {
     expect( updateStub ).to.not.have.been.called;
   });
 
+  it( "should not handle 'rise-presentation-play' message (https://github.com/Rise-Vision/rise-vision-apps/issues/2230)", function() {
+    RisePlayerConfiguration.Preview.receiveData({
+      data: { topic: "rise-presentation-play" },
+      origin: "https://widgets.risevision.com"
+    });
+
+    //confirm AttributeData.update() is not called
+    expect( updateStub ).to.not.have.been.called;
+  });
 
   describe( "_initDataRetrieval:", function() {
     beforeEach( function() {
