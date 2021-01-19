@@ -77,12 +77,7 @@ RisePlayerConfiguration.Logger = (() => {
         "os": playerOs,
         "chrome_version": chromeVersion
       },
-      "template": {
-        "product_code": RisePlayerConfiguration.getTemplateProductCode(),
-        "version": RisePlayerConfiguration.getTemplateVersion(),
-        "name": RisePlayerConfiguration.getTemplateName(),
-        "presentation_id": RisePlayerConfiguration.getPresentationId()
-      }
+      "template": _getTemplateData()
     };
   }
 
@@ -238,6 +233,8 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _logWithLevel( level, componentData, event, eventDetails, additionalFields ) {
+    const templateData = _getTemplateData();
+
     if ( typeof additionalFields !== "undefined" && typeof additionalFields !== "object" ) {
       return severe( LOGGER_COMPONENT_DATA, "invalid additional fields value", {
         componentData: componentData,
@@ -251,11 +248,11 @@ RisePlayerConfiguration.Logger = (() => {
     RisePlayerConfiguration.Viewer.sendEndpointLog({
       severity: level,
       eventErrorCode: ( eventDetails && eventDetails.errorCode ) || ( level === "error" ? "X" : null ),
-      eventApp: componentData.name || `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
+      eventApp: componentData.name || `HTML Template: ${templateData.name}`,
       componentId: componentData.id || null,
-      eventAppVersion: componentData.name ? componentData.version : RisePlayerConfiguration.getTemplateVersion(),
+      eventAppVersion: componentData.name ? componentData.version : templateData.version,
       eventDetails: JSON.stringify({ event, eventDetails }),
-      debugInfo: JSON.stringify( Object.assign({}, additionalFields, { template: _commonEntryValues ? _commonEntryValues.template : null }))
+      debugInfo: JSON.stringify( Object.assign({}, additionalFields, { template: templateData }))
     });
 
     if ( _shouldNotLog( componentData, event, additionalFields )) {
@@ -334,6 +331,15 @@ RisePlayerConfiguration.Logger = (() => {
     }-${
       today.getDate()
     }`;
+  }
+
+  function _getTemplateData() {
+    return {
+      "product_code": RisePlayerConfiguration.getTemplateProductCode(),
+      "version": RisePlayerConfiguration.getTemplateVersion(),
+      "name": RisePlayerConfiguration.getTemplateName(),
+      "presentation_id": RisePlayerConfiguration.getPresentationId()
+    }
   }
 
   function _getLogParams( level, event, eventDetails, additionalFields ) {
