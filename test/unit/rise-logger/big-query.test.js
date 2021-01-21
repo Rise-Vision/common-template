@@ -459,7 +459,7 @@ describe( "Big Query logging", function() {
 
           expect( entry.level ).to.equal( "error" );
           expect( entry.event ).to.equal( "video download failed again" );
-          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.event_details ).to.equal( JSON.stringify({ details: "http://video.com/matrix.wmv" }));
           expect( entry.platform ).to.equal( "content" );
           expect( entry.source ).to.equal( COMPONENT_DATA.name );
           expect( entry.version ).to.equal( COMPONENT_DATA.version );
@@ -484,7 +484,7 @@ describe( "Big Query logging", function() {
 
           expect( entry.level ).to.equal( "error" );
           expect( entry.event ).to.equal( "video download failed once more" );
-          expect( entry.event_details ).to.equal( "http://video.com/matrix.wmv" );
+          expect( entry.event_details ).to.equal( JSON.stringify({ details: "http://video.com/matrix.wmv" }));
           expect( entry.platform ).to.equal( "content" );
           expect( entry.source ).to.equal( COMPONENT_DATA.name );
           expect( entry.version ).to.equal( COMPONENT_DATA.version );

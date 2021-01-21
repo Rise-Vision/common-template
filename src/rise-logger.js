@@ -343,19 +343,22 @@ RisePlayerConfiguration.Logger = (() => {
   }
 
   function _getLogParams( level, event, eventDetails, additionalFields ) {
-    const params = additionalFields ? Object.keys( additionalFields )
-      .filter( key => key && key.charAt( 0 ) != "_" )
-      .reduce(( struct, field ) => ({
-        [ field ]: additionalFields[ field ]
-      }), {}) : {};
+    const details = eventDetails ? ( typeof eventDetails !== "object" ? { details: eventDetails } : eventDetails ) : {},
+      additional = additionalFields ? ( typeof additionalFields !== "object" ? { debugInfo: additionalFields } : additionalFields ) : {},
+      debugDetails = Object.keys( additional )
+        .filter( key => key && key.charAt( 0 ) != "_" && key !== "storage" )
+        .reduce(( struct, field ) => {
+          struct[ field ] = additional[ field ];
+          return struct;
+        }, {}),
+      detailsCombined = Object.assign({}, details, debugDetails );
 
-    Object.assign( params, {
+    return {
       "level": level,
       "event": event,
-      "event_details": eventDetails || ""
-    });
-
-    return params;
+      "event_details": Object.keys( detailsCombined ).length === 0 ? "" : detailsCombined,
+      "storage": additionalFields && additionalFields.storage || null
+    };
   }
 
   function severe( componentData, event, eventDetails, additionalFields ) {

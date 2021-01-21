@@ -44,19 +44,6 @@
     "regenerator-runtime": "^0.12.1",
     "run-sequence": "^2.2.1",
     "whatwg-fetch": "^3.0.0",
-    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.11.2"
-  },
-  "resolutions": {
-    "braces": "2.3.1",
-    "coveralls": "3.0.9",
-    "cryptiles": "^4.1.2",
-    "debug": "^2.6.9",
-    "growl": "^1.10.2",
-    "lodash": "^4.17.12",
-    "lodash.template": ">=4.5.0",
-    "minimatch": "^3.0.2",
-    "minimist": "^1.2.3",
-    "set-value": "^2.0.1",
-    "ws": "^1.1.5"
+    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.13.0"
   }
 }

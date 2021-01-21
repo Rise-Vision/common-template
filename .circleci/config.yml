@@ -21,6 +21,7 @@ jobs:
       - checkout
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
+      - run: node --version
       - run: npm test
       - persist_to_workspace:
           root: .
