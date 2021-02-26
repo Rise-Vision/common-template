@@ -22,7 +22,7 @@ jobs:
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
       - run: node --version
-      - run: npm test
+      - run: npm run test-ci
       - persist_to_workspace:
           root: .
           paths:

@@ -7,6 +7,8 @@
     "preinstall": "npx npm-force-resolutions || true",
     "pretest": "eslint .",
     "test": "gulp test",
+    "test-ci": "npm run test",
+    "posttest-ci": "gulp coveralls",
     "pretty": "eslint . --fix",
     "build": "gulp build"
   },
@@ -34,7 +36,8 @@
     "es7-object-polyfill": "^1.0.0",
     "eslint": "^5.6.0",
     "eslint-config-idiomatic": "^4.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
     "gulp-babel": "^7.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.4.0",
@@ -42,8 +45,7 @@
     "gulp-uglify": "^3.0.1",
     "promise-polyfill": "^8.1.0",
     "regenerator-runtime": "^0.12.1",
-    "run-sequence": "^2.2.1",
     "whatwg-fetch": "^3.0.0",
-    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.13.0"
+    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#v1.15.2"
   }
 }

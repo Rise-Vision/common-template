@@ -9,7 +9,6 @@
     gulp = require( "gulp" ),
     factory = require( "widget-tester" ).gulpTaskFactory,
     rename = require( "gulp-rename" ),
-    runSequence = require( "run-sequence" ),
     sourcemaps = require( "gulp-sourcemaps" ),
     uglify = require( "gulp-uglify" ),
     configScripts = [
@@ -33,7 +32,19 @@
       "src/rise-content-uptime.js",
       "src/rise-play-until-done.js",
       "src/rise-purge-cached-files.js"
-    ];
+    ],
+    testFiles = [
+      "test/test_env.js",
+      "node_modules/es7-object-polyfill/build/es7-object-polyfill.browser.js",
+      "node_modules/promise-polyfill/dist/polyfill.min.js",
+      "node_modules/whatwg-fetch/dist/fetch.umd.js",
+      "node_modules/dom4/build/dom4.js",
+      "src/config/config-test.js"
+    ].concat(templateScripts)
+    .concat([
+      "test/unit/*test.js",
+      "test/unit/rise-logger/*test.js"
+    ]);
 
   gulp.task( "clean", function( cb ) {
     return del([ "./dist/**" ], cb );
@@ -72,25 +83,22 @@
       .pipe( gulp.dest( "dist" ));
   });
 
-  gulp.task( "build", ( cb ) => {
-    runSequence([ "clean" ], [ "configScripts", "templateScripts" ], cb );
-  });
+  gulp.task( "build", gulp.series( "clean", gulp.parallel( "configScripts", "templateScripts" )));
 
   gulp.task( "test-unit", factory.testUnitAngular(
-    { testFiles: [
-      "test/test_env.js",
-      "node_modules/es7-object-polyfill/build/es7-object-polyfill.browser.js",
-      "node_modules/promise-polyfill/dist/polyfill.min.js",
-      "node_modules/whatwg-fetch/dist/fetch.umd.js",
-      "node_modules/dom4/build/dom4.js",
-      "dist/config-test.js",
-      "dist/common-template.js",
-      "test/unit/*test.js",
-      "test/unit/rise-logger/*test.js" ] }
+    { 
+      coverageFiles: "src/**/*.js",
+      basePath: '../..',
+      testFiles: testFiles
+    }
   ));
 
-  gulp.task( "test", ( cb ) => {
-    runSequence([ "build" ], [ "test-unit" ], cb );
+  gulp.task( "coveralls", factory.coveralls());
+
+  gulp.task( "test", gulp.series( "build", "test-unit" ));
+
+  gulp.task("watch", function () {
+    return gulp.watch(["src/*.js", "src/config/config-test.js", "test/unit/**/*.test.js"], gulp.series("test"));
   });
 
 })( console );
