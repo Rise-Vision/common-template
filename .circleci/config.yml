@@ -44,16 +44,6 @@ jobs:
           paths:
             - gcloud
 
-  generate-version:
-    docker: *BUILDIMAGE
-    steps:
-      - run: mkdir version-string
-      - run: echo $(date +%Y.%m.%d.%H.%M) > version-string/version
-      - persist_to_workspace:
-          root: .
-          paths:
-            - version-string
-
   deploy-stage:
     docker: *GCSIMAGE
     steps:
@@ -65,7 +55,7 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          VERSION=$(cat version-string/version)
+          VERSION=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}')
           TARGET=$WIDGETS_BASE/staging/common/$VERSION/
           echo Deploying version $VERSION to common
           gsutil cp dist/*.js $TARGET
@@ -84,7 +74,7 @@ jobs:
       - run: git clone https://github.com/Rise-Vision/rise-image.git
       - run: |
           IMAGEMAJOR=$(grep version rise-image/package.json | grep -Po '[0-9]+' | head -1)
-          VERSION=$(cat version-string/version)
+          VERSION=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}')
           DEST_FILE=rise-image/e2e/rise-image-electron.html
           sed "
             s!__STAGE__/common!staging/common/$VERSION!;
@@ -112,7 +102,7 @@ jobs:
           at: .
       - run: echo build common-template e2e page << parameters.stage >>
       - run: |
-          VERSION=$(cat version-string/version)
+          VERSION=$(echo -n $CIRCLE_BRANCH |awk 'BEGIN{FS="/"}{print tolower($NF)}')
           SRC_FILE=e2e/src/template.html
           sed -i "s!stable/common!staging/common/$VERSION!" $SRC_FILE
       - run: |
@@ -235,21 +225,10 @@ workflows:
                 - master
                 - build/stable
                 - /^e2e[/].*/
-      - generate-version:
-          requires:
-            - install
-          filters:
-            branches:
-              only:
-                - /^(stage|staging)[/].*/
-                - master
-                - build/stable
-                - /^e2e[/].*/
       - deploy-stage:
           requires:
             - build_and_test
             - gcloud-setup
-            - generate-version
           filters:
             branches:
               only:
@@ -262,7 +241,6 @@ workflows:
           name: build-component-e2e-page-beta
           requires:
             - build_and_test
-            - generate-version
           filters:
             branches:
               only:
@@ -273,7 +251,6 @@ workflows:
           name: build-component-e2e-page-stable
           requires:
             - build_and_test
-            - generate-version
           filters:
             branches:
               only:
@@ -283,7 +260,6 @@ workflows:
           name: build-common-e2e-page-beta
           requires:
             - build_and_test
-            - generate-version
           filters:
             branches:
               only:
@@ -294,7 +270,6 @@ workflows:
           name: build-common-e2e-page-stable
           requires:
             - build_and_test
-            - generate-version
           filters:
             branches:
               only:
