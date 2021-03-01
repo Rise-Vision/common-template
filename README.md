@@ -1,4 +1,4 @@
-# common-template
+# common-template [![CircleCI](https://circleci.com/gh/Rise-Vision/common-template/tree/master.svg?style=svg)](https://circleci.com/gh/Rise-Vision/workflows/common-template/tree/master) [![Coverage Status](https://coveralls.io/repos/github/Rise-Vision/common-template/badge.svg?branch=master)](https://coveralls.io/github/Rise-Vision/common-template?branch=master)
 Common scripts for Rise Templates
 
 ## Build

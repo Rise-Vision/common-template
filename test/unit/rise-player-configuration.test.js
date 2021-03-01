@@ -315,7 +315,7 @@ describe( "RisePlayerConfiguration", function() {
     });
 
     it( "should be able to call getChromeVersion even if it's not configured", function() {
-      expect( RisePlayerConfiguration.getChromeVersion()).to.be.null;
+      expect( RisePlayerConfiguration.getChromeVersion()).to.be.ok;
     });
 
     it( "should get the chrome version even if it's not configured", function() {

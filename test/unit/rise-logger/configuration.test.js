@@ -12,6 +12,7 @@ describe( "configure", function() {
 
     sandbox = sinon.sandbox.create();
     sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
+    sandbox.stub( RisePlayerConfiguration, "getChromeVersion" ).returns( "chromeVersion" );
   });
 
   afterEach( function() {
@@ -66,7 +67,7 @@ describe( "configure", function() {
         "ip": null,
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
-        "chrome_version": null
+        "chrome_version": "chromeVersion"
       },
       "template": {
         "product_code": "TEMPLATE_PRODUCT_CODE",
@@ -98,7 +99,7 @@ describe( "configure", function() {
         "ip": null,
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
-        "chrome_version": null
+        "chrome_version": "chromeVersion"
       },
       "template": {
         "product_code": "TEMPLATE_PRODUCT_CODE",
@@ -110,6 +111,7 @@ describe( "configure", function() {
   });
 
   it( "should recognize player ip and chrome version if they are provided", function() {
+    RisePlayerConfiguration.getChromeVersion.restore();
     RisePlayerConfiguration.configure({
       displayId: "DISPLAY_ID",
       companyId: "COMPANY_ID",
@@ -163,7 +165,7 @@ describe( "configure", function() {
         "ip": null,
         "version": "2018.01.01.10.00",
         "os": "Ubuntu 64",
-        "chrome_version": null
+        "chrome_version": "chromeVersion"
       },
       "template": {
         "product_code": "",
