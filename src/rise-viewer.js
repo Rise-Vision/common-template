@@ -36,6 +36,7 @@ RisePlayerConfiguration.Viewer = (() => {
         severity: "ERROR",
         eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
         eventAppVersion: RisePlayerConfiguration.getTemplateVersion(),
+        presentationId: RisePlayerConfiguration.getPresentationId(),
         eventErrorCode: "E000000010",
         eventDetails: `invalid log call attempt - missing fields - ${JSON.stringify( fields )}`,
         debugInfo: new Error().stack
@@ -44,7 +45,8 @@ RisePlayerConfiguration.Viewer = (() => {
 
     send( "log-endpoint-event", Object.assign({}, {
       eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
-      eventAppVersion: RisePlayerConfiguration.getTemplateVersion()
+      eventAppVersion: RisePlayerConfiguration.getTemplateVersion(),
+      presentationId: RisePlayerConfiguration.getPresentationId()
     }, fields ));
   }
 
@@ -52,7 +54,8 @@ RisePlayerConfiguration.Viewer = (() => {
     send( "log-endpoint-heartbeat", Object.assign({}, {
       componentId: null,
       eventApp: `HTML Template: ${RisePlayerConfiguration.getTemplateName()}`,
-      eventAppVersion: RisePlayerConfiguration.getTemplateVersion()
+      eventAppVersion: RisePlayerConfiguration.getTemplateVersion(),
+      presentationId: RisePlayerConfiguration.getPresentationId()
     }, fields ));
   }
 
