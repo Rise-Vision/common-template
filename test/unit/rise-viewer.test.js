@@ -158,6 +158,7 @@ describe( "Viewer", function() {
       eventApp: "HTML Template: TEMPLATE_NAME",
       eventAppVersion: "test-event-app-version",
       presentationId: "PRESENTATION-ID",
+      placeholderId: "",
       eventDetails: "test-event-details",
       frameElementId: "context",
       severity: "INFO"
@@ -187,6 +188,7 @@ describe( "Viewer", function() {
           eventApp: "HTML Template: TEMPLATE_NAME",
           eventAppVersion: "TEMPLATE_VERSION",
           presentationId: "PRESENTATION-ID",
+          placeholderId: "",
           frameElementId: "context"
         }, "*" );
 
