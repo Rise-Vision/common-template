@@ -245,10 +245,16 @@ RisePlayerConfiguration.Logger = (() => {
       });
     }
 
+    // Some templates are logging errors as components. componentData.name
+    // contains the template name.
+    const eventApp = componentData.name === templateData.name || !componentData.name ?
+      `HTML Template: ${templateData.name}` :
+      componentData.name;
+
     RisePlayerConfiguration.Viewer.sendEndpointLog({
       severity: level,
       eventErrorCode: ( eventDetails && eventDetails.errorCode ) || ( level === "error" ? "X" : null ),
-      eventApp: componentData.name || `HTML Template: ${templateData.name}`,
+      eventApp,
       componentId: componentData.id || null,
       eventAppVersion: componentData.name ? componentData.version : templateData.version,
       eventDetails: JSON.stringify({ event, eventDetails }),
