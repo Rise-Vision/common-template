@@ -168,12 +168,6 @@ RisePlayerConfiguration.Helpers = (() => {
       configuration = window.getRisePlayerConfiguration || window.top.getRisePlayerConfiguration;
     } catch ( err ) {
       console.log( err );
-
-      RisePlayerConfiguration.Viewer.sendEndpointLog({
-        severity: "DEBUG",
-        eventDetails: err && err.message
-      });
-
     }
 
     return configuration;
