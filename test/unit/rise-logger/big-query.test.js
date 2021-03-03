@@ -34,6 +34,8 @@ describe( "Big Query logging", function() {
     RisePlayerConfiguration.getPlayerInfo = undefined;
 
     sandbox = sinon.sandbox.create();
+    sandbox.stub( RisePlayerConfiguration, "getTemplateName" ).returns( "TEMPLATE-NAME" );
+    sandbox.stub( RisePlayerConfiguration, "getTemplateVersion" ).returns( "TEMPLATE-VERSION" );
     sandbox.stub( RisePlayerConfiguration.Helpers, "getWaitForPlayerURLParam" ).returns( false );
     sandbox.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" ).returns( false );
   });
@@ -446,6 +448,29 @@ describe( "Big Query logging", function() {
           expect( entry.source ).to.equal( COMPONENT_DATA.name );
           expect( entry.version ).to.equal( COMPONENT_DATA.version );
           expect( entry.component.id ).to.equal( COMPONENT_DATA.id );
+
+          const endpointCall = RisePlayerConfiguration.Viewer.sendEndpointLog
+          expect( endpointCall ).to.have.been.called;
+          expect( endpointCall.lastCall.args[ 0 ].eventApp ).to.equal( COMPONENT_DATA.name );
+          expect( endpointCall.lastCall.args[ 0 ].eventAppVersion ).to.equal( COMPONENT_DATA.version );
+          expect( endpointCall.lastCall.args[ 0 ].componentId ).to.equal( COMPONENT_DATA.id );
+        });
+
+        it( "should call endpoint log with HTML template event app for common template component", function() {
+          RisePlayerConfiguration.Logger.error({
+            name: "RisePlayerConfiguration",
+            id: "CommonComponent",
+            version: "N/A"
+          }, "common error" );
+
+          // Refresh token request + insert request
+          expect( requests.length ).to.equal( 2 );
+
+          const endpointCall = RisePlayerConfiguration.Viewer.sendEndpointLog
+          expect( endpointCall ).to.have.been.called;
+          expect( endpointCall.lastCall.args[ 0 ].eventApp ).to.equal( "HTML Template: TEMPLATE-NAME" );
+          expect( endpointCall.lastCall.args[ 0 ].eventAppVersion ).to.equal( "TEMPLATE-VERSION" );
+          expect( endpointCall.lastCall.args[ 0 ].componentId ).to.equal( "CommonComponent" );
         });
 
         it( "should log an error event with event details", function() {
