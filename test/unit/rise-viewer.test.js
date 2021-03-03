@@ -15,6 +15,7 @@ describe( "Viewer", function() {
     riseImage = {};
     riseText = {};
 
+    sandbox.stub( RisePlayerConfiguration, "getPresentationId" ).returns( "PRESENTATION-ID" );
     sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
       return Object.values({
         "rise-image": riseImage,
@@ -156,6 +157,8 @@ describe( "Viewer", function() {
       topic: "log-endpoint-event",
       eventApp: "HTML Template: TEMPLATE_NAME",
       eventAppVersion: "test-event-app-version",
+      presentationId: "PRESENTATION-ID",
+      placeholderId: "",
       eventDetails: "test-event-details",
       frameElementId: "context",
       severity: "INFO"
@@ -184,6 +187,8 @@ describe( "Viewer", function() {
           componentId: null,
           eventApp: "HTML Template: TEMPLATE_NAME",
           eventAppVersion: "TEMPLATE_VERSION",
+          presentationId: "PRESENTATION-ID",
+          placeholderId: "",
           frameElementId: "context"
         }, "*" );
 
