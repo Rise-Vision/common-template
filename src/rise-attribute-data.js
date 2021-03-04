@@ -12,6 +12,13 @@ RisePlayerConfiguration.AttributeData = (() => {
     _data = null,
     _handlers = [];
 
+  function _elementForId( id ) {
+    const elements = RisePlayerConfiguration.Helpers.getRiseElements(),
+      filtered = elements.filter( element => element.id === id );
+
+    return filtered.length === 0 ? null : filtered[ 0 ];
+  }
+
   function _reset() {
     _startEventSent = false;
     _data = null;
@@ -34,8 +41,7 @@ RisePlayerConfiguration.AttributeData = (() => {
     });
 
     try {
-      RisePlayerConfiguration.Helpers.getComponentAsync( element )
-        .then( _setPropertyNative.bind( null, element, property, value ));
+      RisePlayerConfiguration.Helpers.bindOnConfigured( element, _setPropertyNative.bind( null, element, property, value ));
     } catch ( error ) {
       RisePlayerConfiguration.Logger.error(
         LOGGER_DATA,
@@ -61,7 +67,7 @@ RisePlayerConfiguration.AttributeData = (() => {
       }
 
       const id = component.id;
-      const element = RisePlayerConfiguration.Helpers.getComponent( id );
+      const element = _elementForId( id );
 
       if ( !element ) {
         return RisePlayerConfiguration.Logger.warning(

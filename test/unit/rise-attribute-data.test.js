@@ -20,17 +20,17 @@ describe( "AttributeData", function() {
       { id: "rise-data-financial-non-editable-02" }
     ];
 
-    sinon.stub( RisePlayerConfiguration.Helpers, "getComponent", function( id ) {
-      return elements.find( function( element ) {
-        return element.id === id;
-      });
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
+      return elements;
     });
 
     sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
       return editableElements;
     });
 
-    sinon.stub( RisePlayerConfiguration.Helpers, "getComponentAsync" ).resolves();
+    sinon.stub( RisePlayerConfiguration.Helpers, "bindOnConfigured", function( element, func ) {
+      func();
+    });
 
     sinon.stub( RisePlayerConfiguration.Helpers, "sendStartEvent" );
 
@@ -38,9 +38,9 @@ describe( "AttributeData", function() {
   });
 
   afterEach( function() {
-    RisePlayerConfiguration.Helpers.getComponent.restore();
+    RisePlayerConfiguration.Helpers.getRiseElements.restore();
     RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
-    RisePlayerConfiguration.Helpers.getComponentAsync.restore();
+    RisePlayerConfiguration.Helpers.bindOnConfigured.restore();
     RisePlayerConfiguration.Helpers.sendStartEvent.restore();
     RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
   });
@@ -66,7 +66,7 @@ describe( "AttributeData", function() {
         ]
       })
         .then( function() {
-          expect( RisePlayerConfiguration.Helpers.getComponent.called ).to.be.true;
+          expect( RisePlayerConfiguration.Helpers.getRiseElements.called ).to.be.true;
           expect( RisePlayerConfiguration.Helpers.sendStartEvent.called ).to.be.true;
 
           expect( elements ).to.deep.equal([
