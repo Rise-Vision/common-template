@@ -247,7 +247,9 @@ RisePlayerConfiguration.Logger = (() => {
 
     // Some templates are logging errors as components. componentData.name
     // contains the template name.
-    const eventApp = componentData.name === templateData.name || !componentData.name ?
+    const isTemplateLog = componentData.name === templateData.name ||
+      !componentData.name || componentData.name === "RisePlayerConfiguration";
+    const eventApp = isTemplateLog ?
       `HTML Template: ${templateData.name}` :
       componentData.name;
 
@@ -256,7 +258,7 @@ RisePlayerConfiguration.Logger = (() => {
       eventErrorCode: ( eventDetails && eventDetails.errorCode ) || ( level === "error" ? "X" : null ),
       eventApp,
       componentId: componentData.id || null,
-      eventAppVersion: componentData.name ? componentData.version : templateData.version,
+      eventAppVersion: isTemplateLog ? templateData.version : componentData.version,
       eventDetails: JSON.stringify({ event, eventDetails }),
       debugInfo: JSON.stringify( Object.assign({}, additionalFields, { template: templateData }))
     });
