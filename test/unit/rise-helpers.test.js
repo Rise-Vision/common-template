@@ -186,7 +186,67 @@ describe( "Helpers", function() {
     });
   });
 
-  describe( "bindOnConfigured", function() {
+  describe( "getComponentAsync", function() {
+    var element;
+
+    var clock;
+
+    beforeEach( function() {
+      clock = sinon.useFakeTimers();
+
+      element = document.createElement( "rise-image" );
+
+      sinon.stub( RisePlayerConfiguration.Viewer, "sendEndpointLog" );
+    });
+
+    afterEach( function() {
+      clock.restore();
+
+      RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
+    });
+
+    it( "should return element._onConfigured by default", function() {
+      element._onConfigured = "configuredFunction";
+
+      expect( RisePlayerConfiguration.Helpers.getComponentAsync( element )).to.equal( "configuredFunction" );
+    });
+
+    it( "should return promise otherwise", function() {
+      expect( RisePlayerConfiguration.Helpers.getComponentAsync( element ).then ).to.be.a( "function" );
+    });
+
+    it( "should resolve promise on configured event", function( done ) {
+      RisePlayerConfiguration.Helpers.getComponentAsync( element ).then( function() {
+        done();
+      });
+
+      element.dispatchEvent( new CustomEvent( "configured" ));
+    });
+
+    it( "should log event if promise is not resolved within 10 seconds", function() {
+      RisePlayerConfiguration.Helpers.getComponentAsync( element );
+
+      clock.tick( 10 * 1000 );
+
+      expect( RisePlayerConfiguration.Viewer.sendEndpointLog.calledWith({
+        severity: "IMPORTANT",
+        eventDetails: "_onConfigured promise failure: " + element.tagName.toLowerCase()
+      })).to.be.true;
+    });
+
+    it( "should cancel log if promise is resolved", function() {
+      RisePlayerConfiguration.Helpers.getComponentAsync( element );
+
+      element.dispatchEvent( new CustomEvent( "configured" ));
+
+      clock.tick( 10 * 60 * 60 );
+
+      expect( RisePlayerConfiguration.Viewer.sendEndpointLog.called ).to.be.false;
+    });
+
+  });
+
+  describe( "bindEventAsync", function() {
     var element;
     var handleEvent;
 
@@ -197,17 +257,7 @@ describe( "Helpers", function() {
     });
 
     describe( "sendStartEvent", function() {
-      it( "should send 'start' event", function() {
-        element.setAttribute( "id", "element-1" );
-
-        element.addEventListener( "start", handleEvent );
-
-        RisePlayerConfiguration.Helpers.sendStartEvent( element );
-
-        expect( handleEvent.calledWith()).to.be.true;
-      });
-
-      it( "should re-send 'start' event on 'configured', asynchronously", function( done ) {
+      it( "should send 'start' event on 'configured', asynchronously", function( done ) {
         element.setAttribute( "id", "element-2" );
 
         RisePlayerConfiguration.Helpers.sendStartEvent( element );
@@ -249,8 +299,8 @@ describe( "Helpers", function() {
     it( "should handle multiple events", function( done ) {
       element.setAttribute( "id", "element-4" );
 
-      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event1" );
-      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event2" );
+      RisePlayerConfiguration.Helpers.bindEventAsync( element, "event1" );
+      RisePlayerConfiguration.Helpers.bindEventAsync( element, "event2" );
 
       element.addEventListener( "event1", handleEvent );
       element.addEventListener( "event2", handleEvent );
@@ -274,8 +324,8 @@ describe( "Helpers", function() {
       parentElement.appendChild( element );
       element.setAttribute( "id", "element-5" );
 
-      RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, "event1" );
-      RisePlayerConfiguration.Helpers.bindEventOnConfigured( parentElement, "event2" );
+      RisePlayerConfiguration.Helpers.bindEventAsync( element, "event1" );
+      RisePlayerConfiguration.Helpers.bindEventAsync( parentElement, "event2" );
 
       parentElement.addEventListener( "event2", handleEvent );
 

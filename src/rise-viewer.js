@@ -92,7 +92,7 @@ RisePlayerConfiguration.Viewer = (() => {
       });
 
 
-      riseElements.forEach( element => RisePlayerConfiguration.Helpers.bindEventOnConfigured( element, topic ));
+      riseElements.forEach( element => RisePlayerConfiguration.Helpers.bindEventAsync( element, topic ));
       window.dispatchEvent( new Event( topic ));
     } else if ( topic === "get-template-data" ) {
       send( topic, message );

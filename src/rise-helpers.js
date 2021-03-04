@@ -2,19 +2,12 @@
 
 RisePlayerConfiguration.Helpers = (() => {
 
-  const LOGGER_DATA = {
-    name: "RisePlayerConfiguration",
-    id: "Helpers",
-    version: "N/A"
-  };
-
   const SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS = [
     "rise-video",
     "rise-data-financial"
   ];
   let _clients = [];
   let _riseElements = null;
-  let _componentBindings = {};
 
   function _clientsAreAvailable( names ) {
     return names.every( name => _clients.indexOf( name ) >= 0 );
@@ -127,40 +120,6 @@ RisePlayerConfiguration.Helpers = (() => {
     }
   }
 
-  function getRiseElements() {
-    if ( _riseElements === null ) {
-      _riseElements = [];
-
-      const all = document.getElementsByTagName( "*" );
-
-      for ( var i = 0; i < all.length; i++ ) {
-        const element = all[ i ];
-        const name = element.tagName.toLowerCase();
-
-        if ( /^rise-/.test( name )) {
-          _riseElements.push( element );
-        }
-      }
-    }
-
-    return _riseElements;
-  }
-
-  function getRiseEditableElements() {
-    return getRiseElements()
-      .filter( element => !element.hasAttribute( "non-editable" ))
-  }
-
-  function getSharedScheduleUnsupportedElements() {
-    return getRiseElements()
-      .filter( element => SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS.indexOf( element.tagName.toLowerCase()) >= 0 )
-  }
-
-  function getComponent( id ) {
-    return getRiseElements()
-      .find( element => element.id === id );
-  }
-
   function getRisePlayerConfiguration() {
     let configuration = null;
 
@@ -211,84 +170,80 @@ RisePlayerConfiguration.Helpers = (() => {
     );
   }
 
-  function _createConfiguredListener( component ) {
-    return function( event ) {
-      if ( event.target !== component ) {
-        return;
+  function getRiseElements() {
+    if ( _riseElements === null ) {
+      _riseElements = [];
+
+      const all = document.getElementsByTagName( "*" );
+
+      for ( var i = 0; i < all.length; i++ ) {
+        const element = all[ i ];
+        const name = element.tagName.toLowerCase();
+
+        if ( /^rise-/.test( name )) {
+          _riseElements.push( element );
+        }
       }
+    }
 
-      // Call functions asynchronously to allow components to register handlers
-      Promise.resolve()
-        .then(() => {
-          const componentId = component.id;
-          let binding = _componentBindings[ componentId ];
-          let i;
-
-          if ( binding.funcs && binding.funcs.length ) {
-            for ( i = 0; i < binding.funcs.length; i++ ) {
-              binding.funcs[ i ]();
-            }
-          }
-
-          // clear funcs to prevent further binding
-          binding.funcs = null;
-
-          component.removeEventListener( "configured", binding.listener );
-        });
-    };
+    return _riseElements;
   }
 
-  // Make calls to the component once it's configured;
-  // but if it's already configured the listener won't work,
-  // so we directly send the request also.
-  function bindOnConfigured( component, func ) {
-    const componentId = component.id;
-    let binding = _componentBindings[ componentId ];
+  function getRiseEditableElements() {
+    return getRiseElements()
+      .filter( element => !element.hasAttribute( "non-editable" ))
+  }
 
-    if ( !binding ) {
-      binding = {
-        listener: _createConfiguredListener( component ),
-        funcs: []
-      };
-      _componentBindings[ componentId ] = binding;
+  function getSharedScheduleUnsupportedElements() {
+    return getRiseElements()
+      .filter( element => SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS.indexOf( element.tagName.toLowerCase()) >= 0 )
+  }
 
-      component.addEventListener( "configured", binding.listener );
+  function getComponent( id ) {
+    return getRiseElements()
+      .find( element => element.id === id );
+  }
+
+  function getComponentAsync( component ) {
+    if ( component._onConfigured ) {
+      return component._onConfigured;
     }
 
-    // if we're still binding to funcs, push
-    if ( func && binding && binding.funcs ) {
-      binding.funcs.push( func );
+    const promise = new Promise(( resolve ) => {
+      const logConfiguredFailure = setTimeout(() => {
+        RisePlayerConfiguration.Viewer.sendEndpointLog({
+          severity: "IMPORTANT",
+          eventDetails: "_onConfigured promise failure: " + component.tagName.toLowerCase()
+        });
+      }, 10 * 1000 );
 
-      // Note: funcs overflow; should never bind so many functions unless
-      // configured event was missed.
-      if ( binding.funcs.length > 10 ) {
-        // clear funcs to prevent further binding
-        binding.funcs = null;
-        component.removeEventListener( "configured", binding.listener );
+      component.addEventListener( "configured", function configured( event ) {
+        if ( event.target !== component ) {
+          return;
+        }
 
-        RisePlayerConfiguration.Logger.warning(
-          LOGGER_DATA,
-          "component bindOnConfigured overflow triggered",
-          { componentId: componentId }
-        );
-      }
+        component.removeEventListener( "configured", configured );
 
-    }
+        clearTimeout( logConfiguredFailure );
 
-    // call func directly if it exists
-    func && func();
+        resolve();
+      });
+    });
+
+    return component._onConfigured = promise;
   }
 
   function _sendEvent( component, topic ) {
     component.dispatchEvent( new CustomEvent( topic ));
   }
 
-  function bindEventOnConfigured( component, topic ) {
-    bindOnConfigured( component, _sendEvent.bind( null, component, topic ));
+  function bindEventAsync( component, topic ) {
+    getComponentAsync( component )
+      .then( _sendEvent.bind( null, component, topic ));
   }
 
   function sendStartEvent( component ) {
-    bindEventOnConfigured( component, "start" );
+    bindEventAsync( component, "start" );
   }
 
   function reset() {
@@ -316,10 +271,10 @@ RisePlayerConfiguration.Helpers = (() => {
     getViewerType: getViewerType,
     getSharedScheduleUnsupportedElements: getSharedScheduleUnsupportedElements,
     onceClientsAreAvailable: onceClientsAreAvailable,
-    bindOnConfigured: bindOnConfigured,
-    bindEventOnConfigured: bindEventOnConfigured,
+    bindEventAsync: bindEventAsync,
     sendStartEvent: sendStartEvent,
-    getComponent: getComponent
+    getComponent: getComponent,
+    getComponentAsync: getComponentAsync
   };
 
   if ( isTestEnvironment()) {

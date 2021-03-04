@@ -22,7 +22,7 @@ describe( "Viewer", function() {
         "rise-text": riseText
       });
     });
-    sandbox.stub( RisePlayerConfiguration.Helpers, "bindEventOnConfigured" );
+    sandbox.stub( RisePlayerConfiguration.Helpers, "bindEventAsync" );
 
     sandbox.stub( window, "addEventListener" );
     sandbox.stub( window, "dispatchEvent" );
@@ -43,7 +43,7 @@ describe( "Viewer", function() {
   it( "should not execute on message if origin not from risevision.com", function() {
     RisePlayerConfiguration.Viewer.receiveData({ origin: "https://test.com", data: JSON.stringify({ testData: "test" }) });
 
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.not.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.not.have.been.called;
   });
 
   it( "should not execute on other events", function() {
@@ -52,7 +52,7 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.not.have.been.called;
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.not.have.been.called;
     expect( window.dispatchEvent ).to.not.have.been.called;
   });
 
@@ -62,9 +62,9 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseText, "rise-presentation-play" );
 
     expect( window.dispatchEvent ).to.have.been.called;
   });
@@ -75,9 +75,9 @@ describe( "Viewer", function() {
       origin: "file://"
     });
 
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseImage, "rise-presentation-play" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseText, "rise-presentation-play" );
 
     expect( window.dispatchEvent ).to.have.been.called;
   });
@@ -88,9 +88,9 @@ describe( "Viewer", function() {
       origin: "https://viewer.risevision.com"
     });
 
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledTwice;
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseImage, "rise-presentation-stop" );
-    expect( RisePlayerConfiguration.Helpers.bindEventOnConfigured ).to.have.been.calledWith( riseText, "rise-presentation-stop" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledTwice;
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseImage, "rise-presentation-stop" );
+    expect( RisePlayerConfiguration.Helpers.bindEventAsync ).to.have.been.calledWith( riseText, "rise-presentation-stop" );
 
     expect( window.dispatchEvent ).to.have.been.called;
   });
