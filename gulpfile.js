@@ -98,7 +98,7 @@
   gulp.task( "test", gulp.series( "build", "test-unit" ));
 
   gulp.task("watch", function () {
-    return gulp.watch(["src/*.js", "src/config/config-test.js", "test/unit/**/*.test.js"], gulp.series("test"));
+    return gulp.watch(["src/*.js", "src/config/config-test.js", "test/unit/**/*.test.js"], gulp.series("test-unit"));
   });
 
 })( console );
