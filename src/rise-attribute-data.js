@@ -34,7 +34,7 @@ RisePlayerConfiguration.AttributeData = (() => {
     });
 
     try {
-      RisePlayerConfiguration.Helpers.getComponentAsync( element )
+      RisePlayerConfiguration.Helpers.getComponentAsync( element, "attribute-data" )
         .then( _setPropertyNative.bind( null, element, property, value ));
     } catch ( error ) {
       RisePlayerConfiguration.Logger.error(

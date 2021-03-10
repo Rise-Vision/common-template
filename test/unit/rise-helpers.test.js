@@ -223,14 +223,25 @@ describe( "Helpers", function() {
       element.dispatchEvent( new CustomEvent( "configured" ));
     });
 
-    it( "should log event if promise is not resolved within 10 seconds", function() {
+    it( "should log event if promise is not resolved within 20 minutes", function() {
       RisePlayerConfiguration.Helpers.getComponentAsync( element );
 
-      clock.tick( 10 * 60 * 1000 );
+      clock.tick( 20 * 60 * 1000 );
 
       expect( RisePlayerConfiguration.Viewer.sendEndpointLog.calledWith({
         severity: "IMPORTANT",
-        eventDetails: "_onConfigured promise failure: " + element.tagName.toLowerCase()
+        eventDetails: "_onConfigured promise failure (component): " + element.tagName.toLowerCase()
+      })).to.be.true;
+    });
+
+    it( "should log source of the call", function() {
+      RisePlayerConfiguration.Helpers.getComponentAsync( element, "source" );
+
+      clock.tick( 20 * 60 * 1000 );
+
+      expect( RisePlayerConfiguration.Viewer.sendEndpointLog.calledWith({
+        severity: "IMPORTANT",
+        eventDetails: "_onConfigured promise failure (source): " + element.tagName.toLowerCase()
       })).to.be.true;
     });
 
@@ -239,7 +250,7 @@ describe( "Helpers", function() {
 
       element.dispatchEvent( new CustomEvent( "configured" ));
 
-      clock.tick( 10 * 60 * 1000 );
+      clock.tick( 20 * 60 * 1000 );
 
       expect( RisePlayerConfiguration.Viewer.sendEndpointLog.called ).to.be.false;
     });

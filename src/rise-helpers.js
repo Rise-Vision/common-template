@@ -204,7 +204,7 @@ RisePlayerConfiguration.Helpers = (() => {
       .find( element => element.id === id );
   }
 
-  function getComponentAsync( component ) {
+  function getComponentAsync( component, sourceString ) {
     if ( component._onConfigured ) {
       return component._onConfigured;
     }
@@ -213,9 +213,9 @@ RisePlayerConfiguration.Helpers = (() => {
       const logConfiguredFailure = setTimeout(() => {
         RisePlayerConfiguration.Viewer.sendEndpointLog({
           severity: "IMPORTANT",
-          eventDetails: "_onConfigured promise failure: " + component.tagName.toLowerCase()
+          eventDetails: "_onConfigured promise failure (" + ( sourceString || "component" ) + "): " + component.tagName.toLowerCase()
         });
-      }, 10 * 60 * 1000 );
+      }, 20 * 60 * 1000 );
 
       component.addEventListener( "configured", function configured( event ) {
         if ( event.target !== component ) {
@@ -238,7 +238,7 @@ RisePlayerConfiguration.Helpers = (() => {
   }
 
   function bindEventAsync( component, topic ) {
-    getComponentAsync( component )
+    getComponentAsync( component, "event: " + topic )
       .then( _sendEvent.bind( null, component, topic ));
   }
 
