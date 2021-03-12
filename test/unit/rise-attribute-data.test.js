@@ -26,7 +26,7 @@ describe( "AttributeData", function() {
       });
     });
 
-    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseEditableElements", function() {
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseRootElements", function() {
       return editableElements;
     });
 
@@ -39,7 +39,7 @@ describe( "AttributeData", function() {
 
   afterEach( function() {
     RisePlayerConfiguration.Helpers.getComponent.restore();
-    RisePlayerConfiguration.Helpers.getRiseEditableElements.restore();
+    RisePlayerConfiguration.Helpers.getRiseRootElements.restore();
     RisePlayerConfiguration.Helpers.getComponentAsync.restore();
     RisePlayerConfiguration.Helpers.sendStartEvent.restore();
     RisePlayerConfiguration.Viewer.sendEndpointLog.restore();
@@ -90,10 +90,10 @@ describe( "AttributeData", function() {
 
   describe( "sendStartEvent", function() {
 
-    it( "should send start event to editable components when never been sent before", function() {
+    it( "should send start event to all root components when never been sent before", function() {
       return RisePlayerConfiguration.AttributeData.sendStartEvent()
         .then( function() {
-          expect( RisePlayerConfiguration.Helpers.getRiseEditableElements.called ).to.be.true;
+          expect( RisePlayerConfiguration.Helpers.getRiseRootElements.called ).to.be.true;
 
           expect( RisePlayerConfiguration.Helpers.sendStartEvent.calledTwice ).to.be.true;
         });

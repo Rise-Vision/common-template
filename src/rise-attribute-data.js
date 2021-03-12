@@ -77,7 +77,7 @@ RisePlayerConfiguration.AttributeData = (() => {
 
   function sendStartEvent() {
     if ( !_startEventSent ) {
-      RisePlayerConfiguration.Helpers.getRiseEditableElements()
+      RisePlayerConfiguration.Helpers.getRiseRootElements()
         .forEach( component =>
           RisePlayerConfiguration.Helpers.sendStartEvent( component )
         );
