@@ -8,7 +8,7 @@ Why is this change required? What problem does it solve?
 Describe in detail how you tested your changes. Include details of your testing environment and link(s) for reviewers to validate.
 
  - [ ] Common template has been tested on Player
- - [ ] Common template has been tested on Apps
+ - [ ] Common template has been tested in Apps Template Editor
 
 ## Release Plan:
 - As the Submitter, upon requesting review of this pull request, I confirm that the [Release Checklist](https://help.risevision.com/hc/en-us/articles/360031119991) has been completed.
