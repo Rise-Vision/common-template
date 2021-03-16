@@ -25,7 +25,7 @@ RisePlayerConfiguration.AttributeDataWatch = (() => {
     }
 
     // No need to get attribute data or sending start if there are no elements.
-    if ( RisePlayerConfiguration.Helpers.getRiseElements().length === 0 ) {
+    if ( RisePlayerConfiguration.Helpers.getRiseRootElements().length === 0 ) {
       return;
     }
 

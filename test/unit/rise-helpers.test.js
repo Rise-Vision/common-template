@@ -10,32 +10,66 @@ describe( "Helpers", function() {
   beforeEach( function() {
     _sandbox = sinon.sandbox.create();
 
-    _sandbox.stub( document, "getElementsByTagName", function() {
-      return [
-        { tagName: "HTML" },
-        { tagName: "HEAD" },
-        { tagName: "BODY" },
-        {
-          tagName: "RISE-DATA-IMAGE",
-          hasAttribute: function() {
-            return true;
-          }
+    _sandbox.stub( document, "getElementsByTagName" ).returns([
+      { tagName: "HTML" },
+      { tagName: "HEAD" },
+      { tagName: "BODY" },
+      {
+        tagName: "RISE-DATA-IMAGE",
+        hasAttribute: function() {
+          return true;
+        }
+      },
+      {
+        tagName: "RISE-DATA-FINANCIAL",
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      {
+        tagName: "RISE-IMAGE",
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      {
+        tagName: "RISE-PLAYLIST",
+        parentElement: {
+          tagName: "BODY"
         },
-        {
-          tagName: "RISE-DATA-FINANCIAL",
-          hasAttribute: function() {
-            return false;
-          }
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      {
+        tagName: "RISE-PLAYLIST-ITEM",
+        parentElement: {
+          tagName: "RISE-PLAYLIST"
         },
-        {
-          tagName: "RISE-IMAGE",
-          hasAttribute: function() {
-            return false;
-          }
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      {
+        tagName: "RISE-EMBEDDED-TEMPLATE",
+        parentElement: {
+          tagName: "RISE-PLAYLIST-ITEM"
         },
-        { tagName: "P" }
-      ];
-    });
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      {
+        tagName: "RISE-IMAGE",
+        parentElement: {
+          tagName: "RISE-PLAYLIST-ITEM"
+        },
+        hasAttribute: function() {
+          return false;
+        }
+      },
+      { tagName: "P" }
+    ]);
   });
 
   afterEach( function() {
@@ -156,12 +190,31 @@ describe( "Helpers", function() {
       var elements = RisePlayerConfiguration.Helpers.getRiseElements();
 
       expect( elements ).to.be.ok;
-      expect( elements.length ).to.equal( 3 );
+      expect( elements.length ).to.equal( 7 );
       expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-IMAGE" );
       expect( elements[ 1 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
       expect( elements[ 2 ].tagName ).to.equal( "RISE-IMAGE" );
+      expect( elements[ 3 ].tagName ).to.equal( "RISE-PLAYLIST" );
+      expect( elements[ 4 ].tagName ).to.equal( "RISE-PLAYLIST-ITEM" );
+      expect( elements[ 5 ].tagName ).to.equal( "RISE-EMBEDDED-TEMPLATE" );
+      expect( elements[ 6 ].tagName ).to.equal( "RISE-IMAGE" );
     });
   });
+
+  describe( "getRiseRootElements", function() {
+
+    it( "should get list of rise elements", function() {
+      var elements = RisePlayerConfiguration.Helpers.getRiseRootElements();
+
+      expect( elements ).to.be.ok;
+      expect( elements.length ).to.equal( 4 );
+      expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-IMAGE" );
+      expect( elements[ 1 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
+      expect( elements[ 2 ].tagName ).to.equal( "RISE-IMAGE" );
+      expect( elements[ 3 ].tagName ).to.equal( "RISE-PLAYLIST" );
+    });
+  });
+
 
   describe( "getRiseEditableElements", function() {
 
@@ -169,9 +222,10 @@ describe( "Helpers", function() {
       var elements = RisePlayerConfiguration.Helpers.getRiseEditableElements();
 
       expect( elements ).to.be.ok;
-      expect( elements.length ).to.equal( 2 );
+      expect( elements.length ).to.equal( 3 );
       expect( elements[ 0 ].tagName ).to.equal( "RISE-DATA-FINANCIAL" );
       expect( elements[ 1 ].tagName ).to.equal( "RISE-IMAGE" );
+      expect( elements[ 2 ].tagName ).to.equal( "RISE-PLAYLIST" );
     });
   });
 

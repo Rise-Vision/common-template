@@ -11,7 +11,7 @@ describe( "AttributeDataWatch", function() {
       { id: "rise-data-financial-01" }
     ];
 
-    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
+    sinon.stub( RisePlayerConfiguration.Helpers, "getRiseRootElements", function() {
       return elements;
     });
     sinon.stub( RisePlayerConfiguration, "getCompanyId", function() {
@@ -29,7 +29,7 @@ describe( "AttributeDataWatch", function() {
   });
 
   afterEach( function() {
-    RisePlayerConfiguration.Helpers.getRiseElements.restore();
+    RisePlayerConfiguration.Helpers.getRiseRootElements.restore();
     RisePlayerConfiguration.getCompanyId.restore();
     RisePlayerConfiguration.getPresentationId.restore();
     RisePlayerConfiguration.AttributeData.sendStartEvent.restore();

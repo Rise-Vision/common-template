@@ -27,7 +27,7 @@ describe( "RisePlayerConfiguration", function() {
       getHttpParameter: _sandbox.stub(),
       isSharedSchedule: _sandbox.stub().returns( false ),
       getSharedScheduleUnsupportedElements: _sandbox.stub().returns([ { id: "rise-video" } ]),
-      getRiseElements: _sandbox.stub().returns([]),
+      getRiseRootElements: _sandbox.stub().returns([]),
       getComponentAsync: _sandbox.stub()
     };
 
@@ -406,7 +406,7 @@ describe( "RisePlayerConfiguration", function() {
 
   describe( "configure:", function() {
     it( "should bind configured event for all elements", function() {
-      RisePlayerConfiguration.Helpers.getRiseElements.returns([ "el1", "el2" ])
+      RisePlayerConfiguration.Helpers.getRiseRootElements.returns([ "el1", "el2" ])
 
       RisePlayerConfiguration.configure();
 

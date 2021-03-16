@@ -152,7 +152,7 @@ const RisePlayerConfiguration = (() => {
     }
 
     // Bind configured handlers for all RiseElements
-    RisePlayerConfiguration.Helpers.getRiseElements().forEach( element => RisePlayerConfiguration.Helpers.getComponentAsync( element, "configure" ));
+    RisePlayerConfiguration.Helpers.getRiseRootElements().forEach( element => RisePlayerConfiguration.Helpers.getComponentAsync( element, "configure" ));
 
     const configuration = _getPlayerConfiguration();
     const isInViewer = RisePlayerConfiguration.Helpers.isInViewer();

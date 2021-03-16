@@ -189,13 +189,23 @@ RisePlayerConfiguration.Helpers = (() => {
     return _riseElements;
   }
 
-  function getRiseEditableElements() {
+  function getRiseRootElements() {
     return getRiseElements()
+      .filter( element => {
+        const parentName = element.parentElement ? element.parentElement.tagName.toLowerCase() : "";
+
+        // filter out children of rise-playlist and rise-playlist-item
+        return !/^rise-playlist/.test( parentName );
+      });
+  }
+
+  function getRiseEditableElements() {
+    return getRiseRootElements()
       .filter( element => !element.hasAttribute( "non-editable" ))
   }
 
   function getSharedScheduleUnsupportedElements() {
-    return getRiseElements()
+    return getRiseRootElements()
       .filter( element => SHARED_SCHEDULES_UNSUPPORTED_COMPONENTS.indexOf( element.tagName.toLowerCase()) >= 0 )
   }
 
@@ -256,6 +266,7 @@ RisePlayerConfiguration.Helpers = (() => {
     getLocalMessagingJsonContent: getLocalMessagingJsonContent,
     getLocalMessagingTextContent: getLocalMessagingTextContent,
     getRiseElements: getRiseElements,
+    getRiseRootElements: getRiseRootElements,
     getRiseEditableElements: getRiseEditableElements,
     getRisePlayerConfiguration: getRisePlayerConfiguration,
     getWaitForPlayerURLParam: getWaitForPlayerURLParam,

@@ -82,7 +82,7 @@ RisePlayerConfiguration.Viewer = (() => {
 
     if ( topic === "rise-presentation-play" || topic === "rise-presentation-stop" ) {
 
-      const riseElements = RisePlayerConfiguration.Helpers.getRiseElements();
+      const riseElements = RisePlayerConfiguration.Helpers.getRiseRootElements();
 
       console.log( `Dispatching ${topic} event` );
 

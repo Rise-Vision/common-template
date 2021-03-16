@@ -16,7 +16,7 @@ describe( "Viewer", function() {
     riseText = {};
 
     sandbox.stub( RisePlayerConfiguration, "getPresentationId" ).returns( "PRESENTATION-ID" );
-    sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseElements", function() {
+    sandbox.stub( RisePlayerConfiguration.Helpers, "getRiseRootElements", function() {
       return Object.values({
         "rise-image": riseImage,
         "rise-text": riseText
